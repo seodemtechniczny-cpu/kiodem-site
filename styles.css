@@ -106,8 +106,9 @@ a { color: inherit; }
 .top__home { display: block; line-height: 0; padding: 6px; margin: -6px; }
 .top__mark { width: 40px; height: 31px; color: var(--ivory); transition: transform .5s var(--ease-out); }
 .top__home:hover .top__mark { transform: translateY(-1px); }
-.lang { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 500; letter-spacing: .02em; }
-.lang__btn { color: var(--ink-45); padding: 6px 2px; transition: color .25s; }
+.lang { display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 500; letter-spacing: .02em; }
+.lang__btn { color: var(--ink-45); padding: 6px 1px; transition: color .25s; }
+@media (max-width: 420px) { .lang { gap: 5px; font-size: 11.5px; } .lang__sep { display: none; } .lang__btn { padding: 6px 3px; } }
 .lang__btn[aria-pressed="true"] { color: var(--ivory); }
 .lang__btn:hover { color: var(--ivory); }
 .lang__sep { width: 1px; height: 14px; background: var(--ink-18); transform: rotate(18deg); }
@@ -147,6 +148,7 @@ a { color: inherit; }
 .tile__s { font-size: 12px; line-height: 1.35; color: var(--ink-70); margin-top: 4px; }
 
 .tile--work { justify-content: flex-end; padding: 0; }
+.tile--work:not(:has(img)) .tile__cap { border-top: 0; }
 /* obraz w polu jest juz czarno-bialy w pliku (-bw.webp): zadnych filtrow CSS w ruchu */
 .tile--work img {
   position: absolute; left: 0; top: 0; width: 100%; height: 100%;
@@ -261,6 +263,11 @@ a { color: inherit; }
   .overlay__body > *:nth-child(6n+7) { grid-column: 6 / span 6; margin-top: 56px; }
   .overlay__body > #brief { grid-column: 1 / -1; margin-top: 0; }
 }
+/* uslugi, o mnie, kontakt: spokojnie, dwie kolumny bez przesuniec; rozrzut zostaje w realizacjach */
+@media (min-width: 900px) {
+  .overlay__body.is-calm > * { grid-column: auto / span 6; margin-top: 0; }
+  .overlay__body.is-calm > .lead { grid-column: 1 / -1; }
+}
 @media (min-width: 1300px) {
   .overlay__body > *:nth-child(6n+2) { grid-column: 1 / span 4; }
   .overlay__body > *:nth-child(6n+3) { grid-column: 6 / span 4; }
@@ -284,7 +291,10 @@ a { color: inherit; }
 .case:hover .case__thumb { filter: none; }
 .case__meta { margin: 0 0 8px !important; font-size: 13px; color: var(--ink-45) !important; }
 .case__what { margin: 0 0 10px !important; }
-.case__link { font-size: 13.5px; text-decoration: none; border-bottom: 1px solid var(--ink-45); padding-bottom: 1px; }
+.case__h { margin: 14px 0 2px; font-size: 12.5px; font-weight: 500; color: var(--ink-45); letter-spacing: .01em; }
+.list--tight li { padding: 6px 0 6px 18px; font-size: 14px; line-height: 1.45; }
+.list--tight li::before { top: 16px; }
+.case__link { display: inline-block; margin-top: 14px; font-size: 13.5px; text-decoration: none; border-bottom: 1px solid var(--ink-45); padding-bottom: 1px; }
 .case__link:hover { border-bottom-color: var(--ivory); }
 .case.is-target { border-top-color: var(--ivory); }
 
@@ -340,8 +350,9 @@ a { color: inherit; }
 .opt__n { font-size: 12px; color: var(--ink-45); font-variant-numeric: tabular-nums; }
 .opt.is-on .opt__n { color: rgba(8, 10, 15, .55); }
 .opt__t { font-variation-settings: 'wdth' 112; font-weight: 600; font-size: 16px; line-height: 1.2; text-wrap: balance; }
-.field { margin: 0 0 18px; }
-.field label { display: block; font-size: 12.5px; color: var(--ink-45); margin-bottom: 4px; }
+/* uwaga: `.field` to kontener kafelkow - wiersze formularza maja wlasna nazwe */
+.brief__field { margin: 0 0 18px; }
+.brief__field label { display: block; font-size: 12.5px; color: var(--ink-45); margin-bottom: 4px; }
 .input {
   display: block; width: 100%; background: transparent; border: 0; border-bottom: 1px solid var(--ink-45);
   color: var(--ivory); font: inherit; font-size: 18px; padding: 8px 0; outline: none; transition: border-color .25s;

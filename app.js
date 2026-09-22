@@ -4,227 +4,20 @@
   'use strict';
 
   /* ─── dane ─────────────────────────────────────────────────────────────── */
-  const I18N = {
-    en: {
-      tagline: 'Websites, automation and Google Ads for independent businesses.',
-      hint: 'Drag or scroll in any direction',
-      'nav.work': 'Work', 'nav.services': 'Services', 'nav.about': 'About', 'nav.contact': 'Contact',
-      open: 'Open', visit: 'Visit the site', close: 'Close',
-      workLead: 'Shops, clinics, schools and showrooms. Each one runs on its own numbers, so the work is judged by enquiries and sales, not by a launch.',
-      servicesLead: 'Four things, done by one person who also answers the phone.',
-      aboutTitle: 'About', aboutLead: 'KIODEM is Michał Smoliński, working from Gliwice in southern Poland with clients in Poland, the United Kingdom and Germany.',
-      about: [
-        'The person you write to is the person who does the work. There is no account manager and no hand-off: the brief, the build and the numbers afterwards stay with one pair of hands.',
-        'Scope is fixed and written in plain terms before anything starts. Accounts, domains and tracking are set up in your name, so nothing depends on me later.',
-        'Most projects begin with a short written check of one journey on your site: how a customer gets from a search to an enquiry, and where that route breaks. It costs nothing and it tells both of us whether there is a project.'
-      ],
-      facts: [['Based in', 'Gliwice, Poland'], ['Working in', 'English and Polish'], ['Clients in', 'Poland, UK, Germany'], ['Platforms', 'WordPress, WooCommerce, Shopify, Shoper, Shopware'], ['Measurement', 'GA4, Tag Manager, Search Console, Merchant Center']],
-      contactTitle: 'Contact', contactLead: 'One email is enough. I reply within one working day.',
-      mail: 'michal@kiodem.com', phone: '+48 789 350 367', linkedin: 'LinkedIn', write: 'Write to me',
-      contactNote: 'Calls in English on weekdays 9 to 17 UK time. Or send the address of your site and I will come back with the short written check first.',
-      sections: { work: 'Nine sites and shops, judged by enquiries', services: 'Websites, ads, measurement, automation',
-                  about: 'One person does the work you talk to', contact: 'One email is enough',
-                  brief: 'Six questions, two minutes, an answer from me' },
-      'nav.brief': 'Brief',
-      contactBrief: 'Or answer six questions and I will come back with a first take:',
-      brief: {
-        intro: 'Six questions, two minutes. The answer comes from me, not from a system.',
-        steps: [
-          { k: 'who', type: 'single', q: 'What kind of business is it?',
-            opts: ['Showroom or store', 'Online shop', 'Clinic or practice', 'School or courses', 'Services', 'Something else'] },
-          { k: 'what', type: 'multi', q: 'What do you need?', hint: 'Pick everything that applies.',
-            opts: ['A website', 'SEO and local search', 'Google Ads', 'Measurement', 'Automation', 'Not sure yet'] },
-          { k: 'state', type: 'single', q: 'Where are you now?',
-            opts: ['Nothing online yet', 'A site, but few enquiries', 'Ads running, results unclear', 'Growing, it has to hold'] },
-          { k: 'when', type: 'single', q: 'When?', opts: ['This month', 'This quarter', 'Just looking'] },
-          { k: 'site', type: 'text', q: 'Your website, if there is one', placeholder: 'www.example.co.uk' },
-          { k: 'contact', type: 'contact', q: 'Where do I reply?',
-            fields: [['name', 'Name'], ['email', 'Email'], ['company', 'Company (optional)'], ['note', 'Anything else (optional)']] }
-        ],
-        labels: { who: 'Business', what: 'Needs', state: 'Situation', when: 'When', site: 'Website', name: 'Name', email: 'Email', company: 'Company', note: 'Note' },
-        next: 'Next', back: 'Back', review: 'Review', send: 'Send the brief', copy: 'Copy the brief', copied: 'Copied', edit: 'Change answers',
-        summaryTitle: 'Your brief', sent: 'Sent. I reply within one working day.',
-        mailNote: 'Your mail app opens with the brief filled in. If it does not, copy the brief and paste it into an email to',
-        keyHint: 'Number keys pick an answer, Enter continues.', emailError: 'An email address is needed for the reply.', skip: 'Skip'
-      }
-    },
-    pl: {
-      tagline: 'Strony, automatyzacje i Google Ads dla niezależnych firm.',
-      hint: 'Przeciągnij albo przewiń w dowolną stronę',
-      'nav.work': 'Realizacje', 'nav.services': 'Usługi', 'nav.about': 'O mnie', 'nav.contact': 'Kontakt',
-      open: 'Otwórz', visit: 'Zobacz stronę', close: 'Zamknij',
-      workLead: 'Sklepy, kliniki, szkoły i salony. Każda z tych firm działa na własnych liczbach, więc pracę ocenia się po zapytaniach i sprzedaży, nie po samym wdrożeniu.',
-      servicesLead: 'Cztery rzeczy, które robi jedna osoba. Ta sama, która odbiera telefon.',
-      aboutTitle: 'O mnie', aboutLead: 'KIODEM to Michał Smoliński. Pracuję z Gliwic z klientami w Polsce, Wielkiej Brytanii i Niemczech.',
-      about: [
-        'Osoba, do której piszesz, jest osobą, która robi robotę. Bez opiekuna klienta i bez przekazywania dalej: brief, wdrożenie i liczby po wdrożeniu zostają w jednych rękach.',
-        'Zakres jest ustalony i spisany zwykłym językiem, zanim cokolwiek się zacznie. Konta, domeny i pomiar zakładam na Ciebie, więc nic nie zależy ode mnie później.',
-        'Większość projektów zaczyna się od krótkiego, pisemnego sprawdzenia jednej ścieżki na Twojej stronie: jak klient przechodzi od wyszukiwania do zapytania i gdzie ta droga się urywa. To nic nie kosztuje i mówi nam obojgu, czy jest tu projekt.'
-      ],
-      facts: [['Siedziba', 'Gliwice'], ['Języki', 'polski i angielski'], ['Klienci', 'Polska, Wielka Brytania, Niemcy'], ['Platformy', 'WordPress, WooCommerce, Shopify, Shoper, Shopware'], ['Pomiar', 'GA4, Tag Manager, Search Console, Merchant Center']],
-      contactTitle: 'Kontakt', contactLead: 'Wystarczy jeden mail. Odpisuję w ciągu jednego dnia roboczego.',
-      mail: 'contact@kiodem.com', phone: '+48 789 350 367', linkedin: 'LinkedIn', write: 'Napisz do mnie',
-      contactNote: 'Rozmowy w dni robocze 9–17. Albo wyślij adres swojej strony, a najpierw odeślę krótkie pisemne sprawdzenie.',
-      sections: { work: 'Dziewięć stron i sklepów, ocenianych po zapytaniach', services: 'Strony, reklamy, pomiar, automatyzacje',
-                  about: 'Robotę robi ta sama osoba, z którą rozmawiasz', contact: 'Wystarczy jeden mail',
-                  brief: 'Sześć pytań, dwie minuty, odpowiedź ode mnie' },
-      'nav.brief': 'Brief',
-      contactBrief: 'Albo odpowiedz na sześć pytań, a wrócę z pierwszą oceną:',
-      brief: {
-        intro: 'Sześć pytań, dwie minuty. Odpowiedź przychodzi ode mnie, nie z systemu.',
-        steps: [
-          { k: 'who', type: 'single', q: 'Jaka to firma?',
-            opts: ['Salon lub sklep stacjonarny', 'Sklep internetowy', 'Klinika lub gabinet', 'Szkoła lub kursy', 'Usługi', 'Coś innego'] },
-          { k: 'what', type: 'multi', q: 'Czego potrzebujesz?', hint: 'Zaznacz wszystko, co pasuje.',
-            opts: ['Strony', 'SEO i wyszukiwania lokalnego', 'Google Ads', 'Pomiaru', 'Automatyzacji', 'Jeszcze nie wiem'] },
-          { k: 'state', type: 'single', q: 'Na jakim etapie jesteś?',
-            opts: ['Nic jeszcze nie ma w sieci', 'Jest strona, mało zapytań', 'Reklamy działają, wyniki niejasne', 'Rośniemy, ma to wytrzymać'] },
-          { k: 'when', type: 'single', q: 'Kiedy?', opts: ['W tym miesiącu', 'W tym kwartale', 'Na razie się rozglądam'] },
-          { k: 'site', type: 'text', q: 'Twoja strona, jeśli jest', placeholder: 'www.przyklad.pl' },
-          { k: 'contact', type: 'contact', q: 'Gdzie mam odpisać?',
-            fields: [['name', 'Imię i nazwisko'], ['email', 'E-mail'], ['company', 'Firma (opcjonalnie)'], ['note', 'Coś jeszcze (opcjonalnie)']] }
-        ],
-        labels: { who: 'Firma', what: 'Potrzeby', state: 'Etap', when: 'Kiedy', site: 'Strona', name: 'Imię i nazwisko', email: 'E-mail', company: 'Firma', note: 'Uwagi' },
-        next: 'Dalej', back: 'Wstecz', review: 'Podsumowanie', send: 'Wyślij brief', copy: 'Skopiuj brief', copied: 'Skopiowane', edit: 'Zmień odpowiedzi',
-        summaryTitle: 'Twój brief', sent: 'Wysłane. Odpisuję w ciągu jednego dnia roboczego.',
-        mailNote: 'Otworzy się Twój program pocztowy z wypełnionym briefem. Jeśli nie, skopiuj brief i wklej go do maila na',
-        keyHint: 'Klawisze z cyframi wybierają odpowiedź, Enter idzie dalej.', emailError: 'Do odpowiedzi potrzebny jest adres e-mail.', skip: 'Pomiń'
-      }
-    }
-  };
-
-  const WORK = [
-    { id: 'electric-studio', name: 'Electric Studio', url: 'https://sklepelectricstudio.pl/', img: 'electric-studio',
-      sector: { en: 'E-bike and e-moto shop, Poland', pl: 'Sklep z e-rowerami i e-moto' },
-      what: { en: 'Shop theme on Shoper, product data and purchase tracking, Google Ads with Merchant Center, supplier integrations.',
-              pl: 'Szablon sklepu na Shoper, dane produktów i pomiar zakupów, Google Ads z Merchant Center, integracje z hurtowniami.' } },
-    { id: 'rehamedica', name: 'RehaMedica', url: 'https://wprehamedica.com/', img: 'rehamedica',
-      sector: { en: 'Physiotherapy clinic', pl: 'Klinika fizjoterapii' },
-      what: { en: 'WordPress website and hosting, technical SEO, measurement and the Google Business Profile.',
-              pl: 'Strona na WordPressie i hosting, SEO techniczne, pomiar i wizytówka Google.' } },
-    { id: 'porto-alegre', name: 'Porto Alegre', url: 'https://portoalegre-gliwice.pl/', img: 'porto-alegre',
-      sector: { en: 'Language school, Gliwice', pl: 'Szkoła językowa, Gliwice' },
-      what: { en: 'SEO and Google Ads with call measurement, so enquiries by phone count like enquiries by form.',
-              pl: 'SEO i Google Ads z pomiarem rozmów, żeby telefon liczył się tak samo jak formularz.' } },
-    { id: 'level', name: 'LEVEL', url: 'https://www.level.edu.pl/', img: 'level',
-      sector: { en: 'Language school, three locations', pl: 'Szkoła językowa, trzy filie' },
-      what: { en: 'Google Ads rebuilt around enquiries rather than clicks, SEO on Squarespace.',
-              pl: 'Google Ads przebudowane pod zapytania zamiast kliknięć, SEO na Squarespace.' } },
-    { id: 'lepimy', name: 'Lepimy', url: 'https://pierogarnialepimy.pl/', img: 'lepimy',
-      sector: { en: 'Pierogi restaurant', pl: 'Pierogarnia' },
-      what: { en: 'Search review, page speed and the Google Business Profile.',
-              pl: 'Przegląd widoczności, szybkość strony i wizytówka Google.' } },
-    { id: 'meume', name: 'MEUME', url: 'https://meumedesign.com/', img: 'meume',
-      sector: { en: 'Design studio', pl: 'Studio projektowe' },
-      what: { en: 'WordPress website designed and built, with the animated scene on the home page.',
-              pl: 'Strona na WordPressie od projektu po wdrożenie, z animowaną sceną na stronie głównej.' } },
-    { id: 'gartendekor', name: 'Gartendekor Lippstadt', url: 'https://www.gartendekor-lippstadt.de/', img: 'gartendekor',
-      sector: { en: 'Garden décor shop and showroom, Germany', pl: 'Sklep i salon z dekoracjami ogrodowymi, Niemcy' },
-      what: { en: 'Google Ads for a Shopware shop with a showroom, plus competitor price research for the German market.',
-              pl: 'Google Ads dla sklepu na Shopware z salonem, plus badanie cen konkurencji na rynku niemieckim.' } },
-    { id: 'voltgo', name: 'VoltGo', url: 'https://voltgo.pl/', img: 'voltgo',
-      sector: { en: 'E-mobility shop', pl: 'Sklep z e-mobilnością' },
-      what: { en: 'Storefront work on a custom CMS: cart logic and product pages.',
-              pl: 'Prace na froncie sklepu na autorskim CMS: logika koszyka i karty produktów.' } },
-    { id: 'kiokuya', name: 'KIOKUYA', url: 'https://kiokuya.com/', img: 'kiokuya',
-      sector: { en: 'Own product: CRM for vehicle dealers', pl: 'Własny produkt: CRM dla dealerów pojazdów' },
-      what: { en: 'Customer records, invoicing and fleet documents in one place, built in Python.',
-              pl: 'Klienci, faktury i dokumenty floty w jednym miejscu, napisane w Pythonie.' } }
-  ];
-
-  const SERVICES = [
-    { id: 'websites', title: { en: 'Websites', pl: 'Strony' },
-      line: { en: 'Built to be found and to take an enquiry', pl: 'Zbudowane, żeby dało się je znaleźć i zapytać' },
-      text: { en: 'WordPress and WooCommerce builds, storefront work on Shopify, Shoper and Shopware, location pages for showrooms, page speed and clean code that a shop owner can keep running.',
-              pl: 'Wdrożenia na WordPressie i WooCommerce, prace w sklepach na Shopify, Shoper i Shopware, strony lokalizacji dla salonów, szybkość i czysty kod, który właściciel sklepu utrzyma sam.' } },
-    { id: 'seo', title: { en: 'SEO and local search', pl: 'SEO i wyszukiwanie lokalne' }, chart: 'seo',
-      line: { en: 'Found for what people actually type', pl: 'Widoczne pod to, co ludzie naprawdę wpisują' },
-      text: { en: 'Search is where a showroom, a clinic or a school gets most of its new enquiries. The work is unglamorous and it compounds: fix what stops Google from reading the site, write the pages people are looking for, keep the Business Profile alive.',
-              pl: 'Wyszukiwarka daje salonowi, klinice czy szkole większość nowych zapytań. Ta praca nie jest efektowna, ale się sumuje: usunąć to, co przeszkadza Google czytać stronę, napisać strony, których ludzie szukają, utrzymać wizytówkę przy życiu.' },
-      details: {
-        en: ['Technical base first: indexing, sitemap, speed and Core Web Vitals, structured data, hreflang on two-language sites.',
-             'One page per service and per location, with the address, hours, directions and real photos. No town pages that only swap the name.',
-             'Google Business Profile kept current: categories, services, photos, posts, and an answer to every review.',
-             'Search Console read every month. Queries with many impressions and few clicks are the pages to fix next.',
-             'No promised positions and no bought links. The report shows queries, clicks and enquiries, not a ranking score.'],
-        pl: ['Najpierw podstawa techniczna: indeksowanie, mapa strony, szybkość i Core Web Vitals, dane strukturalne, hreflang przy dwóch językach.',
-             'Osobna strona dla każdej usługi i lokalizacji, z adresem, godzinami, dojazdem i prawdziwymi zdjęciami. Bez podstron miast, które różnią się tylko nazwą.',
-             'Wizytówka Google na bieżąco: kategorie, usługi, zdjęcia, wpisy i odpowiedź na każdą opinię.',
-             'Search Console czytana co miesiąc. Zapytania z wieloma wyświetleniami i małą liczbą kliknięć to strony do poprawy w pierwszej kolejności.',
-             'Bez obiecywania pozycji i bez kupowania linków. Raport pokazuje zapytania, kliknięcia i zapytania ofertowe, nie „wynik SEO”.'] } },
-    { id: 'ads', title: { en: 'Google Ads', pl: 'Google Ads' }, chart: 'ads',
-      line: { en: 'Campaigns judged by enquiries, not clicks', pl: 'Kampanie oceniane po zapytaniach, nie po kliknięciach' },
-      text: { en: 'A click is a cost. An enquiry is the point. Every account is set up so that the two can be told apart, by campaign, by location and by product, and the budget follows the enquiries.',
-              pl: 'Kliknięcie to koszt. Zapytanie to cel. Każde konto jest ustawione tak, żeby dało się je rozróżnić po kampanii, lokalizacji i produkcie, a budżet szedł za zapytaniami.' },
-      details: {
-        en: ['Campaigns split by intent: brand, service plus town, generic. Each group gets its own budget and its own numbers.',
-             'Search terms reviewed weekly. Irrelevant ones are excluded before they eat the budget.',
-             'Conversions are enquiries: forms, calls, WhatsApp clicks and directions, counted once and by location.',
-             'Budget follows impression share and enquiries per group, never clicks.',
-             'Shopping and Merchant Center for shops: feed health, disapprovals, prices in step with the shop.',
-             'A monthly note in plain words: what changed, what it did, what happens next.'],
-        pl: ['Kampanie podzielone według intencji: marka, usługa plus miasto, ogólne. Każda grupa ma własny budżet i własne liczby.',
-             'Wyszukiwane frazy przeglądane co tydzień. Nietrafione wykluczane, zanim zjedzą budżet.',
-             'Konwersje to zapytania: formularze, telefony, kliknięcia w WhatsApp i dojazd, liczone raz i po lokalizacji.',
-             'Budżet idzie za udziałem w wyświetleniach i zapytaniami w grupie, nigdy za kliknięciami.',
-             'Shopping i Merchant Center dla sklepów: kondycja feedu, odrzucenia, ceny zgodne ze sklepem.',
-             'Co miesiąc notatka zwykłym językiem: co się zmieniło, co to dało, co dalej.'] } },
-    { id: 'measurement', title: { en: 'Measurement', pl: 'Pomiar' },
-      line: { en: 'Numbers that agree with each other', pl: 'Liczby, które się ze sobą zgadzają' },
-      text: { en: 'GA4, Tag Manager and consent mode, Merchant Center and Search Console, set up so the shop, the ads and the reports count the same sale once.',
-              pl: 'GA4, Tag Manager i tryb zgody, Merchant Center i Search Console, ustawione tak, żeby sklep, reklamy i raporty liczyły tę samą sprzedaż raz.' } },
-    { id: 'automation', title: { en: 'Automation', pl: 'Automatyzacje' },
-      line: { en: 'Small programs that run unattended', pl: 'Małe programy, które działają bez nadzoru' },
-      text: { en: 'Python integrations: supplier feeds and stock, invoicing and CRM, price checks, monitoring and reports. Written for your setup, left with the code.',
-              pl: 'Integracje w Pythonie: feedy i stany hurtowni, faktury i CRM, sprawdzanie cen, monitoring i raporty. Pisane pod Twoje narzędzia, zostają z kodem.' } }
-  ];
-
-  // Wykresy: przyklady, nie wyniki klientow - podpis mowi to wprost. Jedna skala na wykres,
-  // dwie serie roznia sie jasnoscia i sa nazwane w legendzie; wiersz z "duzo wyswietlen,
-  // malo klikniec" dostaje kreskowanie, nie kolor.
-  const CHARTS = {
-    ads: {
-      title: { en: 'Example account, one month: share of spend against share of enquiries',
-               pl: 'Przykładowe konto, jeden miesiąc: udział w wydatkach i udział w zapytaniach' },
-      legend: { en: ['Share of spend', 'Share of enquiries'], pl: ['Udział w wydatkach', 'Udział w zapytaniach'] },
-      caption: { en: 'The two bars should look alike. Where spend outruns enquiries, budget moves to the rows above.',
-                 pl: 'Oba słupki powinny wyglądać podobnie. Tam, gdzie wydatki wyprzedzają zapytania, budżet przechodzi do wierszy wyżej.' },
-      rows: [
-        { label: { en: 'Service + town', pl: 'Usługa + miasto' }, a: 22, b: 46 },
-        { label: { en: 'Brand', pl: 'Marka' }, a: 8, b: 24 },
-        { label: { en: 'Generic', pl: 'Ogólne' }, a: 31, b: 22 },
-        { label: { en: 'Competitor names', pl: 'Nazwy konkurencji' }, a: 14, b: 5 },
-        { label: { en: 'Irrelevant', pl: 'Nietrafione' }, a: 25, b: 3 }
-      ]
-    },
-    seo: {
-      title: { en: 'Example Search Console, one month: impressions per query',
-               pl: 'Przykładowa Search Console, jeden miesiąc: wyświetlenia na zapytanie' },
-      legend: { en: ['Impressions', 'Many impressions, few clicks: fix this page next'],
-                pl: ['Wyświetlenia', 'Dużo wyświetleń, mało kliknięć: ta strona do poprawy'] },
-      caption: { en: 'Hover a row for clicks, click-through rate and average position.',
-                 pl: 'Najedź na wiersz, żeby zobaczyć kliknięcia, CTR i średnią pozycję.' },
-      rows: [
-        { label: { en: 'kitchens gliwice', pl: 'kuchnie gliwice' }, imp: 1240, clicks: 61, pos: 3.1 },
-        { label: { en: 'kitchen showroom silesia', pl: 'salon kuchni śląsk' }, imp: 980, clicks: 9, pos: 8.4 },
-        { label: { en: 'fitted kitchens price', pl: 'kuchnie na wymiar cena' }, imp: 860, clicks: 38, pos: 4.0 },
-        { label: { en: 'german kitchens', pl: 'kuchnie niemieckie' }, imp: 720, clicks: 5, pos: 9.1 },
-        { label: { en: 'kitchen design consultation', pl: 'projekt kuchni konsultacja' }, imp: 410, clicks: 27, pos: 2.6 },
-        { label: { en: 'kitchen showroom opening hours', pl: 'salon kuchni godziny otwarcia' }, imp: 300, clicks: 2, pos: 6.8 }
-      ]
-    }
-  };
-
-  const GREETINGS = ['Welcome', 'Witamy', 'Willkommen', 'Bienvenue', 'Bienvenido', 'Benvenuti', 'Välkommen',
-    'Welkom', 'Bem-vindo', 'Vítejte', 'Tervetuloa', 'ようこそ', '환영합니다', 'Καλώς ήρθατε', 'Ласкаво просимо'];
+  const D = window.KIODEM_DATA;
+  const LANGS = D.LANGS, I18N = D.I18N, WORK = D.WORK, SERVICES = D.SERVICES, CHARTS = D.CHARTS;
+  const GREETINGS = D.GREETINGS, GREETING_BY_LANG = D.GREETING_BY_LANG, LOCALES = D.LOCALES;
 
   /* ─── stan ─────────────────────────────────────────────────────────────── */
   const $ = (s) => document.querySelector(s);
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const coarse = matchMedia('(pointer: coarse)').matches;
   let lang = (function () {
-    try { const s = localStorage.getItem('kiodem-lang'); if (s === 'en' || s === 'pl') return s; } catch (e) {}
-    return /^pl/i.test(navigator.language || '') ? 'pl' : 'en';
+    try { const s = localStorage.getItem('kiodem-lang'); if (LANGS.includes(s)) return s; } catch (e) {}
+    for (const l of (navigator.languages || [navigator.language || 'en'])) {
+      const k = String(l).slice(0, 2).toLowerCase(); if (LANGS.includes(k)) return k;
+    }
+    return 'en';
   })();
   const t = (k) => I18N[lang][k];
 
@@ -258,7 +51,7 @@
   function tileHTML(it) {
     if (it.kind === 'work') {
       const w = it.data;
-      return '<img src="assets/work/' + w.img + '-bw.webp" alt="" loading="lazy" onload="this.classList.add(\'is-loaded\')" onerror="this.remove()">' +
+      return (w.img ? '<img src="assets/work/' + w.img + '-bw.webp" alt="" loading="lazy" onload="this.classList.add(\'is-loaded\')" onerror="this.remove()">' : '') +
              '<div class="tile__cap"><div class="tile__t">' + w.name + '</div><div class="tile__s">' + w.sector[lang] + '</div></div>';
     }
     if (it.kind === 'service') return '<div class="tile__t">' + it.data.title[lang] + '</div><div class="tile__s">' + it.data.line[lang] + '</div>';
@@ -419,11 +212,14 @@
     const L = I18N[lang];
     if (name === 'work') {
       panelTitle.textContent = L['nav.work'];
+      const block = (title, items) => items && items[lang] && items[lang].length
+        ? '<h4 class="case__h">' + esc(title) + '</h4><ul class="list list--tight">' + items[lang].map((d) => '<li>' + esc(d) + '</li>').join('') + '</ul>' : '';
       return '<p class="lead">' + L.workLead + '</p>' + WORK.map((w) =>
         '<article class="case" id="case-' + w.id + '">' +
-        '<img class="case__thumb" src="assets/work/' + w.img + '.webp" alt="" loading="lazy" onload="this.classList.add(\'is-loaded\')" onerror="this.remove()">' +
+        (w.img ? '<img class="case__thumb" src="assets/work/' + w.img + '.webp" alt="" loading="lazy" onload="this.classList.add(\'is-loaded\')" onerror="this.remove()">' : '') +
         '<h3 class="display">' + esc(w.name) + '</h3><p class="case__meta">' + esc(w.sector[lang]) + '</p>' +
         '<p class="case__what">' + esc(w.what[lang]) + '</p>' +
+        block(L.caseTech, w.tech) + block(L.caseResult, w.result) + block(L.caseAdvice, w.advice) +
         '<a class="case__link" href="' + w.url + '" target="_blank" rel="noopener">' + L.visit + '</a></article>').join('');
     }
     if (name === 'services') {
@@ -493,7 +289,7 @@
 
   /* Wykresy: cienkie poziome slupki w SVG, rysuja sie od zera, wiersz pod kursorem pokazuje
      wartosci, reszta przygasa. Tabela dla czytnikow ekranu obok. */
-  const fmt = (n) => n.toLocaleString(lang === 'pl' ? 'pl-PL' : 'en-GB');
+  const fmt = (n) => n.toLocaleString(LOCALES[lang] || 'en-GB');
   function renderChart(fig) {
     const kind = fig.dataset.chart, C = CHARTS[kind], grouped = kind === 'ads';
     const narrow = (fig.clientWidth || panelBody.clientWidth || innerWidth) < 480;
@@ -501,7 +297,7 @@
     const rh = narrow ? (grouped ? 70 : 58) : (grouped ? 44 : 34), top = 8, H = top + C.rows.length * rh + 6;
     const max = grouped ? Math.max(...C.rows.map((r) => Math.max(r.a, r.b))) : Math.max(...C.rows.map((r) => r.imp));
     const bx = (v) => (v / max) * AREA;
-    const dec = (n) => n.toFixed(1).replace('.', lang === 'pl' ? ',' : '.');
+    const dec = (n) => n.toFixed(1).replace('.', lang === 'en' ? '.' : ',');
     let svg = '<svg class="' + (narrow ? 'is-narrow' : '') + '" viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true">' +
       '<defs><pattern id="hatch-' + kind + '" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">' +
       '<line x1="0" y1="0" x2="0" y2="6" class="hatch"/></pattern></defs>';
@@ -514,7 +310,7 @@
       const by = narrow ? y + 30 : y + (grouped ? 10 : 12);      // pierwszy slupek
       let info;
       if (grouped) {
-        info = r.label[lang] + ': ' + r.a + '% ' + (lang === 'pl' ? 'wydatków' : 'of spend') + ', ' + r.b + '% ' + (lang === 'pl' ? 'zapytań' : 'of enquiries');
+        info = r.label[lang] + ': ' + r.a + '% ' + C.words[lang][0] + ', ' + r.b + '% ' + C.words[lang][1];
         svg += '<g class="row' + (i === 0 ? ' is-on' : '') + '" tabindex="0" data-i="' + i + '" aria-label="' + esc(info) + '">' +
           '<text class="lbl" x="0" y="' + ly + '">' + lab + '</text>' +
           '<rect class="bar bar-a" x="' + LBL + '" y="' + by + '" width="' + bx(r.a).toFixed(1) + '" height="10"/>' +
@@ -524,8 +320,8 @@
         table += '<tr><td>' + lab + '</td><td>' + r.a + '%</td><td>' + r.b + '%</td></tr>';
       } else {
         const ctr = r.clicks / r.imp * 100, weak = ctr < 1.5;
-        info = r.label[lang] + ': ' + fmt(r.imp) + (lang === 'pl' ? ' wyświetleń, ' : ' impressions, ') + fmt(r.clicks) +
-               (lang === 'pl' ? ' kliknięć, CTR ' : ' clicks, CTR ') + dec(ctr) + '%, ' + (lang === 'pl' ? 'pozycja ' : 'position ') + dec(r.pos);
+        info = r.label[lang] + ': ' + fmt(r.imp) + ' ' + C.words[lang][0] + ', ' + fmt(r.clicks) + ' ' + C.words[lang][1] +
+               ', CTR ' + dec(ctr) + '%, ' + C.words[lang][2] + ' ' + dec(r.pos);
         svg += '<g class="row' + (weak ? ' is-weak' : '') + (i === 0 ? ' is-on' : '') + '" tabindex="0" data-i="' + i + '" aria-label="' + esc(info) + '">' +
           '<text class="lbl" x="0" y="' + ly + '">' + lab + '</text>' +
           '<rect class="bar bar-b' + (weak ? ' bar-h' : '') + '" x="' + LBL + '" y="' + by + '" width="' + bx(r.imp).toFixed(1) + '" height="12"' + (weak ? ' fill="url(#hatch-' + kind + ')"' : '') + '/>' +
@@ -569,6 +365,7 @@
   function openPanel(name, anchor, push) {
     current = name;
     panelBody.innerHTML = renderPanel(name);
+    panelBody.classList.toggle('is-calm', name !== 'work');
     panelBody.querySelectorAll('figure.chart').forEach(renderChart);
     if (name === 'brief') Brief.start();
     F.paused = true; viewport.classList.add('is-blurred');
@@ -666,8 +463,8 @@
       let h = '<p class="brief__q display">' + esc(st.q) + '</p>' + (st.hint ? '<p class="brief__hint">' + esc(st.hint) + '</p>' : '');
       if (st.opts) h += '<div class="opts">' + st.opts.map((o, i) => '<button type="button" class="opt' + (picked(st, i) ? ' is-on' : '') + '" data-i="' + i + '">' +
         '<span class="opt__n">' + (i + 1) + '</span><span class="opt__t">' + esc(o) + '</span></button>').join('') + '</div>';
-      if (st.type === 'text') h += '<div class="field"><input class="input" type="text" inputmode="url" id="brief-site" placeholder="' + esc(st.placeholder) + '" value="' + esc(S.a.site || '') + '" autocomplete="url"></div>';
-      if (st.type === 'contact') h += st.fields.map(([k, l]) => '<div class="field"><label for="brief-' + k + '">' + esc(l) + '</label>' +
+      if (st.type === 'text') h += '<div class="brief__field"><input class="input" type="text" inputmode="url" id="brief-site" placeholder="' + esc(st.placeholder) + '" value="' + esc(S.a.site || '') + '" autocomplete="url"></div>';
+      if (st.type === 'contact') h += st.fields.map(([k, l]) => '<div class="brief__field"><label for="brief-' + k + '">' + esc(l) + '</label>' +
         (k === 'note' ? '<textarea class="input" id="brief-note" rows="3">' + esc(S.a.note || '') + '</textarea>'
                       : '<input class="input" type="' + (k === 'email' ? 'email' : 'text') + '" id="brief-' + k + '" value="' + esc(S.a[k] || '') + '" autocomplete="' + ({ name: 'name', email: 'email', company: 'organization' })[k] + '">') +
         '</div>').join('') + '<p class="brief__err" id="brief-err" hidden></p>';
@@ -727,6 +524,9 @@
   })();
 
   /* ─── jezyk ────────────────────────────────────────────────────────────── */
+  const langBox = $('.lang');
+  langBox.innerHTML = LANGS.map((l) => '<button class="lang__btn" type="button" data-lang="' + l + '" aria-pressed="false">' + l.toUpperCase() + '</button>')
+    .join('<span class="lang__sep" aria-hidden="true"></span>');
   function applyLang(next) {
     lang = next;
     document.documentElement.lang = lang;
@@ -754,7 +554,7 @@
       return;
     }
 
-    const last = lang === 'pl' ? 'Witamy' : 'Welcome';
+    const last = GREETING_BY_LANG[lang] || 'Welcome';
     const seq = seen ? [] : GREETINGS.filter((g) => g !== last).concat([last]);
     const flyIn = () => {
       F.entering = true; build(); F.tiles.forEach((x) => { x.enter = 1; });
