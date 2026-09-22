@@ -119,7 +119,7 @@
   const t = (k) => I18N[lang][k];
 
   const viewport = $('#viewport'), field = $('#field'), hero = $('#hero'), hint = $('#hint');
-  const panel = $('#panel'), scrim = $('#scrim'), panelBody = $('#panel-body'), panelTitle = $('#panel-title');
+  const panel = $('#panel'), panelBody = $('#panel-body'), panelTitle = $('#panel-title');
 
   /* ─── pole: siatka, ktora zawija sie w kazda strone ────────────────────── */
   const F = { ox: 0, oy: 0, tx: 0, ty: 0, vx: 0, vy: 0, rx: 0, ry: 0, prx: 0, pry: 0,
@@ -307,26 +307,73 @@
       '<p class="contact__note">' + L.contactNote + '</p>';
   }
 
+  /* Tekst jak kod: cyfry, ktore znak po znaku staja sie literami. Dziala na wezlach tekstu,
+     wiec znaczniki (pogrubienia, linki) zostaja na miejscu. */
+  const CODE = '0123456789';
+  let decodeRuns = 0;
+  function decode(root, hold) {
+    if (reduced) return;
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    for (let n; (n = walker.nextNode());) if (n.nodeValue.trim()) nodes.push({ n, text: n.nodeValue });
+    if (!nodes.length) return;
+    const run = ++decodeRuns, t0 = performance.now() + (hold || 0);
+    let lastTick = 0;
+    const step = (now) => {
+      if (root.dataset.decodeRun !== String(run)) return;
+      if (now - lastTick < 40) { requestAnimationFrame(step); return; }
+      lastTick = now;
+      let done = true;
+      for (const it of nodes) {
+        const dur = 420 + Math.min(900, it.text.length * 7);
+        const k = clamp((now - t0) / dur, 0, 1);
+        if (k < 1) done = false;
+        const cut = Math.floor(k * it.text.length);
+        let out = '';
+        for (let i = 0; i < it.text.length; i++) {
+          const ch = it.text[i];
+          out += (i < cut || /\s/.test(ch)) ? ch : CODE[(Math.random() * CODE.length) | 0];
+        }
+        it.n.nodeValue = out;
+      }
+      if (!done) requestAnimationFrame(step);
+    };
+    root.dataset.decodeRun = String(run);
+    for (const it of nodes) it.n.nodeValue = it.text.replace(/\S/g, () => CODE[(Math.random() * CODE.length) | 0]);
+    requestAnimationFrame(step);
+  }
+
+  function flowIn(items) {
+    if (reduced || !window.gsap) return;
+    items.forEach((el, i) => {
+      const delay = 0.15 + i * 0.1;
+      gsap.fromTo(el, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .8, ease: 'power3.out', delay });
+      setTimeout(() => decode(el), delay * 1000 + 80);
+    });
+  }
+
   function openPanel(name, anchor, push) {
     current = name;
     panelBody.innerHTML = renderPanel(name);
-    panel.classList.add('is-open'); scrim.classList.add('is-open');
+    panel.classList.add('is-open');
     panel.setAttribute('aria-hidden', 'false');
     hero.classList.add('is-quiet');
     document.querySelectorAll('.pill__btn').forEach((b) => b.setAttribute('aria-current', b.dataset.panel === name ? 'true' : 'false'));
     lastFocus = document.activeElement;
     $('#panel-close').focus({ preventScroll: true });
     panel.scrollTop = 0;
+    decode(panelTitle, 60);
+    flowIn([...panelBody.children]);
     if (anchor) {
       const el = document.getElementById(anchor);
-      if (el) { el.classList.add('is-target'); setTimeout(() => el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }), 350); }
+      if (el) { el.classList.add('is-target'); setTimeout(() => el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }), 900); }
     }
     if (push !== false) history.replaceState(null, '', '#' + name + (anchor ? '/' + anchor.replace(/^(case|service)-/, '') : ''));
   }
   function closePanel() {
     if (!current) return;
     current = null;
-    panel.classList.remove('is-open'); scrim.classList.remove('is-open');
+    panel.classList.remove('is-open');
     panel.setAttribute('aria-hidden', 'true');
     hero.classList.remove('is-quiet');
     document.querySelectorAll('.pill__btn').forEach((b) => b.setAttribute('aria-current', 'false'));
@@ -340,7 +387,7 @@
   }
   document.querySelectorAll('.pill__btn').forEach((b) => b.addEventListener('click', () => (current === b.dataset.panel ? closePanel() : openPanel(b.dataset.panel))));
   $('#panel-close').addEventListener('click', closePanel);
-  scrim.addEventListener('click', closePanel);
+  panel.addEventListener('click', (e) => { if (e.target === panel || e.target.classList.contains('overlay__inner')) closePanel(); });
   $('#home').addEventListener('click', () => { closePanel(); F.tx = F.ty = 0; });
   function route() {
     const m = location.hash.match(/^#(work|services|about|contact)(?:\/([\w-]+))?/);
@@ -358,7 +405,7 @@
     document.querySelectorAll('.lang__btn').forEach((b) => b.setAttribute('aria-pressed', b.dataset.lang === lang ? 'true' : 'false'));
     $('#panel-close').setAttribute('aria-label', t('close'));
     build();
-    if (current) panelBody.innerHTML = renderPanel(current), panelTitle.textContent = panelTitle.textContent;
+    if (current) { panelBody.innerHTML = renderPanel(current); flowIn([...panelBody.children]); }
   }
   document.querySelectorAll('.lang__btn').forEach((b) => b.addEventListener('click', () => { if (b.dataset.lang !== lang) applyLang(b.dataset.lang); }));
 
@@ -412,6 +459,7 @@
     tl.call(flyIn, null, 'field');
     tl.to(root, { backgroundColor: 'rgba(8,10,15,0)', duration: .8 }, 'field');
     tl.set(hero, { opacity: 1 }, 'field+=.6');
+    tl.call(() => decode($('.hero__line')), null, 'field+=.6');
     tl.to(wm, { opacity: 0, duration: .3 }, 'field+=.6');
     tl.call(finish, null, 'field+=1');
   }

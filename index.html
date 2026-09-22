@@ -76,16 +76,17 @@
   <button class="pill__btn" type="button" data-panel="contact" data-i18n="nav.contact">Contact</button>
 </nav>
 
-<div class="scrim" id="scrim"></div>
-<aside class="panel" id="panel" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="panel-title">
-  <div class="panel__head">
-    <h2 class="panel__title" id="panel-title"></h2>
-    <button class="panel__close" id="panel-close" type="button" aria-label="Close">
-      <span></span><span></span>
-    </button>
+<section class="overlay" id="panel" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="panel-title">
+  <div class="overlay__inner">
+    <div class="overlay__head">
+      <h2 class="overlay__title display" id="panel-title"></h2>
+      <button class="overlay__close" id="panel-close" type="button" aria-label="Close">
+        <span></span><span></span>
+      </button>
+    </div>
+    <div class="overlay__body" id="panel-body"></div>
   </div>
-  <div class="panel__body" id="panel-body"></div>
-</aside>
+</section>
 
 <noscript>
   <div class="noscript">
