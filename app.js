@@ -234,7 +234,8 @@
   /* ─── pole: siatka, ktora zawija sie w kazda strone ────────────────────── */
   const F = { ox: 0, oy: 0, tx: 0, ty: 0, vx: 0, vy: 0, rx: 0, ry: 0, prx: 0, pry: 0,
               cw: 224, ch: 168, cols: 0, rows: 0, W: 0, H: 0, tiles: [], dragging: false, moved: false,
-              lastX: 0, lastY: 0, lastT: 0, idle: 0, entering: false, dirty: true };
+              lastX: 0, lastY: 0, lastT: 0, idle: 0, entering: false, dirty: true,
+              paused: false, dock: 0, docked: false };
 
   const hash = (a, b) => { let h = (a * 73856093) ^ (b * 19349663); h = (h ^ (h >>> 13)) * 1274126177; return ((h ^ (h >>> 16)) >>> 0) / 4294967295; };
   const lerp = (a, b, k) => a + (b - a) * k;
@@ -257,7 +258,7 @@
   function tileHTML(it) {
     if (it.kind === 'work') {
       const w = it.data;
-      return '<img src="assets/work/' + w.img + '.webp" alt="" loading="lazy" onload="this.classList.add(\'is-loaded\')" onerror="this.remove()">' +
+      return '<img src="assets/work/' + w.img + '-bw.webp" alt="" loading="lazy" onload="this.classList.add(\'is-loaded\')" onerror="this.remove()">' +
              '<div class="tile__cap"><div class="tile__t">' + w.name + '</div><div class="tile__s">' + w.sector[lang] + '</div></div>';
     }
     if (it.kind === 'service') return '<div class="tile__t">' + it.data.title[lang] + '</div><div class="tile__s">' + it.data.line[lang] + '</div>';
@@ -303,7 +304,8 @@
   // a pole wyglada, jakby mialo glebie ostrosci wokol znaku.
   function centreFade(cx, cy) {
     const r = Math.hypot(cx / (F.W > 1200 ? 1.35 : 1.1), cy);
-    const lo = F.cw * 1.15, hi = F.cw * 2.4;
+    const d = F.dock;                                   // 0 = logo w srodku, 1 = logo u gory
+    const lo = F.cw * (1.15 - 0.95 * d), hi = F.cw * (2.4 - 1.7 * d);
     const k = clamp((r - lo) / (hi - lo), 0, 1);
     return k * k * (3 - 2 * k);
   }
@@ -317,13 +319,20 @@
     const z = tl.z + (tl.hover ? 46 : 0) - 520 * e;
     const s = tl.hover ? 1.04 : 1;
     tl.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,' + z.toFixed(1) + 'px) rotateZ(' + tl.rot.toFixed(2) + 'deg) scale(' + s + ')';
-    const fade = (0.12 + 0.88 * centreFade(wx, wy)) * tl.base * (1 - tl.enter);
-    tl.el.style.opacity = fade.toFixed(3);
-    tl.el.style.pointerEvents = fade < 0.35 ? 'none' : '';
+    const fade = Math.round((0.12 + 0.88 * centreFade(wx, wy)) * tl.base * (1 - tl.enter) * 100) / 100;
+    if (fade !== tl.lastFade) {                          // zapis stylu tylko gdy wartosc sie zmienia
+      tl.el.style.opacity = fade;
+      const pe = fade < 0.35 ? 'none' : '';
+      if (pe !== tl.lastPe) { tl.el.style.pointerEvents = pe; tl.lastPe = pe; }
+      tl.lastFade = fade;
+    }
   }
 
   function frame(now) {
+    if (F.paused) { requestAnimationFrame(frame); return; }
     const k = 0.11;
+    const dockT = F.docked ? 1 : 0;
+    if (Math.abs(F.dock - dockT) > 0.001) { F.dock = lerp(F.dock, dockT, 0.06); F.dirty = true; }
     F.ox = lerp(F.ox, F.tx, k); F.oy = lerp(F.oy, F.ty, k);
     const dx = F.tx - F.ox, dy = F.ty - F.oy;
     const moving = Math.abs(dx) + Math.abs(dy) > 0.05;
@@ -354,7 +363,7 @@
       const dt = Math.max(1, now - F.lastT);
       F.tx += dx; F.ty += dy;
       F.vx = lerp(F.vx, dx / dt * 14, 0.5); F.vy = lerp(F.vy, dy / dt * 14, 0.5);
-      if (Math.abs(dx) + Math.abs(dy) > 2) { F.moved = true; hideHint(); }
+      if (Math.abs(dx) + Math.abs(dy) > 2) { F.moved = true; hideHint(); dock(true); }
       F.lastX = e.clientX; F.lastY = e.clientY; F.lastT = now;
     } else if (!coarse) {                                 // kamera lekko za kursorem
       F.pry = (e.clientX / innerWidth - .5) * 5; F.prx = -(e.clientY / innerHeight - .5) * 5;
@@ -367,7 +376,7 @@
     e.preventDefault();
     const m = e.deltaMode === 1 ? 16 : 1;
     F.tx -= e.deltaX * m * 0.9; F.ty -= e.deltaY * m * 0.9;
-    hideHint();
+    hideHint(); dock(true);
   }, { passive: false });
   document.addEventListener('keydown', (e) => {
     if (panel.classList.contains('is-open')) {
@@ -382,13 +391,25 @@
     const step = 180;
     if (e.key === 'ArrowLeft') F.tx += step; else if (e.key === 'ArrowRight') F.tx -= step;
     else if (e.key === 'ArrowUp') F.ty += step; else if (e.key === 'ArrowDown') F.ty -= step;
-    else if (e.key === 'Home') { F.tx = F.ty = 0; } else return;
-    e.preventDefault(); hideHint();
+    else if (e.key === 'Home') { F.tx = F.ty = 0; dock(false); e.preventDefault(); return; } else return;
+    e.preventDefault(); hideHint(); dock(true);
   });
   let resizeT; addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(build, 150); });
 
   let hintHidden = false;
   function hideHint() { if (hintHidden) return; hintHidden = true; hint.classList.add('is-hidden'); }
+
+  /* Logo: w srodku na start, po pierwszym ruchu pola wedruje do gory i maleje - pole dostaje
+     caly ekran. Klik w znak (albo Home) sprowadza je z powrotem. */
+  function dock(on) {
+    if (F.docked === on) return;
+    F.docked = on;
+    if (reduced || !window.gsap) { hero.classList.toggle('is-docked', on); return; }
+    const top = parseFloat(getComputedStyle($('.top')).paddingTop) || 18;
+    gsap.to(hero, { top: on ? top + 'px' : '50%', yPercent: on ? 0 : -50, scale: on ? 0.28 : 1,
+                    duration: 1, ease: 'expo.out', overwrite: 'auto' });
+    gsap.to([$('.hero__line'), hint], { opacity: on ? 0 : 1, duration: .35, overwrite: 'auto' });
+  }
 
   /* ─── panele ───────────────────────────────────────────────────────────── */
   let current = null, lastFocus = null;
@@ -420,7 +441,7 @@
     }
     if (name === 'brief') {
       panelTitle.textContent = L['nav.brief'];
-      return '<p class="lead">' + L.brief.intro + '</p><div class="brief" id="brief"><div class="brief__progress"></div><div class="brief__stage"></div></div>';
+      return '<p class="lead">' + L.brief.intro + '</p><div class="brief" id="brief" data-nodecode><div class="brief__progress"></div><div class="brief__stage"></div></div>';
     }
     panelTitle.textContent = L.contactTitle;
     return '<p class="lead">' + L.contactLead + '</p>' +
@@ -437,12 +458,14 @@
   const CODE = '0123456789';
   let decodeRuns = 0;
   function decode(root, hold) {
-    if (reduced) return;
+    if (reduced || !root || root.hasAttribute('data-nodecode')) return;
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
     const nodes = [];
-    for (let n; (n = walker.nextNode());) if (n.nodeValue.trim() && !n.parentElement.closest('svg, table')) nodes.push({ n, text: n.nodeValue });
+    for (let n; (n = walker.nextNode());) if (n.nodeValue.trim() && !n.parentElement.closest('svg, table, [data-nodecode]')) nodes.push({ n, text: n.nodeValue });
     if (!nodes.length) return;
     const run = ++decodeRuns, t0 = performance.now() + (hold || 0);
+    // gdy klatki nie przychodza (karta w tle, slaba maszyna), tekst i tak wraca do liter
+    setTimeout(() => { if (root.dataset.decodeRun === String(run)) for (const it of nodes) it.n.nodeValue = it.text; }, (hold || 0) + 1600);
     let lastTick = 0;
     const step = (now) => {
       if (root.dataset.decodeRun !== String(run)) return;
@@ -530,12 +553,14 @@
     gsap.to(fig.querySelectorAll('.bar'), { scaleX: 1, duration: 1.1, ease: 'expo.out', stagger: .07 });
   }
 
-  function flowIn(items) {
+  /* Tresc naplywa partiami: po dwa-trzy bloki naraz, kolejna partia po chwili. */
+  function flowIn(items, opts) {
     if (reduced || !window.gsap) return;
+    const o = opts || {}, batch = innerWidth >= 900 ? 3 : 2;
     items.forEach((el, i) => {
-      const delay = 0.15 + i * 0.1;
-      gsap.fromTo(el, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .8, ease: 'power3.out', delay });
-      setTimeout(() => decode(el), delay * 1000 + 80);
+      const delay = 0.12 + Math.floor(i / batch) * 0.34 + (i % batch) * 0.09;
+      gsap.fromTo(el, { opacity: 0, y: 34 }, { opacity: 1, y: 0, duration: .85, ease: 'power3.out', delay, overwrite: 'auto' });
+      if (o.decode !== false) setTimeout(() => decode(el), delay * 1000 + 80);
       const fig = el.querySelector('figure.chart');
       if (fig) setTimeout(() => drawChart(fig), delay * 1000 + 350);
     });
@@ -546,6 +571,7 @@
     panelBody.innerHTML = renderPanel(name);
     panelBody.querySelectorAll('figure.chart').forEach(renderChart);
     if (name === 'brief') Brief.start();
+    F.paused = true; viewport.classList.add('is-blurred');
     panel.classList.add('is-open');
     panel.setAttribute('aria-hidden', 'false');
     hero.classList.add('is-quiet');
@@ -564,6 +590,7 @@
   function closePanel() {
     if (!current) return;
     current = null;
+    F.paused = false; F.dirty = true; viewport.classList.remove('is-blurred');
     panel.classList.remove('is-open');
     panel.setAttribute('aria-hidden', 'true');
     hero.classList.remove('is-quiet');
@@ -579,8 +606,8 @@
   document.querySelectorAll('.pill__btn').forEach((b) => b.addEventListener('click', () => (current === b.dataset.panel ? closePanel() : openPanel(b.dataset.panel))));
   $('#panel-close').addEventListener('click', closePanel);
   panelBody.addEventListener('click', (e) => { const b = e.target.closest('[data-open]'); if (b) openPanel(b.dataset.open); });
-  panel.addEventListener('click', (e) => { if (e.target === panel || e.target.classList.contains('overlay__inner')) closePanel(); });
-  $('#home').addEventListener('click', () => { closePanel(); F.tx = F.ty = 0; });
+  panel.addEventListener('click', (e) => { if (e.target === panel) closePanel(); });
+  $('#home').addEventListener('click', () => { closePanel(); F.tx = F.ty = 0; dock(false); });
   function route() {
     const m = location.hash.match(/^#(work|services|about|contact|brief)(?:\/([\w-]+))?/);
     if (!m) return;
@@ -605,13 +632,14 @@
     }
     function readInputs() {
       const st = B().steps[S.step];
+      if (!st) return;
       if (st.type === 'text') S.a.site = ($('#brief-site') || {}).value || '';
       if (st.type === 'contact') st.fields.forEach(([k]) => { S.a[k] = ($('#brief-' + k) || {}).value || ''; });
       save();
     }
     function valid() {
       const st = B().steps[S.step];
-      if (st.type !== 'contact') return true;
+      if (!st || st.type !== 'contact') return true;
       const ok = compose_email_ok(S.a.email);
       const err = $('#brief-err');
       if (err) { err.hidden = ok; err.textContent = ok ? '' : B().emailError; }
@@ -622,12 +650,13 @@
     function pick(i) {
       const st = B().steps[S.step];
       if (!st || !st.opts || i >= st.opts.length) return;
-      if (st.type === 'single') { S.a[st.k] = i; save(); render(); setTimeout(next, 260); }
-      else { const arr = Array.isArray(S.a[st.k]) ? S.a[st.k].slice() : []; const j = arr.indexOf(i); j >= 0 ? arr.splice(j, 1) : arr.push(i); S.a[st.k] = arr; save(); render(true); }
+      if (st.type === 'single') { S.a[st.k] = i; save(); mark(st); setTimeout(next, 300); }
+      else { const arr = Array.isArray(S.a[st.k]) ? S.a[st.k].slice() : []; const j = arr.indexOf(i); j >= 0 ? arr.splice(j, 1) : arr.push(i); S.a[st.k] = arr; save(); mark(st); }
     }
     function next() { readInputs(); if (!valid()) return; if (S.step < stepsN()) { S.step++; render(); } }
     function back() { readInputs(); if (S.step > 0) { S.step--; render(); } }
     function picked(st, i) { const v = S.a[st.k]; return Array.isArray(v) ? v.includes(i) : v === i; }
+    function mark(st) { stage.querySelectorAll('.opt').forEach((o) => o.classList.toggle('is-on', picked(st, +o.dataset.i))); }
     function render(quiet) {
       const b = B(), n = stepsN();
       prog.innerHTML = b.steps.map((_, i) => '<i class="' + (i < S.step ? 'is-done' : i === S.step ? 'is-now' : '') + '"></i>').join('') +
@@ -649,7 +678,11 @@
       stage.innerHTML = h;
       stage.querySelectorAll('.opt').forEach((o) => o.addEventListener('click', () => pick(+o.dataset.i)));
       stage.querySelectorAll('[data-act]').forEach((x) => x.addEventListener('click', () => (x.dataset.act === 'next' ? next() : back())));
-      if (!quiet) { flowIn([...stage.children]); const f = stage.querySelector('input'); if (f) setTimeout(() => f.focus({ preventScroll: true }), 500); }
+      if (!quiet) {
+        flowIn([...stage.children], { decode: false });
+        decode(stage.querySelector('.brief__q'), 120);
+        const f = stage.querySelector('input'); if (f) setTimeout(() => f.focus({ preventScroll: true }), 500);
+      }
     }
     function lines() {
       const b = B(), out = [];
@@ -687,7 +720,8 @@
         location.href = 'mailto:' + mail + '?subject=' + encodeURIComponent('Brief KIODEM') + '&body=' + encodeURIComponent(text());
         note.hidden = false; note.textContent = b.mailNote + ' ' + mail + '.';
       });
-      flowIn([...stage.children]);
+      flowIn([...stage.children], { decode: false });
+      decode(stage.querySelector('.brief__q'), 120);
     }
     return { start, pick, next, back };
   })();
