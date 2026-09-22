@@ -491,7 +491,7 @@
       });
       return out;
     }
-    function text() { return 'Brief KIODEM\n\n' + lines().map((l) => l[0] + ': ' + l[1]).join('\n'); }
+    function text() { return B().subject + '\n\n' + lines().map((l) => l[0] + ': ' + l[1]).join('\n'); }
     function summary() {
       const b = B();
       stage.innerHTML = '<p class="brief__q display">' + esc(b.summaryTitle) + '</p><div class="summary"><dl>' +
@@ -514,7 +514,7 @@
             if (r.ok) { note.hidden = false; note.textContent = b.sent; try { localStorage.removeItem('kiodem-brief'); } catch (x) {} return; }
           } catch (x) {}
         }
-        location.href = 'mailto:' + mail + '?subject=' + encodeURIComponent('Brief KIODEM') + '&body=' + encodeURIComponent(text());
+        location.href = 'mailto:' + mail + '?subject=' + encodeURIComponent(B().subject) + '&body=' + encodeURIComponent(text());
         note.hidden = false; note.textContent = b.mailNote + ' ' + mail + '.';
       });
       flowIn([...stage.children], { decode: false });

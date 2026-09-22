@@ -10,7 +10,7 @@ window.KIODEM_DATA = (function () {
     en: {
       tagline: "Websites, automation and Google Ads for independent businesses.",
       hint: "Drag or scroll in any direction",
-      "nav.work": "Work", "nav.services": "Services", "nav.about": "About", "nav.contact": "Contact", "nav.brief": "Brief",
+      "nav.work": "Work", "nav.services": "Services", "nav.about": "About", "nav.contact": "Contact", "nav.brief": "Start",
       visit: "Visit the site", close: "Close",
       caseTech: "Under the hood", caseResult: "Measured", caseAdvice: "What I recommended",
       workLead: "Shops, clinics, schools and showrooms. Each one runs on its own numbers, so the work is judged by enquiries and sales, not by a launch.",
@@ -39,16 +39,16 @@ window.KIODEM_DATA = (function () {
           { k: "contact", type: "contact", q: "Where do I reply?", fields: [["name", "Name"], ["email", "Email"], ["company", "Company (optional)"], ["note", "Anything else (optional)"]] }
         ],
         labels: { who: "Business", what: "Needs", state: "Situation", when: "When", site: "Website", name: "Name", email: "Email", company: "Company", note: "Note" },
-        next: "Next", back: "Back", review: "Review", send: "Send the brief", copy: "Copy the brief", copied: "Copied", edit: "Change answers", skip: "Skip",
-        summaryTitle: "Your brief", sent: "Sent. I reply within one working day.",
-        mailNote: "Your mail app opens with the brief filled in. If it does not, copy the brief and paste it into an email to",
+        next: "Next", back: "Back", review: "Review", send: "Send my answers", copy: "Copy my answers", copied: "Copied", edit: "Change answers", skip: "Skip",
+        subject: "Enquiry from kiodem.com", summaryTitle: "Your answers", sent: "Sent. I reply within one working day.",
+        mailNote: "Your mail app opens with the answers filled in. If it does not, copy them and paste them into an email to",
         keyHint: "Number keys pick an answer, Enter continues.", emailError: "An email address is needed for the reply."
       }
     },
     pl: {
       tagline: "Strony, automatyzacje i Google Ads dla niezależnych firm.",
       hint: "Przeciągnij albo przewiń w dowolną stronę",
-      "nav.work": "Realizacje", "nav.services": "Usługi", "nav.about": "O mnie", "nav.contact": "Kontakt", "nav.brief": "Brief",
+      "nav.work": "Realizacje", "nav.services": "Usługi", "nav.about": "O mnie", "nav.contact": "Kontakt", "nav.brief": "Zacznij",
       visit: "Zobacz stronę", close: "Zamknij",
       caseTech: "Od kuchni", caseResult: "Zmierzone", caseAdvice: "Co zarekomendowałem",
       workLead: "Sklepy, kliniki, szkoły i salony. Każda z tych firm działa na własnych liczbach, więc pracę ocenia się po zapytaniach i sprzedaży, nie po samym wdrożeniu.",
@@ -77,16 +77,16 @@ window.KIODEM_DATA = (function () {
           { k: "contact", type: "contact", q: "Gdzie mam odpisać?", fields: [["name", "Imię i nazwisko"], ["email", "E-mail"], ["company", "Firma (opcjonalnie)"], ["note", "Coś jeszcze (opcjonalnie)"]] }
         ],
         labels: { who: "Firma", what: "Potrzeby", state: "Etap", when: "Kiedy", site: "Strona", name: "Imię i nazwisko", email: "E-mail", company: "Firma", note: "Uwagi" },
-        next: "Dalej", back: "Wstecz", review: "Podsumowanie", send: "Wyślij brief", copy: "Skopiuj brief", copied: "Skopiowane", edit: "Zmień odpowiedzi", skip: "Pomiń",
-        summaryTitle: "Twój brief", sent: "Wysłane. Odpisuję w ciągu jednego dnia roboczego.",
-        mailNote: "Otworzy się Twój program pocztowy z wypełnionym briefem. Jeśli nie, skopiuj brief i wklej go do maila na",
+        next: "Dalej", back: "Wstecz", review: "Podsumowanie", send: "Wyślij odpowiedzi", copy: "Skopiuj odpowiedzi", copied: "Skopiowane", edit: "Zmień odpowiedzi", skip: "Pomiń",
+        subject: "Zapytanie z kiodem.com", summaryTitle: "Twoje odpowiedzi", sent: "Wysłane. Odpisuję w ciągu jednego dnia roboczego.",
+        mailNote: "Otworzy się Twój program pocztowy z wypełnionymi odpowiedziami. Jeśli nie, skopiuj je i wklej do maila na",
         keyHint: "Klawisze z cyframi wybierają odpowiedź, Enter idzie dalej.", emailError: "Do odpowiedzi potrzebny jest adres e-mail."
       }
     },
     de: {
       tagline: "Websites, Automatisierung und Google Ads für unabhängige Unternehmen.",
       hint: "Ziehen oder scrollen Sie in jede Richtung",
-      "nav.work": "Arbeiten", "nav.services": "Leistungen", "nav.about": "Über mich", "nav.contact": "Kontakt", "nav.brief": "Briefing",
+      "nav.work": "Arbeiten", "nav.services": "Leistungen", "nav.about": "Über mich", "nav.contact": "Kontakt", "nav.brief": "Start",
       visit: "Website ansehen", close: "Schließen",
       caseTech: "Unter der Haube", caseResult: "Gemessen", caseAdvice: "Meine Empfehlung",
       workLead: "Läden, Praxen, Schulen und Ausstellungsräume. Jedes dieser Unternehmen lebt von eigenen Zahlen, deshalb zählt am Ende die Anfrage und der Verkauf, nicht der Launch.",
@@ -115,16 +115,16 @@ window.KIODEM_DATA = (function () {
           { k: "contact", type: "contact", q: "Wohin darf ich antworten?", fields: [["name", "Name"], ["email", "E-Mail"], ["company", "Firma (optional)"], ["note", "Noch etwas? (optional)"]] }
         ],
         labels: { who: "Unternehmen", what: "Bedarf", state: "Stand", when: "Wann", site: "Website", name: "Name", email: "E-Mail", company: "Firma", note: "Anmerkung" },
-        next: "Weiter", back: "Zurück", review: "Zusammenfassung", send: "Briefing senden", copy: "Briefing kopieren", copied: "Kopiert", edit: "Antworten ändern", skip: "Überspringen",
-        summaryTitle: "Ihr Briefing", sent: "Gesendet. Ich antworte innerhalb eines Werktags.",
-        mailNote: "Ihr E-Mail-Programm öffnet sich mit dem ausgefüllten Briefing. Falls nicht, kopieren Sie es und senden es an",
+        next: "Weiter", back: "Zurück", review: "Zusammenfassung", send: "Antworten senden", copy: "Antworten kopieren", copied: "Kopiert", edit: "Antworten ändern", skip: "Überspringen",
+        subject: "Anfrage über kiodem.com", summaryTitle: "Ihre Antworten", sent: "Gesendet. Ich antworte innerhalb eines Werktags.",
+        mailNote: "Ihr E-Mail-Programm öffnet sich mit den ausgefüllten Antworten. Falls nicht, kopieren Sie sie und senden sie an",
         keyHint: "Zifferntasten wählen eine Antwort, Enter geht weiter.", emailError: "Für die Antwort brauche ich eine E-Mail-Adresse."
       }
     },
     fr: {
       tagline: "Sites web, automatisation et Google Ads pour les entreprises indépendantes.",
       hint: "Faites glisser ou défiler dans toutes les directions",
-      "nav.work": "Réalisations", "nav.services": "Services", "nav.about": "À propos", "nav.contact": "Contact", "nav.brief": "Brief",
+      "nav.work": "Réalisations", "nav.services": "Services", "nav.about": "À propos", "nav.contact": "Contact", "nav.brief": "Commencer",
       visit: "Voir le site", close: "Fermer",
       caseTech: "Sous le capot", caseResult: "Mesuré", caseAdvice: "Ce que j'ai recommandé",
       workLead: "Boutiques, cliniques, écoles et showrooms. Chacune vit de ses propres chiffres : le travail se juge aux demandes et aux ventes, pas à la mise en ligne.",
@@ -153,16 +153,16 @@ window.KIODEM_DATA = (function () {
           { k: "contact", type: "contact", q: "Où puis-je répondre ?", fields: [["name", "Nom"], ["email", "E-mail"], ["company", "Entreprise (facultatif)"], ["note", "Autre chose ? (facultatif)"]] }
         ],
         labels: { who: "Entreprise", what: "Besoins", state: "Situation", when: "Quand", site: "Site", name: "Nom", email: "E-mail", company: "Entreprise", note: "Remarque" },
-        next: "Suivant", back: "Retour", review: "Récapitulatif", send: "Envoyer le brief", copy: "Copier le brief", copied: "Copié", edit: "Modifier les réponses", skip: "Passer",
-        summaryTitle: "Votre brief", sent: "Envoyé. Je réponds sous un jour ouvré.",
-        mailNote: "Votre messagerie s'ouvre avec le brief rempli. Sinon, copiez le brief et collez-le dans un e-mail à",
+        next: "Suivant", back: "Retour", review: "Récapitulatif", send: "Envoyer mes réponses", copy: "Copier mes réponses", copied: "Copié", edit: "Modifier les réponses", skip: "Passer",
+        subject: "Demande via kiodem.com", summaryTitle: "Vos réponses", sent: "Envoyé. Je réponds sous un jour ouvré.",
+        mailNote: "Votre messagerie s'ouvre avec les réponses remplies. Sinon, copiez-les et collez-les dans un e-mail à",
         keyHint: "Les touches numériques choisissent une réponse, Entrée continue.", emailError: "Une adresse e-mail est nécessaire pour la réponse."
       }
     },
     es: {
       tagline: "Webs, automatización y Google Ads para negocios independientes.",
       hint: "Arrastra o desplaza en cualquier dirección",
-      "nav.work": "Trabajos", "nav.services": "Servicios", "nav.about": "Sobre mí", "nav.contact": "Contacto", "nav.brief": "Brief",
+      "nav.work": "Trabajos", "nav.services": "Servicios", "nav.about": "Sobre mí", "nav.contact": "Contacto", "nav.brief": "Empezar",
       visit: "Ver el sitio", close: "Cerrar",
       caseTech: "Por dentro", caseResult: "Medido", caseAdvice: "Lo que recomendé",
       workLead: "Tiendas, clínicas, escuelas y salas de exposición. Cada una vive de sus propios números: el trabajo se juzga por consultas y ventas, no por el lanzamiento.",
@@ -191,9 +191,9 @@ window.KIODEM_DATA = (function () {
           { k: "contact", type: "contact", q: "¿Dónde te respondo?", fields: [["name", "Nombre"], ["email", "Correo"], ["company", "Empresa (opcional)"], ["note", "¿Algo más? (opcional)"]] }
         ],
         labels: { who: "Negocio", what: "Necesidades", state: "Situación", when: "Cuándo", site: "Web", name: "Nombre", email: "Correo", company: "Empresa", note: "Nota" },
-        next: "Siguiente", back: "Atrás", review: "Resumen", send: "Enviar el brief", copy: "Copiar el brief", copied: "Copiado", edit: "Cambiar respuestas", skip: "Saltar",
-        summaryTitle: "Tu brief", sent: "Enviado. Respondo en un día laborable.",
-        mailNote: "Se abrirá tu correo con el brief relleno. Si no, copia el brief y pégalo en un correo a",
+        next: "Siguiente", back: "Atrás", review: "Resumen", send: "Enviar respuestas", copy: "Copiar respuestas", copied: "Copiado", edit: "Cambiar respuestas", skip: "Saltar",
+        subject: "Consulta desde kiodem.com", summaryTitle: "Tus respuestas", sent: "Enviado. Respondo en un día laborable.",
+        mailNote: "Se abrirá tu correo con las respuestas rellenas. Si no, cópialas y pégalas en un correo a",
         keyHint: "Las teclas numéricas eligen una respuesta, Intro continúa.", emailError: "Para responder necesito una dirección de correo."
       }
     }
