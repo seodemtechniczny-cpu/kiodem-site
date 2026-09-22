@@ -27,7 +27,7 @@ window.KIODEM_DATA = (function () {
       mail: "michal@kiodem.com", phone: "+48 789 350 367", linkedin: "LinkedIn", write: "Write to me",
       contactNote: "Calls in English on weekdays 9 to 17 UK time. Or send the address of your site and I will come back with the short written check first.",
       contactBrief: "Or answer six questions and I will come back with a first take:",
-      sections: { work: "Ten sites and shops, judged by enquiries", services: "Websites, search, ads, measurement, automation", about: "One person does the work you talk to", contact: "One email is enough", brief: "Six questions, two minutes, an answer from me" },
+      sections: { work: "Nine sites and shops, judged by enquiries", services: "Websites, search, ads, measurement, automation", about: "One person does the work you talk to", contact: "One email is enough", brief: "Six questions, two minutes, an answer from me" },
       brief: {
         intro: "Six questions, two minutes. The answer comes from me, not from a system.",
         steps: [
@@ -65,7 +65,7 @@ window.KIODEM_DATA = (function () {
       mail: "contact@kiodem.com", phone: "+48 789 350 367", linkedin: "LinkedIn", write: "Napisz do mnie",
       contactNote: "Rozmowy w dni robocze 9–17. Albo wyślij adres swojej strony, a najpierw odeślę krótkie pisemne sprawdzenie.",
       contactBrief: "Albo odpowiedz na sześć pytań, a wrócę z pierwszą oceną:",
-      sections: { work: "Dziesięć stron i sklepów, ocenianych po zapytaniach", services: "Strony, wyszukiwarka, reklamy, pomiar, automatyzacje", about: "Robotę robi ta sama osoba, z którą rozmawiasz", contact: "Wystarczy jeden mail", brief: "Sześć pytań, dwie minuty, odpowiedź ode mnie" },
+      sections: { work: "Dziewięć stron i sklepów, ocenianych po zapytaniach", services: "Strony, wyszukiwarka, reklamy, pomiar, automatyzacje", about: "Robotę robi ta sama osoba, z którą rozmawiasz", contact: "Wystarczy jeden mail", brief: "Sześć pytań, dwie minuty, odpowiedź ode mnie" },
       brief: {
         intro: "Sześć pytań, dwie minuty. Odpowiedź przychodzi ode mnie, nie z systemu.",
         steps: [
@@ -103,7 +103,7 @@ window.KIODEM_DATA = (function () {
       mail: "michal@kiodem.com", phone: "+48 789 350 367", linkedin: "LinkedIn", write: "Schreiben Sie mir",
       contactNote: "Telefonate auf Englisch an Werktagen von 9 bis 17 Uhr. Oder schicken Sie die Adresse Ihrer Website, dann kommt zuerst die kurze schriftliche Prüfung.",
       contactBrief: "Oder beantworten Sie sechs Fragen, und ich melde mich mit einer ersten Einschätzung:",
-      sections: { work: "Zehn Websites und Shops, gemessen an Anfragen", services: "Websites, Suche, Anzeigen, Messung, Automatisierung", about: "Die Arbeit macht die Person, mit der Sie sprechen", contact: "Eine E-Mail genügt", brief: "Sechs Fragen, zwei Minuten, eine Antwort von mir" },
+      sections: { work: "Neun Websites und Shops, gemessen an Anfragen", services: "Websites, Suche, Anzeigen, Messung, Automatisierung", about: "Die Arbeit macht die Person, mit der Sie sprechen", contact: "Eine E-Mail genügt", brief: "Sechs Fragen, zwei Minuten, eine Antwort von mir" },
       brief: {
         intro: "Sechs Fragen, zwei Minuten. Die Antwort kommt von mir, nicht von einem System.",
         steps: [
@@ -141,7 +141,7 @@ window.KIODEM_DATA = (function () {
       mail: "michal@kiodem.com", phone: "+48 789 350 367", linkedin: "LinkedIn", write: "M'écrire",
       contactNote: "Appels en anglais en semaine de 9 h à 17 h. Ou envoyez l'adresse de votre site et je reviendrai d'abord avec la courte vérification écrite.",
       contactBrief: "Ou répondez à six questions et je reviendrai avec un premier avis :",
-      sections: { work: "Dix sites et boutiques, jugés aux demandes", services: "Sites, recherche, publicité, mesure, automatisation", about: "Le travail est fait par la personne à qui vous parlez", contact: "Un seul e-mail suffit", brief: "Six questions, deux minutes, une réponse de ma part" },
+      sections: { work: "Neuf sites et boutiques, jugés aux demandes", services: "Sites, recherche, publicité, mesure, automatisation", about: "Le travail est fait par la personne à qui vous parlez", contact: "Un seul e-mail suffit", brief: "Six questions, deux minutes, une réponse de ma part" },
       brief: {
         intro: "Six questions, deux minutes. La réponse vient de moi, pas d'un système.",
         steps: [
@@ -179,7 +179,7 @@ window.KIODEM_DATA = (function () {
       mail: "michal@kiodem.com", phone: "+48 789 350 367", linkedin: "LinkedIn", write: "Escríbeme",
       contactNote: "Llamadas en inglés en días laborables de 9 a 17 h. O envía la dirección de tu web y primero te devuelvo la breve revisión escrita.",
       contactBrief: "O responde seis preguntas y vuelvo con una primera valoración:",
-      sections: { work: "Diez webs y tiendas, juzgadas por consultas", services: "Webs, búsqueda, anuncios, medición, automatización", about: "El trabajo lo hace la persona con la que hablas", contact: "Basta con un correo", brief: "Seis preguntas, dos minutos, una respuesta mía" },
+      sections: { work: "Nueve webs y tiendas, juzgadas por consultas", services: "Webs, búsqueda, anuncios, medición, automatización", about: "El trabajo lo hace la persona con la que hablas", contact: "Basta con un correo", brief: "Seis preguntas, dos minutos, una respuesta mía" },
       brief: {
         intro: "Seis preguntas, dos minutos. La respuesta viene de mí, no de un sistema.",
         steps: [
@@ -324,28 +324,6 @@ window.KIODEM_DATA = (function () {
                 de: ["Drei Etappen, jede für sich nutzbar: erst Seiten, dann Shop, zuletzt Konfigurator."],
                 fr: ["Trois étapes, chacune utilisable seule : les pages d'abord, la boutique ensuite, le configurateur en dernier."],
                 es: ["Tres fases, cada una útil por sí sola: primero las páginas, luego la tienda, al final el configurador."] } },
-    { id: "gartendekor", name: "Gartendekor Lippstadt", url: "https://www.gartendekor-lippstadt.de/", img: "gartendekor",
-      sector: { en: "Garden décor shop and showroom, Germany", pl: "Sklep i salon z dekoracjami ogrodowymi, Niemcy", de: "Gartendeko-Shop mit Ladengeschäft, Lippstadt", fr: "Boutique et showroom de décoration de jardin, Allemagne", es: "Tienda y exposición de decoración de jardín, Alemania" },
-      what: { en: "Audit and Google Ads plan for a Shopware shop with a showroom.",
-              pl: "Audyt i plan Google Ads dla sklepu na Shopware z salonem stacjonarnym.",
-              de: "Audit und Google-Ads-Plan für einen Shopware-Shop mit Ladengeschäft.",
-              fr: "Audit et plan Google Ads pour une boutique Shopware avec showroom.",
-              es: "Auditoría y plan de Google Ads para una tienda Shopware con sala de exposición." },
-      tech: { en: ["Twelve months of ads measured on a tracking tool that died in 2023: on paper a 0.02% conversion rate, in reality unknown.", "Eight Shopping campaigns losing up to 90% of impressions to budget; most spend in the month after the seasonal peak, and a fifth of it in winter at 15% of peak demand."],
-              pl: ["Dwanaście miesięcy reklam mierzonych narzędziem, które umarło w 2023: na papierze współczynnik konwersji 0,02%, w rzeczywistości nieznany.", "Osiem kampanii Shopping tracących do 90% wyświetleń przez budżet; najwięcej wydane w miesiącu po szczycie sezonu, a jedna piąta zimą, przy 15% szczytowego popytu."],
-              de: ["Zwölf Monate Anzeigen, gemessen mit einem Tool, das 2023 abgeschaltet wurde: auf dem Papier 0,02% Konversionsrate, in Wirklichkeit unbekannt.", "Acht Shopping-Kampagnen verlieren bis zu 90% der Einblendungen durch Budget; die meisten Ausgaben im Monat nach dem Saisonhöhepunkt, ein Fünftel im Winter bei 15% der Spitzennachfrage."],
-              fr: ["Douze mois d'annonces mesurés avec un outil mort en 2023 : sur le papier un taux de conversion de 0,02%, en réalité inconnu.", "Huit campagnes Shopping perdant jusqu'à 90% des impressions faute de budget ; la plus grosse dépense le mois suivant le pic saisonnier, et un cinquième en hiver à 15% de la demande de pointe."],
-              es: ["Doce meses de anuncios medidos con una herramienta que murió en 2023: sobre el papel una conversión del 0,02%, en realidad desconocida.", "Ocho campañas de Shopping perdiendo hasta el 90% de las impresiones por presupuesto; el mayor gasto el mes siguiente al pico de temporada y una quinta parte en invierno, con el 15% de la demanda máxima."] },
-      result: { en: ["A budget curve that follows German search seasonality month by month, and two campaigns instead of eight."],
-                pl: ["Krzywa budżetu idąca za niemiecką sezonowością wyszukiwań miesiąc po miesiącu i dwie kampanie zamiast ośmiu."],
-                de: ["Eine Budgetkurve, die der deutschen Suchsaison Monat für Monat folgt, und zwei Kampagnen statt acht."],
-                fr: ["Une courbe de budget qui suit la saisonnalité des recherches allemandes mois par mois, et deux campagnes au lieu de huit."],
-                es: ["Una curva de presupuesto que sigue la estacionalidad de búsqueda alemana mes a mes, y dos campañas en vez de ocho."] },
-      advice: { en: ["Measurement first, then a comparison with real orders and calls, then the catalogue. A platform change is a security decision, not an SEO one."],
-                pl: ["Najpierw pomiar, potem zestawienie z prawdziwymi zamówieniami i telefonami, potem katalog. Zmiana platformy to decyzja o bezpieczeństwie, nie argument SEO."],
-                de: ["Erst Messung, dann der Abgleich mit echten Bestellungen und Anrufen, dann der Katalog. Ein Plattformwechsel ist eine Sicherheitsentscheidung, kein SEO-Argument."],
-                fr: ["La mesure d'abord, puis une comparaison avec les vraies commandes et les appels, puis le catalogue. Changer de plateforme est une décision de sécurité, pas un argument SEO."],
-                es: ["Primero la medición, luego la comparación con pedidos y llamadas reales, luego el catálogo. Cambiar de plataforma es una decisión de seguridad, no un argumento SEO."] } },
     { id: "voltgo", name: "VoltGo", url: "https://voltgo.pl/", img: "voltgo",
       sector: { en: "Electric vehicle rental marketplace", pl: "Marketplace wypożyczalni pojazdów elektrycznych", de: "Marktplatz für E-Fahrzeug-Vermietung", fr: "Place de marché de location de véhicules électriques", es: "Marketplace de alquiler de vehículos eléctricos" },
       what: { en: "Catalogue work on a custom CMS: vehicle versions, pricing and photos for rental stations.",
