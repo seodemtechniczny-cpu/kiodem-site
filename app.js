@@ -606,7 +606,7 @@
 
     const last = GREETING_BY_LANG[lang] || 'Welcome';
     const seq = GREETINGS.filter((g) => g !== last).concat([last]);   // zawsze pelna lista, jezyk uzytkownika na koncu
-    const STEP = 0.2, ROLL = 0.12;                                      // sekundy na slowo i na przewiniecie rolki
+    const STEP = 0.3, ROLL = 0.18;                                      // sekundy na slowo i na przewiniecie rolki (23 IX: wolniej na prosbe Michala)
     strip.innerHTML = seq.map((g) => '<span>' + esc(g) + '</span>').join('');
     const rowH = strip.firstElementChild.getBoundingClientRect().height;
     const flyIn = () => {
