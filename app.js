@@ -5,7 +5,7 @@
 
   /* ─── dane ─────────────────────────────────────────────────────────────── */
   const D = window.KIODEM_DATA;
-  const LANGS = D.LANGS, I18N = D.I18N, WORK = D.WORK, SERVICES = D.SERVICES, CHARTS = D.CHARTS;
+  const LANGS = D.LANGS, I18N = D.I18N, WORK = D.WORK, SERVICES = D.SERVICES, AREAS = D.AREAS, CHARTS = D.CHARTS;
   const GREETINGS = D.GREETINGS, GREETING_BY_LANG = D.GREETING_BY_LANG, LOCALES = D.LOCALES;
 
   /* ─── stan ─────────────────────────────────────────────────────────────── */
@@ -35,13 +35,14 @@
   const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
   const wrap = (v, size) => ((v % size) + size) % size - size / 2;
 
+  /* Pole = mapa pracy: cztery sekcje i dziesiec obszarow. Zadnych powtorzen realizacji
+     i uslug obok siebie - kazdy kafelek mowi, co da sie u mnie zamowic. */
   function pool() {
     const L = I18N[lang];
     const items = [];
-    ['work', 'services', 'about', 'contact', 'brief'].forEach((id) =>
-      items.push({ kind: 'section', w: 236, h: 150, to: id, text: L['nav.' + id], sub: L.sections[id] }));
-    WORK.forEach((w) => items.push({ kind: 'work', w: 196, h: 130, data: w }));
-    SERVICES.forEach((s) => items.push({ kind: 'service', w: 186, h: 124, data: s }));
+    ['work', 'about', 'contact', 'brief'].forEach((id) =>
+      items.push({ kind: 'section', w: 240, h: 150, to: id, text: L['nav.' + id], sub: L.sections[id] }));
+    AREAS.forEach((a) => items.push({ kind: 'area', w: 232, h: 138, data: a }));
     // deterministyczne przetasowanie - te same pozycje przy kazdym wejsciu
     let seed = 7;
     for (let i = items.length - 1; i > 0; i--) { seed = (seed * 9301 + 49297) % 233280; const j = Math.floor(seed / 233280 * (i + 1)); [items[i], items[j]] = [items[j], items[i]]; }
@@ -54,13 +55,13 @@
       return (w.img ? '<img src="assets/work/' + w.img + '-bw.webp" alt="" loading="lazy" onload="this.classList.add(\'is-loaded\')" onerror="this.remove()">' : '') +
              '<div class="tile__cap"><div class="tile__t">' + w.name + '</div><div class="tile__s">' + w.sector[lang] + '</div></div>';
     }
-    if (it.kind === 'service') return '<div class="tile__t">' + it.data.title[lang] + '</div><div class="tile__s">' + it.data.line[lang] + '</div>';
+    if (it.kind === 'area') return '<div class="tile__t">' + it.data.title[lang] + '</div><div class="tile__s">' + it.data.line[lang] + '</div>';
     return '<div class="tile__t">' + it.text + '</div><div class="tile__s">' + it.sub + '</div>';
   }
 
   function build() {
     const mobile = innerWidth <= 820;
-    F.cw = mobile ? 200 : 300; F.ch = mobile ? 156 : 230;
+    F.cw = mobile ? 214 : 340; F.ch = mobile ? 164 : 250;
     F.cols = Math.ceil(innerWidth / F.cw) + 3; F.rows = Math.ceil(innerHeight / F.ch) + 3;
     if (F.cols % 2 === 0) F.cols++; if (F.rows % 2 === 0) F.rows++;
     F.W = F.cols * F.cw; F.H = F.rows * F.ch;
@@ -70,6 +71,7 @@
     F.tiles = [];
     let k = 0;
     for (let r = 0; r < F.rows; r++) for (let c = 0; c < F.cols; c++) {
+      if (hash(c * 7 + 2, r * 11 + 5) > 0.66) continue;          // co trzecia komorka pusta: pole oddycha
       const it = items[k % items.length]; k++;
       const h1 = hash(c + 1, r + 1), h2 = hash(r + 7, c + 3), h3 = hash(c * 3 + 1, r * 5 + 2);
       const w = Math.round(it.w * scale), h = Math.round(it.h * scale);
@@ -98,7 +100,7 @@
   function centreFade(cx, cy) {
     const r = Math.hypot(cx / (F.W > 1200 ? 1.35 : 1.1), cy);
     const d = F.dock;                                   // 0 = logo w srodku, 1 = logo u gory
-    const lo = F.cw * (1.15 - 0.95 * d), hi = F.cw * (2.4 - 1.7 * d);
+    const lo = F.cw * (1.3 - 1.1 * d), hi = F.cw * (2.5 - 1.8 * d);
     const k = clamp((r - lo) / (hi - lo), 0, 1);
     return k * k * (3 - 2 * k);
   }
@@ -112,7 +114,7 @@
     const z = tl.z + (tl.hover ? 46 : 0) - 520 * e;
     const s = tl.hover ? 1.04 : 1;
     tl.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,' + z.toFixed(1) + 'px) rotateZ(' + tl.rot.toFixed(2) + 'deg) scale(' + s + ')';
-    const fade = Math.round((0.12 + 0.88 * centreFade(wx, wy)) * tl.base * (1 - tl.enter) * 100) / 100;
+    const fade = Math.round((0.03 + 0.97 * centreFade(wx, wy)) * tl.base * (1 - tl.enter) * 100) / 100;
     if (fade !== tl.lastFade) {                          // zapis stylu tylko gdy wartosc sie zmienia
       tl.el.style.opacity = fade;
       const pe = fade < 0.35 ? 'none' : '';
@@ -372,7 +374,7 @@
     panel.classList.add('is-open');
     panel.setAttribute('aria-hidden', 'false');
     hero.classList.add('is-quiet');
-    document.querySelectorAll('.pill__btn').forEach((b) => b.setAttribute('aria-current', b.dataset.panel === name ? 'true' : 'false'));
+    document.querySelectorAll('.dock__btn').forEach((b) => b.setAttribute('aria-current', b.dataset.panel === name ? 'true' : 'false'));
     lastFocus = document.activeElement;
     $('#panel-close').focus({ preventScroll: true });
     panel.scrollTop = 0;
@@ -391,16 +393,34 @@
     panel.classList.remove('is-open');
     panel.setAttribute('aria-hidden', 'true');
     hero.classList.remove('is-quiet');
-    document.querySelectorAll('.pill__btn').forEach((b) => b.setAttribute('aria-current', 'false'));
+    document.querySelectorAll('.dock__btn').forEach((b) => b.setAttribute('aria-current', 'false'));
     history.replaceState(null, '', location.pathname);
     if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
   }
   function openFromTile(it) {
     if (it.kind === 'work') openPanel('work', 'case-' + it.data.id);
-    else if (it.kind === 'service') openPanel('services', 'service-' + it.data.id);
+    else if (it.kind === 'area') openPanel(it.data.to, it.data.anchor || null);
     else openPanel(it.to || 'about');
   }
-  document.querySelectorAll('.pill__btn').forEach((b) => b.addEventListener('click', () => (current === b.dataset.panel ? closePanel() : openPanel(b.dataset.panel))));
+  document.querySelectorAll('.dock__btn').forEach((b) => b.addEventListener('click', () => (current === b.dataset.panel ? closePanel() : openPanel(b.dataset.panel))));
+
+  /* Menu sklada sie z kawalkow: kazda litera przylatuje z innego miejsca i innego kata,
+     w losowej kolejnosci, i trafia na swoje miejsce. Powtarza sie przy zmianie jezyka. */
+  let dockShown = false;
+  function assembleDock(animate) {
+    const btns = [...document.querySelectorAll('.dock__btn')];
+    btns.forEach((b, wi) => {
+      const label = t(b.dataset.i18n);
+      b.setAttribute('aria-label', label);
+      b.innerHTML = [...label].map((ch, i) => '<span class="dock__ch" style="--i:' + i + '" aria-hidden="true">' + (ch === ' ' ? '&nbsp;' : esc(ch)) + '</span>').join('');
+      if (!animate || reduced || !window.gsap) return;
+      const chars = b.querySelectorAll('.dock__ch');
+      gsap.fromTo(chars,
+        { opacity: 0, x: () => gsap.utils.random(-90, 90), y: () => gsap.utils.random(-70, 30), rotation: () => gsap.utils.random(-70, 70), scale: () => gsap.utils.random(1.3, 2.1) },
+        { opacity: 1, x: 0, y: 0, rotation: 0, scale: 1, duration: 1.15, ease: 'expo.out', overwrite: 'auto',
+          stagger: { each: 0.028, from: 'random' }, delay: 0.1 + wi * 0.1 });
+    });
+  }
   $('#panel-close').addEventListener('click', closePanel);
   panelBody.addEventListener('click', (e) => { const b = e.target.closest('[data-open]'); if (b) openPanel(b.dataset.open); });
   panel.addEventListener('click', (e) => { if (e.target === panel) closePanel(); });
@@ -531,7 +551,8 @@
     lang = next;
     document.documentElement.lang = lang;
     try { localStorage.setItem('kiodem-lang', lang); } catch (e) {}
-    document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
+    document.querySelectorAll('[data-i18n]:not(.dock__btn)').forEach((el) => { el.textContent = t(el.dataset.i18n); });
+    assembleDock(dockShown);
     document.querySelectorAll('.lang__btn').forEach((b) => b.setAttribute('aria-pressed', b.dataset.lang === lang ? 'true' : 'false'));
     $('#panel-close').setAttribute('aria-label', t('close'));
     build();
@@ -542,15 +563,16 @@
   /* ─── loader: powitania, pierscien, znak, logotyp, wejscie pola ────────── */
   function loader() {
     const root = $('#loader'), word = $('#loader-word'), mark = $('#loader-mark'), wm = $('#loader-wordmark');
-    const ring = root.querySelector('.loader__ring'), arc = root.querySelector('.loader__ring-arc');
+    const lineBox = root.querySelector('.loader__line'), line = $('#loader-line');
     let seen = false; try { seen = sessionStorage.getItem('kiodem-seen') === '1'; sessionStorage.setItem('kiodem-seen', '1'); } catch (e) {}
     const finish = () => { root.classList.add('is-done'); hero.style.opacity = ''; };
+    const showDock = () => { if (dockShown) return; dockShown = true; assembleDock(true); };
     hero.style.opacity = '0';
 
     if (reduced || !window.gsap || /noloader/.test(location.search)) {
-      word.style.display = 'none'; ring.style.display = 'none';
+      word.style.display = 'none'; lineBox.style.display = 'none';
       wm.style.opacity = '1'; wm.style.filter = 'none'; wm.style.transform = 'none';
-      setTimeout(() => { root.style.transition = 'opacity .5s'; root.style.opacity = '0'; setTimeout(finish, 520); }, 700);
+      setTimeout(() => { root.style.transition = 'opacity .5s'; root.style.opacity = '0'; setTimeout(() => { finish(); dockShown = true; assembleDock(false); }, 520); }, 700);
       return;
     }
 
@@ -564,33 +586,51 @@
         onComplete: () => { if (--left === 0) { F.entering = false; F.dirty = true; } } }));
     };
     const tl = gsap.timeline();
+    window.__kiodemLoader = tl;                         // do podgladu klatek w narzedziach deweloperskich
     const sweep = { v: 0 };
 
+    // cienka linia rosnie od lewej do prawej w rytmie powitan; gdy dochodzi do konca, powitania gasna
+    const span = seq.length ? seq.length * 0.13 + 0.45 : 0.6;
+    tl.to(line, { scaleX: 1, duration: span, ease: 'power1.inOut' }, 0);
     if (seq.length) {
       seq.forEach((g, i) => tl.call(() => { word.textContent = g; }, null, i * 0.13));
-      tl.to(word, { opacity: 0, y: -10, duration: .35, ease: 'power2.in' }, seq.length * 0.13 + 0.45);
+      tl.to(word, { opacity: 0, y: -10, duration: .35, ease: 'power2.in' }, span);
     } else {
       tl.set(word, { opacity: 0 });
     }
-    // pierscien zamyka sie i znak wylania sie w slad za jego obrotem: spinner staje sie logo
-    tl.add('mark');
+    // znak odslania sie od lewej do prawej, jakby linia go rysowala, a sama linia gasnie
+    tl.add('mark', span + 0.1);
     tl.set(mark, { opacity: 1 }, 'mark');
-    tl.to(arc, { strokeDashoffset: 0, duration: .8, ease: 'power2.inOut' }, 'mark');
-    tl.to(sweep, { v: 360, duration: .8, ease: 'power2.inOut', onUpdate: () => mark.style.setProperty('--sweep', sweep.v + 'deg') }, 'mark');
-    tl.to(ring, { opacity: 0, scale: 1.12, duration: .5, ease: 'power2.out' }, 'mark+=.7');
+    tl.to(sweep, { v: 100, duration: .8, ease: 'power2.inOut', onUpdate: () => mark.style.setProperty('--sweep', sweep.v + '%') }, 'mark');
+    tl.to(lineBox, { opacity: 0, duration: .5, ease: 'power2.out' }, 'mark+=.5');
     // obrot znaku jak monety
     tl.to(mark, { rotationY: 360, duration: 1.05, ease: 'power3.inOut', transformPerspective: 800 }, 'mark+=.75');
-    // znak rozmywa sie, a z rozmycia wyostrza sie logotyp: przeciagniecie ostrosci, nie wytarcie
-    tl.add('name', 'mark+=1.55');
-    tl.to(mark, { opacity: 0, scale: 1.18, filter: 'blur(14px)', duration: .55, ease: 'power2.in' }, 'name');
-    tl.to(wm, { opacity: 1, filter: 'blur(0px)', scale: 1, duration: 1.2, ease: 'power3.out' }, 'name+=.15');
+    // po obrocie znak jedzie na miejsce litery D w logotypie, a z niego rozwijaja sie K, I, O i M
+    const L = (n) => wm.querySelector('.wm-' + n);
+    tl.add('name', 'mark+=1.85');
+    tl.set(wm, { opacity: 1, filter: 'none', scale: 1 }, 'name');
+    tl.set([L('k'), L('i'), L('o'), L('m'), L('de')], { opacity: 0 }, 'name');
+    tl.set(mark, { transformOrigin: '0 0', rotationY: 0 }, 'name');
+    // cel mierzony w chwili startu (funkcje), bo zalezy od rozmiaru okna: prostokat litery D w logotypie
+    const geo = () => { const r = L('de').getBoundingClientRect(), m = mark.getBoundingClientRect(); return { r, m }; };
+    tl.to(mark, { x: () => { const g = geo(); return g.r.left - g.m.left; }, y: () => { const g = geo(); return g.r.top - g.m.top; },
+                  scaleX: () => { const g = geo(); return g.r.height / g.m.height; }, scaleY: () => { const g = geo(); return g.r.height / g.m.height; },
+                  duration: .75, ease: 'expo.inOut', immediateRender: false }, 'name');
+    tl.to(L('de'), { opacity: 1, duration: .25 }, 'name+=.6');
+    tl.to(mark, { opacity: 0, duration: .3 }, 'name+=.7');
+    // litery wysuwaja sie spod D: O, I, K w lewo, M w prawo (jednostki viewBoxu logotypu)
+    tl.fromTo(L('o'), { x: 250, opacity: 0 }, { x: 0, opacity: 1, duration: .9, ease: 'expo.out' }, 'name+=.8');
+    tl.fromTo(L('i'), { x: 320, opacity: 0 }, { x: 0, opacity: 1, duration: .9, ease: 'expo.out' }, 'name+=.88');
+    tl.fromTo(L('k'), { x: 560, opacity: 0 }, { x: 0, opacity: 1, duration: .95, ease: 'expo.out' }, 'name+=.96');
+    tl.fromTo(L('m'), { x: -420, opacity: 0 }, { x: 0, opacity: 1, duration: .9, ease: 'expo.out' }, 'name+=.84');
     // kafelki przylatuja spoza ekranu na swoje miejsca, kurtyna znika
-    tl.add('field', 'name+=.7');
+    tl.add('field', 'name+=1.5');
     tl.call(flyIn, null, 'field');
     tl.to(root, { backgroundColor: 'rgba(8,10,15,0)', duration: .8 }, 'field');
     tl.set(hero, { opacity: 1 }, 'field+=.6');
     tl.call(() => decode($('.hero__line')), null, 'field+=.6');
     tl.to(wm, { opacity: 0, duration: .3 }, 'field+=.6');
+    tl.call(showDock, null, 'field+=.8');
     tl.call(finish, null, 'field+=1');
   }
 

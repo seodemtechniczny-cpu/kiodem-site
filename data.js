@@ -412,6 +412,40 @@ window.KIODEM_DATA = (function () {
               es: "Integraciones en Python: feeds y stock de proveedores, facturación y CRM, control de precios, monitorización e informes. Escritas para tu entorno, entregadas con el código." } }
   ];
 
+  /* Obszary pracy: kafelki pola. Kazdy prowadzi do sekcji i kotwicy. */
+  var AREAS = [
+    { id: "sites", to: "services", anchor: "service-websites",
+      title: { en: "Websites", pl: "Strony", de: "Websites", fr: "Sites web", es: "Webs" },
+      line: { en: "Written to be found, built to take an enquiry", pl: "Pisane, żeby je znaleźć, budowane pod zapytanie", de: "Gemacht, um gefunden zu werden und Anfragen zu bringen", fr: "Faits pour être trouvés et recevoir une demande", es: "Hechas para que las encuentren y reciban consultas" } },
+    { id: "local", to: "services", anchor: "service-seo",
+      title: { en: "Local search", pl: "Wyszukiwanie lokalne", de: "Lokale Suche", fr: "Recherche locale", es: "Búsqueda local" },
+      line: { en: "Being found by the town you serve", pl: "Widoczność w mieście, które obsługujesz", de: "Gefunden werden in der Stadt, die Sie bedienen", fr: "Être trouvé dans la ville que vous servez", es: "Que te encuentren en la ciudad a la que sirves" } },
+    { id: "ads", to: "services", anchor: "service-ads",
+      title: { en: "Google Ads", pl: "Google Ads", de: "Google Ads", fr: "Google Ads", es: "Google Ads" },
+      line: { en: "Budget that follows enquiries, not clicks", pl: "Budżet idzie za zapytaniami, nie za kliknięciami", de: "Budget folgt Anfragen, nicht Klicks", fr: "Un budget qui suit les demandes, pas les clics", es: "Presupuesto que sigue a las consultas, no a los clics" } },
+    { id: "tracking", to: "services", anchor: "service-measurement",
+      title: { en: "Traffic tracking", pl: "Śledzenie ruchu", de: "Traffic-Messung", fr: "Suivi du trafic", es: "Seguimiento del tráfico" },
+      line: { en: "Every call, form and order counted once", pl: "Każdy telefon, formularz i zamówienie policzone raz", de: "Jeder Anruf, jedes Formular, jede Bestellung einmal gezählt", fr: "Chaque appel, formulaire et commande compté une fois", es: "Cada llamada, formulario y pedido contado una vez" } },
+    { id: "automation", to: "services", anchor: "service-automation",
+      title: { en: "Automation", pl: "Automatyzacje", de: "Automatisierung", fr: "Automatisation", es: "Automatización" },
+      line: { en: "Small programs that work while you sleep", pl: "Małe programy, które pracują, gdy śpisz", de: "Kleine Programme, die arbeiten, während Sie schlafen", fr: "De petits programmes qui travaillent pendant que vous dormez", es: "Pequeños programas que trabajan mientras duermes" } },
+    { id: "shops", to: "services", anchor: "service-automation",
+      title: { en: "Shop integrations", pl: "Integracje sklepów", de: "Shop-Anbindungen", fr: "Intégrations e-commerce", es: "Integraciones de tienda" },
+      line: { en: "Supplier feeds, stock and prices kept in step", pl: "Feedy hurtowni, stany i ceny w jednym rytmie", de: "Lieferanten-Feeds, Bestände und Preise im Gleichschritt", fr: "Flux fournisseurs, stocks et prix au même rythme", es: "Feeds de proveedores, stock y precios al mismo ritmo" } },
+    { id: "journey", to: "about", anchor: null,
+      title: { en: "Journey check", pl: "Sprawdzenie ścieżki", de: "Weg-Check", fr: "Vérification du parcours", es: "Revisión del recorrido" },
+      line: { en: "From a search to an enquiry, and where it breaks", pl: "Od wyszukiwania do zapytania i gdzie to się urywa", de: "Von der Suche zur Anfrage, und wo es abreißt", fr: "De la recherche à la demande, et où ça casse", es: "De la búsqueda a la consulta, y dónde se rompe" } },
+    { id: "handmade", to: "work", anchor: "case-kiodem",
+      title: { en: "Hand-written sites", pl: "Strony pisane ręcznie", de: "Handgeschriebene Websites", fr: "Sites écrits à la main", es: "Webs escritas a mano" },
+      line: { en: "HTML, CSS and JavaScript with no template underneath", pl: "HTML, CSS i JavaScript bez szablonu pod spodem", de: "HTML, CSS und JavaScript ohne Template darunter", fr: "HTML, CSS et JavaScript sans gabarit dessous", es: "HTML, CSS y JavaScript sin plantilla debajo" } },
+    { id: "profile", to: "services", anchor: "service-seo",
+      title: { en: "Business Profile", pl: "Wizytówka Google", de: "Unternehmensprofil", fr: "Fiche Google", es: "Perfil de Google" },
+      line: { en: "The map listing that brings the phone calls", pl: "Wpis na mapie, z którego dzwonią klienci", de: "Der Karteneintrag, aus dem die Anrufe kommen", fr: "La fiche sur la carte qui fait sonner le téléphone", es: "La ficha del mapa por la que llaman los clientes" } },
+    { id: "reports", to: "services", anchor: "service-measurement",
+      title: { en: "Plain-words reports", pl: "Raporty zwykłym językiem", de: "Berichte in klaren Worten", fr: "Rapports en mots simples", es: "Informes en palabras llanas" },
+      line: { en: "What changed, what it did, what happens next", pl: "Co się zmieniło, co dało, co dalej", de: "Was sich änderte, was es brachte, was folgt", fr: "Ce qui a changé, ce que ça a donné, la suite", es: "Qué cambió, qué dio, qué viene después" } }
+  ];
+
   var CHARTS = {
     ads: {
       title: { en: "Example account, one month: share of spend against share of enquiries", pl: "Przykładowe konto, jeden miesiąc: udział w wydatkach i udział w zapytaniach", de: "Beispielkonto, ein Monat: Anteil an Ausgaben gegen Anteil an Anfragen", fr: "Compte d'exemple, un mois : part des dépenses contre part des demandes", es: "Cuenta de ejemplo, un mes: cuota de gasto frente a cuota de consultas" },
@@ -447,6 +481,6 @@ window.KIODEM_DATA = (function () {
   var GREETING_BY_LANG = { en: "Welcome", pl: "Witamy", de: "Willkommen", fr: "Bienvenue", es: "Bienvenido" };
   var LOCALES = { en: "en-GB", pl: "pl-PL", de: "de-DE", fr: "fr-FR", es: "es-ES" };
 
-  return { LANGS: LANGS, I18N: I18N, WORK: WORK, SERVICES: SERVICES, CHARTS: CHARTS,
+  return { LANGS: LANGS, I18N: I18N, WORK: WORK, SERVICES: SERVICES, AREAS: AREAS, CHARTS: CHARTS,
            GREETINGS: GREETINGS, GREETING_BY_LANG: GREETING_BY_LANG, LOCALES: LOCALES };
 })();
