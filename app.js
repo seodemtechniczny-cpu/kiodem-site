@@ -783,8 +783,21 @@
     document.addEventListener('pointermove', (e) => {
       cx(e.clientX); cy(e.clientY);
       const t = e.target;
+      // jasnosc tla pod wskaznikiem: kolor kafelka zmieszany z tlem strony wg jego przezroczystosci;
+      // powyzej progu kursor robi sie ciemny (mix-blend-mode zawodzi na sredniej szarosci)
+      const tile = t.closest('.tile');
+      let dark = false;
+      if (tile) {
+        const m = getComputedStyle(tile).backgroundColor.match(/\d+(?:\.\d+)?/g), op = parseFloat(tile.style.opacity || 1);
+        if (m) {
+          const lin = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+          const mix = (a, b) => a * op + b * (1 - op);
+          dark = 0.2126 * lin(mix(+m[0], 8)) + 0.7152 * lin(mix(+m[1], 10)) + 0.0722 * lin(mix(+m[2], 15)) > 0.14;
+        }
+      }
+      cur.dataset.tone = dark ? 'dark' : 'light';
       if (panel.classList.contains('is-open')) setState('off');
-      else if (t.closest('.tile')) setState('open', CURSOR.open[lang]);
+      else if (tile) setState('open', CURSOR.open[lang]);
       else if (t.closest('.top, .dock, .navi')) setState('ui');
       else if (t.closest('.viewport')) setState(F.dragging ? 'grab' : 'drag', CURSOR.drag[lang]);
       else setState('off');
