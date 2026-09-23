@@ -777,25 +777,42 @@
     document.body.classList.add('has-cursor');
     const lab = cur.querySelector('.cursor__label');
     const cx = gsap.quickTo(cur, 'x', { duration: .18, ease: 'power3.out' }), cy = gsap.quickTo(cur, 'y', { duration: .18, ease: 'power3.out' });
-    let state = '';
-    const setState = (s, text) => { if (s === state) return; state = s; cur.dataset.state = s; if (text) lab.textContent = text; };
+    let state = '', labText = '';
+    const setState = (s, text) => {
+      if (s === state) return; state = s; cur.dataset.state = s;
+      if (text && text !== labText) { labText = text; lab.innerHTML = [...text].map((ch) => '<span>' + (ch === ' ' ? '&nbsp;' : esc(ch)) + '</span>').join(''); }
+    };
+    /* Kolor kursora liczony osobno dla kropki i kazdej litery, w kazdej klatce: co lezy pod danym
+       punktem (kafelek jasny, przygaszony, ciemny, puste tlo), jego kolor tla zmieszany z tlem strony
+       wg przezroczystosci, jasnosc powyzej progu = ciemna litera. Napis na styku dwoch kafelkow
+       dostaje wiec dwa kolory, a pole dryfujace pod nieruchomym kursorem tez przelicza sie samo. */
+    const dot = cur.querySelector('.cursor__dot');
+    const lumCache = new Map();
+    const lightUnder = (x, y) => {
+      const el = document.elementFromPoint(x, y), tile = el && el.closest ? el.closest('.tile') : null;
+      if (!tile) return false;
+      const key = tile.style.opacity;
+      let L = lumCache.get(tile);
+      if (!L || L.k !== key) {
+        const m = getComputedStyle(tile).backgroundColor.match(/\d+(?:\.\d+)?/g), op = parseFloat(key || 1);
+        const lin = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
+        const mix = (a, b) => a * op + b * (1 - op);
+        L = { k: key, v: m ? 0.2126 * lin(mix(+m[0], 8)) + 0.7152 * lin(mix(+m[1], 10)) + 0.0722 * lin(mix(+m[2], 15)) : 0 };
+        lumCache.set(tile, L);
+      }
+      return L.v > 0.14;
+    };
+    gsap.ticker.add(() => {
+      if (state === 'off' || state === 'ui' || !state) return;
+      const d = dot.getBoundingClientRect();
+      dot.classList.toggle('is-dark', lightUnder(d.left + d.width / 2, d.top + d.height / 2));
+      for (const sp of lab.children) { const r = sp.getBoundingClientRect(); if (r.width) sp.classList.toggle('is-dark', lightUnder(r.left + r.width / 2, r.top + r.height / 2)); }
+    });
     const magnets = [...document.querySelectorAll('.dock__btn'), $('#home')];
     document.addEventListener('pointermove', (e) => {
       cx(e.clientX); cy(e.clientY);
       const t = e.target;
-      // jasnosc tla pod wskaznikiem: kolor kafelka zmieszany z tlem strony wg jego przezroczystosci;
-      // powyzej progu kursor robi sie ciemny (mix-blend-mode zawodzi na sredniej szarosci)
       const tile = t.closest('.tile');
-      let dark = false;
-      if (tile) {
-        const m = getComputedStyle(tile).backgroundColor.match(/\d+(?:\.\d+)?/g), op = parseFloat(tile.style.opacity || 1);
-        if (m) {
-          const lin = (v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); };
-          const mix = (a, b) => a * op + b * (1 - op);
-          dark = 0.2126 * lin(mix(+m[0], 8)) + 0.7152 * lin(mix(+m[1], 10)) + 0.0722 * lin(mix(+m[2], 15)) > 0.14;
-        }
-      }
-      cur.dataset.tone = dark ? 'dark' : 'light';
       if (panel.classList.contains('is-open')) setState('off');
       else if (tile) setState('open', CURSOR.open[lang]);
       else if (t.closest('.top, .dock, .navi')) setState('ui');
