@@ -1,0 +1,34 @@
+name: PageSpeed weekly
+# Mierzy strone w PageSpeed Insights (mobile + desktop) i zapisuje wynik do assets/psi.json,
+# ktory czyta kafelek "Ta strona". Bez klucza API: jeden pomiar tygodniowo miesci sie w limicie.
+on:
+  schedule:
+    - cron: "0 4 * * 1"
+  workflow_dispatch:
+env:
+  SITE_URL: https://seodemtechniczny-cpu.github.io/kiodem-site/
+  # bez klucza dziala na wspolnym limicie Google (bywa wyczerpany, 429); klucz API z projektu Google Cloud
+  # jako sekret repozytorium PSI_API_KEY usuwa ten problem
+  PSI_KEY: ${{ secrets.PSI_API_KEY }}
+permissions:
+  contents: write
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Measure
+        run: |
+          set -e
+          K=""; [ -n "$PSI_KEY" ] && K="&key=${PSI_KEY}"
+          m=$(curl -sS "https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${SITE_URL}&strategy=mobile&category=performance${K}" | python3 -c 'import sys,json;print(round(json.load(sys.stdin)["lighthouseResult"]["categories"]["performance"]["score"]*100))')
+          d=$(curl -sS "https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${SITE_URL}&strategy=desktop&category=performance${K}" | python3 -c 'import sys,json;print(round(json.load(sys.stdin)["lighthouseResult"]["categories"]["performance"]["score"]*100))')
+          printf '{"mobile": %s, "desktop": %s, "date": "%s", "url": "%s"}\n' "$m" "$d" "$(date -u +%Y-%m-%d)" "$SITE_URL" > assets/psi.json
+          cat assets/psi.json
+      - name: Commit
+        run: |
+          git config user.name "psi-bot"
+          git config user.email "psi-bot@users.noreply.github.com"
+          git add assets/psi.json
+          git diff --cached --quiet || git commit -m "PageSpeed: pomiar $(date -u +%Y-%m-%d)"
+          git push

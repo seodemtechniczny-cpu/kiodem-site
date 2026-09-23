@@ -7,12 +7,17 @@
   const D = window.KIODEM_DATA;
   const LANGS = D.LANGS, I18N = D.I18N, WORK = D.WORK, SERVICES = D.SERVICES, AREAS = D.AREAS, CHARTS = D.CHARTS;
   const GREETINGS = D.GREETINGS, GREETING_BY_LANG = D.GREETING_BY_LANG, LOCALES = D.LOCALES;
+  const PROCESS = D.PROCESS, LIVE = D.LIVE, CURSOR = D.CURSOR, GREETING_TIME = D.GREETING_TIME, META = D.META;
+  // katalog strony (obrazy i dane sa wzgledem app.js, nie wzgledem /pl/ czy /de/)
+  const ROOT = (function () { const el = document.querySelector('script[src*="app.js"]'); try { return el ? new URL('.', el.src).href : './'; } catch (e) { return './'; } })();
 
   /* ─── stan ─────────────────────────────────────────────────────────────── */
   const $ = (s) => document.querySelector(s);
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const coarse = matchMedia('(pointer: coarse)').matches;
   let lang = (function () {
+    const fixed = document.documentElement.dataset.lang;          // /pl/, /de/...: strona w tym jezyku
+    if (LANGS.includes(fixed)) return fixed;
     try { const s = localStorage.getItem('kiodem-lang'); if (LANGS.includes(s)) return s; } catch (e) {}
     for (const l of (navigator.languages || [navigator.language || 'en'])) {
       const k = String(l).slice(0, 2).toLowerCase(); if (LANGS.includes(k)) return k;
@@ -29,7 +34,8 @@
               cw: 224, ch: 168, cols: 0, rows: 0, W: 0, H: 0, tiles: [], dragging: false, moved: false,
               lastX: 0, lastY: 0, lastT: 0, idle: 0, entering: false, dirty: true,
               paused: false, dock: 0, docked: false,
-              zoom: 0, focus: null, zooming: false };         // najazd kamery na klikniety kafelek
+              zoom: 0, focus: null, zooming: false,           // najazd kamery na klikniety kafelek
+              map: 0, lastInput: 0 };                         // tryb mapy (odjazd kamery), ostatni ruch uzytkownika
 
   const hash = (a, b) => { let h = (a * 73856093) ^ (b * 19349663); h = (h ^ (h >>> 13)) * 1274126177; return ((h ^ (h >>> 16)) >>> 0) / 4294967295; };
   const lerp = (a, b, k) => a + (b - a) * k;
@@ -43,7 +49,9 @@
     const items = [];
     ['work', 'about', 'contact', 'brief'].forEach((id) =>
       items.push({ kind: 'section', w: 240, h: 150, to: id, text: L['nav.' + id], sub: L.sections[id] }));
+    items.push({ kind: 'section', w: 240, h: 150, to: 'process', text: PROCESS.title[lang], sub: PROCESS.tile[lang] });
     AREAS.forEach((a) => items.push({ kind: 'area', w: 232, h: 138, data: a }));
+    items.push({ kind: 'live', w: 232, h: 138, live: 'now' }, { kind: 'live', w: 232, h: 138, live: 'site' });
     // deterministyczne przetasowanie - te same pozycje przy kazdym wejsciu
     let seed = 7;
     for (let i = items.length - 1; i > 0; i--) { seed = (seed * 9301 + 49297) % 233280; const j = Math.floor(seed / 233280 * (i + 1)); [items[i], items[j]] = [items[j], items[i]]; }
@@ -57,8 +65,32 @@
              '<div class="tile__cap"><div class="tile__t">' + w.name + '</div><div class="tile__s">' + w.sector[lang] + '</div></div>';
     }
     if (it.kind === 'area') return '<div class="tile__t">' + it.data.title[lang] + '</div><div class="tile__s">' + it.data.line[lang] + '</div>';
-    return '<div class="tile__t">' + it.text + '</div><div class="tile__s">' + it.sub + '</div>';
+    if (it.kind === 'live') {
+      const V = LIVE[it.live];
+      if (it.live === 'now') return '<div class="tile__t"><i class="tile__dot" aria-hidden="true"></i>' + esc(V.title[lang]) + '</div>' +
+        '<div class="tile__s" data-live="time">' + esc(V.time[lang].replace('{time}', clock())) + '</div>' +
+        '<div class="tile__s">' + esc(V.reply[lang]) + (V.available ? ' · ' + esc(V.available[lang]) : '') + '</div>';
+      return '<div class="tile__t">' + esc(V.title[lang]) + '</div>' +
+        '<div class="tile__s">' + esc(V.facts[lang].replace('{files}', V.files)) + '</div>' +
+        '<div class="tile__s" data-live="psi">' + esc(psiLine()) + '</div>';
+    }
+    // sekcja Realizacje: trzy miniatury wysuwaja sie po najechaniu
+    const peek = it.to === 'work' ? '<div class="tile__peek" aria-hidden="true">' + WORK.filter((w) => w.img).slice(0, 3).map((w) =>
+      '<img src="' + ROOT + 'assets/work/' + w.img + '.webp" alt="" loading="lazy">').join('') + '</div>' : '';
+    return peek + '<div class="tile__t">' + it.text + '</div><div class="tile__s">' + it.sub + '</div>';
   }
+
+  /* Kafelki na zywo: zegar w Gliwicach i wynik PageSpeed mierzony co tydzien (assets/psi.json,
+     zapisuje go GitHub Action). Bez pliku linia z wynikiem zostaje pusta - nie zmyslamy liczb. */
+  const clock = () => { try { return new Intl.DateTimeFormat(LOCALES[lang] || 'en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Warsaw' }).format(new Date()); } catch (e) { return ''; } };
+  let psi = null;
+  const psiLine = () => psi && psi.mobile != null ? LIVE.site.psi[lang].replace('{m}', psi.mobile).replace('{d}', psi.desktop).replace('{date}', psi.date) : '';
+  function tickLive() {
+    document.querySelectorAll('[data-live="time"]').forEach((el) => { el.textContent = LIVE.now.time[lang].replace('{time}', clock()); });
+    document.querySelectorAll('[data-live="psi"]').forEach((el) => { el.textContent = psiLine(); });
+  }
+  setInterval(tickLive, 30000);
+  fetch(ROOT + 'assets/psi.json', { cache: 'no-cache' }).then((r) => (r.ok ? r.json() : null)).then((j) => { if (j) { psi = j; tickLive(); } }).catch(() => {});
 
   function build() {
     const mobile = innerWidth <= 820;
@@ -101,9 +133,10 @@
   function centreFade(cx, cy) {
     const r = Math.hypot(cx / (F.W > 1200 ? 1.35 : 1.1), cy);
     const d = F.dock;                                   // 0 = logo w srodku, 1 = logo u gory
-    const lo = F.cw * 0.7, hi = F.cw * 1.1;              // ciemno tylko pod samym znakiem
+    const mob = F.cw < 300;                              // telefon: znak jest mniejszy, wiec i ciemna strefa mniejsza
+    const lo = F.cw * (mob ? 0.5 : 0.7), hi = F.cw * (mob ? 0.85 : 1.1);
     const k = clamp((r - lo) / (hi - lo), 0, 1);
-    return Math.max(d, k * k * (3 - 2 * k));             // logo zadokowane u gory = zadnego ciemnego srodka
+    return Math.max(d, F.map, k * k * (3 - 2 * k));      // logo zadokowane u gory albo tryb mapy = zadnego ciemnego srodka
   }
   function renderTile(tl) {
     const wx = wrap(tl.px + F.ox, F.W) + tl.jx, wy = wrap(tl.py + F.oy, F.H) + tl.jy;
@@ -139,18 +172,23 @@
     if (!F.dragging) {                                   // bezwladnosc po puszczeniu
       F.tx += F.vx; F.ty += F.vy; F.vx *= 0.94; F.vy *= 0.94;
       if (Math.abs(F.vx) < 0.02) F.vx = 0; if (Math.abs(F.vy) < 0.02) F.vy = 0;
+      // bezczynnosc: pole powoli sunie, zeby bylo widac, ze jest wieksze niz ekran; kazdy ruch je zatrzymuje
+      if (!reduced && !coarse && !current && !F.zooming && !F.map && now - F.lastInput > 9000) { F.tx -= 0.32; F.ty -= 0.12; }
     }
     // przechyl pola od ruchu (kamera plynie za przeciaganiem) + lekki oddech w spoczynku
     const tRx = clamp(-dy * 0.06, -9, 9), tRy = clamp(dx * 0.06, -9, 9);
     F.rx = lerp(F.rx, tRx, 0.08); F.ry = lerp(F.ry, tRy, 0.08);
     const breath = reduced ? 0 : Math.sin(now / 2600) * 1.2;
-    field.style.transform = 'translateZ(' + (F.zoom * 560).toFixed(1) + 'px) rotateX(' + ((F.rx + F.prx + breath) * (1 - F.zoom)).toFixed(3) + 'deg) rotateY(' + ((F.ry + F.pry) * (1 - F.zoom)).toFixed(3) + 'deg)';
-    if (moving || F.dirty || F.entering) { for (const tl of F.tiles) renderTile(tl); F.dirty = false; }
+    field.style.transform = 'translateZ(' + (F.zoom * 560 - F.map * 700).toFixed(1) + 'px) rotateX(' + ((F.rx + F.prx + breath) * (1 - F.zoom)).toFixed(3) + 'deg) rotateY(' + ((F.ry + F.pry) * (1 - F.zoom)).toFixed(3) + 'deg)';
+    if (moving || F.dirty || F.entering) { for (const tl of F.tiles) renderTile(tl); F.dirty = false; drawNavi(); }
     requestAnimationFrame(frame);
   }
 
   /* wejscie: przeciaganie, kolko, dotyk, klawiatura */
+  const touches = new Map();                             // aktywne palce (pinch = tryb mapy)
   viewport.addEventListener('pointerdown', (e) => {
+    F.lastInput = performance.now();
+    if (e.pointerType === 'touch') { touches.set(e.pointerId, { x: e.clientX, y: e.clientY }); if (touches.size === 2) { pinch0 = pinchDist(); } }
     if (e.button !== 0 || F.zooming) return;
     F.dragging = true; F.moved = false; F.vx = F.vy = 0;
     F.lastX = e.clientX; F.lastY = e.clientY; F.lastT = performance.now();
@@ -158,7 +196,17 @@
     // wskaznik przechwytujemy dopiero gdy zaczyna sie przeciaganie: przechwycony od razu
     // przekierowuje click na viewport i kafelki przestaja byc klikalne
   });
+  let pinch0 = 0;
+  const pinchDist = () => { const p = [...touches.values()]; return p.length === 2 ? Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y) : 0; };
   viewport.addEventListener('pointermove', (e) => {
+    if (e.pointerType === 'touch' && touches.has(e.pointerId)) {
+      touches.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (touches.size === 2 && pinch0) {                  // dwa palce: zblizenie = mapa, rozsuniecie = powrot
+        const d = pinchDist();
+        if (d < pinch0 * 0.72) { setMap(true); pinch0 = d; } else if (d > pinch0 * 1.38) { setMap(false); pinch0 = d; }
+        return;
+      }
+    }
     if (F.dragging) {
       const dx = e.clientX - F.lastX, dy = e.clientY - F.lastY, now = performance.now();
       const dt = Math.max(1, now - F.lastT);
@@ -170,15 +218,60 @@
       F.pry = (e.clientX / innerWidth - .5) * 5; F.prx = -(e.clientY / innerHeight - .5) * 5;
     }
   });
-  const endDrag = () => { if (!F.dragging) return; F.dragging = false; viewport.classList.remove('is-dragging'); setTimeout(() => { F.moved = false; }, 0); };
+  const endDrag = (e) => { if (e && e.pointerType === 'touch') { touches.delete(e.pointerId); pinch0 = 0; } if (!F.dragging) return; F.dragging = false; viewport.classList.remove('is-dragging'); setTimeout(() => { F.moved = false; }, 0); };
   viewport.addEventListener('pointerup', endDrag);
   viewport.addEventListener('pointercancel', endDrag);
+  let wheelMapT = 0;
   viewport.addEventListener('wheel', (e) => {
     e.preventDefault();
+    F.lastInput = performance.now();
+    if (e.ctrlKey || e.metaKey) {                          // pinch na gladziku / ctrl+kolko: tryb mapy
+      const now = performance.now();
+      if (now - wheelMapT > 400) { wheelMapT = now; setMap(e.deltaY > 0); }
+      return;
+    }
     const m = e.deltaMode === 1 ? 16 : 1;
     F.tx -= e.deltaX * m * 0.9; F.ty -= e.deltaY * m * 0.9;
     hideHint(); dock(true);
   }, { passive: false });
+
+  /* Tryb mapy: kamera odjezdza (translateZ pola), widac cala mape pracy, klik w kafelek wjezdza. */
+  function setMap(on) {
+    const target = on ? 1 : 0;
+    if (F.map === target || F.zooming) return;
+    if (on) { hideHint(); dock(true); }
+    document.body.classList.toggle('is-map', on);
+    if (reduced || !window.gsap) { F.map = target; F.dirty = true; return; }
+    gsap.to(F, { map: target, duration: .85, ease: 'expo.inOut', overwrite: 'auto', onUpdate: () => { F.dirty = true; } });
+  }
+
+  /* Nawigator: mala mapa pola w rogu - kropki kafelkow, prostokat widoku, klik przenosi. */
+  const navi = document.createElement('div');
+  navi.className = 'navi'; navi.innerHTML = '<canvas class="navi__map" width="132" height="98" aria-hidden="true"></canvas><button class="navi__btn" type="button"></button>';
+  document.body.appendChild(navi);
+  const naviCv = navi.querySelector('canvas'), naviBtn = navi.querySelector('button');
+  naviBtn.addEventListener('click', () => setMap(!F.map));
+  naviCv.addEventListener('click', (e) => {
+    const r = naviCv.getBoundingClientRect(), sc = naviCv.width / F.W;
+    const wx = (e.clientX - r.left - naviCv.width / 2) / sc, wy = (e.clientY - r.top - naviCv.height / 2) / sc;
+    F.tx = F.ox - wx; F.ty = F.oy - wy; F.vx = F.vy = 0; F.lastInput = performance.now(); hideHint(); dock(true);
+  });
+  function drawNavi() {
+    if (coarse || !F.W) return;
+    const ctx = naviCv.getContext('2d'), Wc = naviCv.width, Hc = Math.round(Wc * F.H / F.W);
+    if (naviCv.height !== Hc) naviCv.height = Hc;
+    const sc = Wc / F.W;
+    ctx.clearRect(0, 0, Wc, Hc);
+    for (const tl of F.tiles) {
+      const wx = wrap(tl.px + F.ox, F.W) + tl.jx, wy = wrap(tl.py + F.oy, F.H) + tl.jy;
+      ctx.fillStyle = tl === F.focus ? '#F1EEE7' : 'rgba(241,238,231,' + (0.22 + 0.5 * tl.base) + ')';
+      ctx.fillRect(Wc / 2 + (wx - tl.w / 2) * sc, Hc / 2 + (wy - tl.h / 2) * sc, Math.max(2, tl.w * sc), Math.max(1.5, tl.h * sc));
+    }
+    const z = 1100 / (1100 - (F.zoom * 560 - F.map * 700));   // ile pola widac przy obecnej glebi kamery
+    const vw = innerWidth / z * sc, vh = innerHeight / z * sc;
+    ctx.strokeStyle = 'rgba(241,238,231,.85)'; ctx.lineWidth = 1;
+    ctx.strokeRect(Wc / 2 - vw / 2 + .5, Hc / 2 - vh / 2 + .5, vw, vh);
+  }
   document.addEventListener('keydown', (e) => {
     if (panel.classList.contains('is-open')) {
       if (e.key === 'Escape') { closePanel(); return; }
@@ -189,6 +282,8 @@
       } else if (current === 'brief' && e.key === 'Enter' && document.activeElement.tagName === 'INPUT') { Brief.next(); e.preventDefault(); }
       return;
     }
+    F.lastInput = performance.now();
+    if (e.key === 'm' || e.key === 'M') { setMap(!F.map); return; }
     const step = 180;
     if (e.key === 'ArrowLeft') F.tx += step; else if (e.key === 'ArrowRight') F.tx -= step;
     else if (e.key === 'ArrowUp') F.ty += step; else if (e.key === 'ArrowDown') F.ty -= step;
@@ -224,7 +319,7 @@
         ? '<h4 class="case__h">' + esc(title) + '</h4><ul class="list list--tight">' + items[lang].map((d) => '<li>' + esc(d) + '</li>').join('') + '</ul>' : '';
       return '<p class="lead">' + L.workLead + '</p>' + WORK.map((w) =>
         '<article class="case" id="case-' + w.id + '">' +
-        (w.img ? '<img class="case__thumb" src="assets/work/' + w.img + '.webp" alt="" loading="lazy" onload="this.classList.add(\'is-loaded\')" onerror="this.remove()">' : '') +
+        (w.img ? '<img class="case__thumb" src="' + ROOT + 'assets/work/' + w.img + '.webp" alt="" loading="lazy" onload="this.classList.add(\'is-loaded\')" onerror="this.remove()">' : '') +
         '<h3 class="display">' + esc(w.name) + '</h3><p class="case__meta">' + esc(w.sector[lang]) + '</p>' +
         '<p class="case__what">' + esc(w.what[lang]) + '</p>' +
         block(L.caseTech, w.tech) + block(L.caseResult, w.result) + block(L.caseAdvice, w.advice) +
@@ -242,6 +337,12 @@
       panelTitle.textContent = L.aboutTitle;
       return '<p class="lead">' + L.aboutLead + '</p>' + L.about.map((p) => '<p>' + p + '</p>').join('') +
         '<dl class="facts">' + L.facts.map((f) => '<dt>' + f[0] + '</dt><dd>' + f[1] + '</dd>').join('') + '</dl>';
+    }
+    if (name === 'process') {
+      panelTitle.textContent = PROCESS.title[lang];
+      return '<p class="lead">' + esc(PROCESS.lead[lang]) + '</p><ol class="steps">' + PROCESS.steps.map((st) =>
+        '<li class="step"><h3 class="display">' + esc(st.t[lang]) + '</h3><p>' + esc(st.d[lang]) + '</p></li>').join('') + '</ol>' +
+        '<p class="contact__note">' + L.contactBrief + ' <button type="button" class="link" data-open="brief">' + L['nav.brief'] + '</button></p>';
     }
     if (name === 'brief') {
       panelTitle.textContent = L['nav.brief'];
@@ -413,8 +514,9 @@
     F.tx = F.ox - wx; F.ty = F.oy - wy; F.vx = F.vy = 0;
     F.focus = tile; F.zooming = true; hideHint(); dock(true);      // logo do gory: po powrocie kafelek zostaje na srodku, nie pod znakiem
     hero.classList.add('is-quiet');
-    if (reduced || !window.gsap) { F.zoom = 1; F.dirty = true; F.zooming = false; openFromTile(tile.it); return; }
-    gsap.to(F, { zoom: 1, duration: .9, ease: 'power3.inOut', overwrite: 'auto',
+    if (reduced || !window.gsap) { F.zoom = 1; F.map = 0; F.dirty = true; F.zooming = false; openFromTile(tile.it); return; }
+    document.body.classList.remove('is-map');
+    gsap.to(F, { zoom: 1, map: 0, duration: .9, ease: 'power3.inOut', overwrite: 'auto',
       onUpdate: () => { F.dirty = true; },
       onComplete: () => { F.zooming = false; openFromTile(tile.it); } });
   }
@@ -427,6 +529,7 @@
       onComplete: () => { F.focus = null; F.zooming = false; F.dirty = true; } });
   }
   function openFromTile(it) {
+    if (it.kind === 'live') { if (it.live === 'now') openPanel('contact'); else openPanel('work', 'case-kiodem'); return; }
     if (it.kind === 'work') openPanel('work', 'case-' + it.data.id);
     else if (it.kind === 'area') openPanel(it.data.to, it.data.anchor || null);
     else openPanel(it.to || 'about');
@@ -455,7 +558,7 @@
   panel.addEventListener('click', (e) => { if (e.target === panel) closePanel(); });
   $('#home').addEventListener('click', () => { closePanel(); F.tx = F.ty = 0; dock(false); });
   function route() {
-    const m = location.hash.match(/^#(work|services|about|contact|brief)(?:\/([\w-]+))?/);
+    const m = location.hash.match(/^#(work|services|about|contact|brief|process)(?:\/([\w-]+))?/);
     if (!m) return;
     openPanel(m[1], m[2] ? (m[1] === 'work' ? 'case-' : 'service-') + m[2] : null, false);
   }
@@ -584,6 +687,8 @@
     assembleDock(dockShown);
     document.querySelectorAll('.lang__btn').forEach((b) => b.setAttribute('aria-pressed', b.dataset.lang === lang ? 'true' : 'false'));
     $('#panel-close').setAttribute('aria-label', t('close'));
+    if (META[lang]) { document.title = META[lang].title; const md = document.querySelector('meta[name="description"]'); if (md) md.content = META[lang].description; }
+    naviBtn.textContent = CURSOR.map[lang]; naviBtn.setAttribute('aria-label', CURSOR.map[lang]);
     build();
     if (current) { panelBody.innerHTML = renderPanel(current); panelBody.querySelectorAll('figure.chart').forEach(renderChart); if (current === 'brief') Brief.start(); flowIn([...panelBody.children]); }
   }
@@ -604,8 +709,10 @@
       return;
     }
 
-    const last = GREETING_BY_LANG[lang] || 'Welcome';
-    const seq = GREETINGS.filter((g) => g !== last).concat([last]);   // zawsze pelna lista, jezyk uzytkownika na koncu
+    const plain = GREETING_BY_LANG[lang] || 'Welcome';
+    const hour = new Date().getHours(), tod = hour < 12 ? 'morning' : hour >= 18 ? 'evening' : null;
+    const last = tod && GREETING_TIME[lang] ? GREETING_TIME[lang][tod] : plain;   // rano i wieczorem powitanie wg pory dnia
+    const seq = GREETINGS.filter((g) => g !== plain && g !== last).concat([last]);   // zawsze pelna lista, jezyk uzytkownika na koncu
     const STEP = 0.3, ROLL = 0.18;                                      // sekundy na slowo i na przewiniecie rolki (23 IX: wolniej na prosbe Michala)
     strip.innerHTML = seq.map((g) => '<span>' + esc(g) + '</span>').join('');
     const rowH = strip.firstElementChild.getBoundingClientRect().height;
@@ -662,7 +769,39 @@
     tl.call(finish, null, 'field+=1');
   }
 
+  /* ─── kursor z etykieta i magnetyczne przyciski (tylko wskaznik precyzyjny) ── */
+  if (!coarse && !reduced && window.gsap) {
+    const cur = document.createElement('div');
+    cur.className = 'cursor'; cur.innerHTML = '<span class="cursor__dot"></span><span class="cursor__label"></span>';
+    document.body.appendChild(cur);
+    document.body.classList.add('has-cursor');
+    const lab = cur.querySelector('.cursor__label');
+    const cx = gsap.quickTo(cur, 'x', { duration: .18, ease: 'power3.out' }), cy = gsap.quickTo(cur, 'y', { duration: .18, ease: 'power3.out' });
+    let state = '';
+    const setState = (s, text) => { if (s === state) return; state = s; cur.dataset.state = s; if (text) lab.textContent = text; };
+    const magnets = [...document.querySelectorAll('.dock__btn'), $('#home')];
+    document.addEventListener('pointermove', (e) => {
+      cx(e.clientX); cy(e.clientY);
+      const t = e.target;
+      if (panel.classList.contains('is-open')) setState('off');
+      else if (t.closest('.tile')) setState('open', CURSOR.open[lang]);
+      else if (t.closest('.top, .dock, .navi')) setState('ui');
+      else if (t.closest('.viewport')) setState(F.dragging ? 'grab' : 'drag', CURSOR.drag[lang]);
+      else setState('off');
+      // magnes: przycisk w promieniu 56 px lekko idzie za kursorem
+      for (const b of magnets) {
+        const r = b.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+        const near = Math.hypot(dx, dy) < 56;
+        gsap.to(b, { x: near ? dx * 0.32 : 0, y: near ? dy * 0.32 : 0, duration: near ? .25 : .5, ease: 'power3.out', overwrite: 'auto' });
+      }
+    }, { passive: true });
+    document.addEventListener('pointerleave', () => setState('off'));
+    viewport.addEventListener('pointerdown', () => { if (state === 'drag') setState('grab'); });
+    viewport.addEventListener('pointerup', () => { if (state === 'grab') setState('drag', CURSOR.drag[lang]); });
+  }
+
   /* ─── start ────────────────────────────────────────────────────────────── */
+  F.lastInput = performance.now();
   applyLang(lang);
   requestAnimationFrame(frame);
   loader();

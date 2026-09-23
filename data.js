@@ -481,6 +481,78 @@ window.KIODEM_DATA = (function () {
   var GREETING_BY_LANG = { en: "Welcome", pl: "Witamy", de: "Willkommen", fr: "Bienvenue", es: "Bienvenido" };
   var LOCALES = { en: "en-GB", pl: "pl-PL", de: "de-DE", fr: "fr-FR", es: "es-ES" };
 
+
+  /* 23 IX 2026: proces, kafelki "Teraz" i "Ta strona", kursor, powitanie wg pory dnia, meta per jezyk. */
+  var PROCESS = {
+    title: { en: "How I work", pl: "Jak pracuję", de: "So arbeite ich", fr: "Ma façon de travailler", es: "Cómo trabajo" },
+    tile: { en: "Four steps, no surprises between them", pl: "Cztery kroki, bez niespodzianek po drodze", de: "Vier Schritte, ohne Überraschungen dazwischen", fr: "Quatre étapes, sans surprise entre elles", es: "Cuatro pasos, sin sorpresas entre medias" },
+    lead: { en: "Every project runs the same way, whether it is a page, a shop integration or an ads account. You always know which step we are on.",
+            pl: "Każdy projekt idzie tą samą drogą, czy to strona, integracja sklepu, czy konto reklamowe. Zawsze wiesz, na którym kroku jesteśmy.",
+            de: "Jedes Projekt läuft gleich ab, ob Website, Shop-Anbindung oder Anzeigenkonto. Sie wissen immer, an welchem Schritt wir sind.",
+            fr: "Chaque projet suit le même chemin, qu'il s'agisse d'un site, d'une intégration de boutique ou d'un compte publicitaire. Vous savez toujours à quelle étape nous en sommes.",
+            es: "Cada proyecto sigue el mismo camino, sea una web, una integración de tienda o una cuenta de anuncios. Siempre sabes en qué paso estamos." },
+    steps: [
+      { t: { en: "Route check", pl: "Sprawdzenie ścieżki", de: "Prüfung des Wegs", fr: "Vérification du parcours", es: "Revisión del recorrido" },
+        d: { en: "You send the address of your site. Within two working days you get one page: how a customer gets from a search to an enquiry and where that route breaks. No cost, no commitment.",
+             pl: "Wysyłasz adres strony. W dwa dni robocze dostajesz jedną stronę: jak klient idzie od wyszukiwania do zapytania i gdzie ta droga się urywa. Bez kosztu i bez zobowiązań.",
+             de: "Sie schicken die Adresse Ihrer Website. Innerhalb von zwei Werktagen bekommen Sie eine Seite: wie ein Kunde von der Suche zur Anfrage kommt und wo dieser Weg abreißt. Kostenlos und unverbindlich.",
+             fr: "Vous envoyez l'adresse de votre site. Sous deux jours ouvrés, vous recevez une page : comment un client passe de la recherche à la demande, et où ce parcours se casse. Sans frais ni engagement.",
+             es: "Envías la dirección de tu web. En dos días laborables recibes una página: cómo un cliente pasa de la búsqueda a la consulta y dónde se rompe ese camino. Sin coste ni compromiso." } },
+      { t: { en: "Scope and price", pl: "Zakres i cena", de: "Umfang und Preis", fr: "Périmètre et prix", es: "Alcance y precio" },
+        d: { en: "One list of what I will do, in plain words, with a price for the whole job or per month. Nothing starts before your yes.",
+             pl: "Jedna lista tego, co zrobię, zwykłym językiem, z ceną za całość albo za miesiąc. Nic nie zaczyna się przed Twoim tak.",
+             de: "Eine Liste dessen, was ich tue, in klaren Worten, mit einem Preis für das Ganze oder pro Monat. Nichts beginnt vor Ihrem Ja.",
+             fr: "Une liste de ce que je ferai, en termes simples, avec un prix pour l'ensemble ou par mois. Rien ne commence avant votre accord.",
+             es: "Una lista de lo que haré, en lenguaje llano, con un precio por el conjunto o por mes. Nada empieza antes de tu sí." } },
+      { t: { en: "The build", pl: "Wdrożenie", de: "Umsetzung", fr: "Réalisation", es: "Ejecución" },
+        d: { en: "I do the work myself: code, data, accounts, measurement. Accounts and domains are set up in your name, so nothing ties you to me later.",
+             pl: "Robię to sam: kod, dane, konta, pomiar. Konta i domeny są na Ciebie, więc nic Cię później ze mną nie wiąże.",
+             de: "Ich mache die Arbeit selbst: Code, Daten, Konten, Messung. Konten und Domains laufen auf Ihren Namen, damit Sie später an nichts gebunden sind.",
+             fr: "Je fais le travail moi-même : code, données, comptes, mesure. Les comptes et domaines sont à votre nom, rien ne vous lie à moi ensuite.",
+             es: "Hago el trabajo yo mismo: código, datos, cuentas, medición. Las cuentas y dominios van a tu nombre, así que nada te ata a mí después." } },
+      { t: { en: "Measured after a month", pl: "Pomiar po miesiącu", de: "Messung nach einem Monat", fr: "Mesure après un mois", es: "Medición al mes" },
+        d: { en: "After a month we compare enquiries and sales with what was there before. If the numbers do not move, I say so first.",
+             pl: "Po miesiącu porównujemy zapytania i sprzedaż z tym, co było wcześniej. Jeśli liczby nie idą, mówię to pierwszy.",
+             de: "Nach einem Monat vergleichen wir Anfragen und Verkäufe mit dem Stand davor. Wenn sich die Zahlen nicht bewegen, sage ich es als Erster.",
+             fr: "Après un mois, nous comparons demandes et ventes avec l'état d'avant. Si les chiffres ne bougent pas, je suis le premier à le dire.",
+             es: "Al mes comparamos consultas y ventas con lo que había antes. Si los números no se mueven, soy el primero en decirlo." } }
+    ]
+  };
+
+  var LIVE = {
+    now: { title: { en: "Now", pl: "Teraz", de: "Jetzt", fr: "Maintenant", es: "Ahora" },
+           time: { en: "It is {time} in Gliwice", pl: "W Gliwicach jest {time}", de: "In Gliwice ist es {time}", fr: "Il est {time} à Gliwice", es: "Son las {time} en Gliwice" },
+           reply: { en: "I reply within one working day", pl: "Odpowiadam w ciągu dnia roboczego", de: "Antwort innerhalb eines Werktags", fr: "Réponse sous un jour ouvré", es: "Respondo en un día laborable" },
+           // wolne terminy: null = linia ukryta; wpisz np. { en: "Free from November", pl: "Wolne terminy od listopada", ... }
+           available: null },
+    site: { title: { en: "This site", pl: "Ta strona", de: "Diese Seite", fr: "Ce site", es: "Esta web" },
+            facts: { en: "{files} files, one library, no plugins, no cookies", pl: "{files} pliki, jedna biblioteka, zero wtyczek, zero ciasteczek", de: "{files} Dateien, eine Bibliothek, keine Plugins, keine Cookies", fr: "{files} fichiers, une bibliothèque, zéro extension, zéro cookie", es: "{files} archivos, una biblioteca, cero plugins, cero cookies" },
+            psi: { en: "PageSpeed {m} mobile, {d} desktop, measured {date}", pl: "PageSpeed {m} mobile, {d} desktop, pomiar {date}", de: "PageSpeed {m} mobil, {d} Desktop, gemessen {date}", fr: "PageSpeed {m} mobile, {d} bureau, mesuré le {date}", es: "PageSpeed {m} móvil, {d} escritorio, medido {date}" },
+            files: 4 }
+  };
+
+  var CURSOR = {
+    open: { en: "Open", pl: "Otwórz", de: "Öffnen", fr: "Ouvrir", es: "Abrir" },
+    drag: { en: "Drag", pl: "Przeciągnij", de: "Ziehen", fr: "Glisser", es: "Arrastra" },
+    close: { en: "Close", pl: "Zamknij", de: "Schließen", fr: "Fermer", es: "Cerrar" },
+    map: { en: "Map", pl: "Mapa", de: "Karte", fr: "Carte", es: "Mapa" }
+  };
+
+  var GREETING_TIME = {
+    en: { morning: "Good morning", evening: "Good evening" }, pl: { morning: "Dzień dobry", evening: "Dobry wieczór" },
+    de: { morning: "Guten Morgen", evening: "Guten Abend" }, fr: { morning: "Bonjour", evening: "Bonsoir" },
+    es: { morning: "Buenos días", evening: "Buenas noches" }
+  };
+
+  var META = {
+    en: { title: "KIODEM: websites, automation and Google Ads for independent businesses", description: "One person does the work you talk to. Hand-written websites, WordPress and WooCommerce, Python integrations for shops, GA4 and Tag Manager, Google Ads judged by enquiries. Michał Smoliński, Gliwice, Poland." },
+    pl: { title: "KIODEM: strony, automatyzacje i Google Ads dla niezależnych firm", description: "Robotę robi ta sama osoba, z którą rozmawiasz. Strony pisane ręcznie, WordPress i WooCommerce, integracje w Pythonie dla sklepów, GA4 i Tag Manager, Google Ads oceniane po zapytaniach. Michał Smoliński, Gliwice." },
+    de: { title: "KIODEM: Websites, Automatisierung und Google Ads für unabhängige Unternehmen", description: "Die Person, mit der Sie sprechen, macht die Arbeit. Handgeschriebene Websites, WordPress und WooCommerce, Python-Anbindungen für Shops, GA4 und Tag Manager, Google Ads nach Anfragen bewertet. Michał Smoliński, Gliwice, Polen." },
+    fr: { title: "KIODEM : sites web, automatisation et Google Ads pour les entreprises indépendantes", description: "La personne à qui vous parlez fait le travail. Sites écrits à la main, WordPress et WooCommerce, intégrations Python pour boutiques, GA4 et Tag Manager, Google Ads jugés sur les demandes. Michał Smoliński, Gliwice, Pologne." },
+    es: { title: "KIODEM: webs, automatización y Google Ads para negocios independientes", description: "La persona con la que hablas hace el trabajo. Webs escritas a mano, WordPress y WooCommerce, integraciones en Python para tiendas, GA4 y Tag Manager, Google Ads juzgados por consultas. Michał Smoliński, Gliwice, Polonia." }
+  };
+
   return { LANGS: LANGS, I18N: I18N, WORK: WORK, SERVICES: SERVICES, AREAS: AREAS, CHARTS: CHARTS,
-           GREETINGS: GREETINGS, GREETING_BY_LANG: GREETING_BY_LANG, LOCALES: LOCALES };
+           GREETINGS: GREETINGS, GREETING_BY_LANG: GREETING_BY_LANG, LOCALES: LOCALES,
+           PROCESS: PROCESS, LIVE: LIVE, CURSOR: CURSOR, GREETING_TIME: GREETING_TIME, META: META };
 })();
