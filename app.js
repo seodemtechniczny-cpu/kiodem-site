@@ -710,8 +710,8 @@
     }
 
     const plain = GREETING_BY_LANG[lang] || 'Welcome';
-    const hour = new Date().getHours(), tod = hour < 12 ? 'morning' : hour >= 18 ? 'evening' : null;
-    const last = tod && GREETING_TIME[lang] ? GREETING_TIME[lang][tod] : plain;   // rano i wieczorem powitanie wg pory dnia
+    const hour = new Date().getHours(), tod = hour < 5 || hour >= 18 ? 'evening' : hour < 12 ? 'morning' : 'afternoon';
+    const last = (GREETING_TIME[lang] && GREETING_TIME[lang][tod]) || plain;      // ostatnie powitanie wg pory dnia odbiorcy
     const seq = GREETINGS.filter((g) => g !== plain && g !== last).concat([last]);   // zawsze pelna lista, jezyk uzytkownika na koncu
     const STEP = 0.3, ROLL = 0.18;                                      // sekundy na slowo i na przewiniecie rolki (23 IX: wolniej na prosbe Michala)
     strip.innerHTML = seq.map((g) => '<span>' + esc(g) + '</span>').join('');

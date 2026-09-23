@@ -538,10 +538,13 @@ window.KIODEM_DATA = (function () {
     map: { en: "Map", pl: "Mapa", de: "Karte", fr: "Carte", es: "Mapa" }
   };
 
+  // powitanie wg pory dnia odbiorcy (godzina z jego przegladarki): 5-12 rano, 12-18 po poludniu, 18-5 wieczor
   var GREETING_TIME = {
-    en: { morning: "Good morning", evening: "Good evening" }, pl: { morning: "Dzień dobry", evening: "Dobry wieczór" },
-    de: { morning: "Guten Morgen", evening: "Guten Abend" }, fr: { morning: "Bonjour", evening: "Bonsoir" },
-    es: { morning: "Buenos días", evening: "Buenas noches" }
+    en: { morning: "Good morning", afternoon: "Good afternoon", evening: "Good evening" },
+    pl: { morning: "Dzień dobry", afternoon: "Dzień dobry", evening: "Dobry wieczór" },
+    de: { morning: "Guten Morgen", afternoon: "Guten Tag", evening: "Guten Abend" },
+    fr: { morning: "Bonjour", afternoon: "Bonjour", evening: "Bonsoir" },
+    es: { morning: "Buenos días", afternoon: "Buenas tardes", evening: "Buenas noches" }
   };
 
   var META = {

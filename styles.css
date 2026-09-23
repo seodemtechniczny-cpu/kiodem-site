@@ -435,9 +435,11 @@ textarea.input { resize: vertical; min-height: 72px; line-height: 1.4; }
 .tile__peek img { flex: 1 1 0; min-width: 0; height: 100%; object-fit: cover; object-position: top; border: 1px solid rgba(8, 10, 15, .18); }
 .tile--section:hover .tile__peek, .tile--section:focus-visible .tile__peek { opacity: 1; transform: none; }
 
-.cursor { position: fixed; left: 0; top: 0; z-index: 90; pointer-events: none; opacity: 1; transition: opacity .2s; will-change: transform; }
-.cursor__dot { position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; border-radius: 50%; background: var(--ivory); transition: transform .25s var(--ease-out), opacity .25s; }
-.cursor__label { position: absolute; left: 14px; top: -11px; font-size: 11.5px; font-weight: 500; letter-spacing: .04em; padding: 4px 8px; background: var(--ivory); color: var(--obsidian); border-radius: 2px; white-space: nowrap; opacity: 0; transform: translateX(-4px); transition: opacity .2s, transform .2s var(--ease-out); }
+/* kursor: biala kropka i bialy napis bez tla; mix-blend-mode: difference odwraca kolor nad jasnym
+   kafelkiem (kosc sloniowa -> prawie czern), wiec etykieta jest czytelna na kazdym tle */
+.cursor { position: fixed; left: 0; top: 0; z-index: 90; pointer-events: none; opacity: 1; transition: opacity .2s; will-change: transform; mix-blend-mode: difference; color: #fff; }
+.cursor__dot { position: absolute; left: -4px; top: -4px; width: 8px; height: 8px; border-radius: 50%; background: #fff; transition: transform .25s var(--ease-out), opacity .25s; }
+.cursor__label { position: absolute; left: 14px; top: -9px; font-size: 13px; font-weight: 500; letter-spacing: .02em; color: #fff; white-space: nowrap; opacity: 0; transform: translateX(-4px); transition: opacity .2s, transform .2s var(--ease-out); }
 .cursor[data-state="open"] .cursor__label, .cursor[data-state="drag"] .cursor__label { opacity: 1; transform: none; }
 .cursor[data-state="open"] .cursor__dot { transform: scale(1.6); }
 .cursor[data-state="grab"] .cursor__dot { transform: scale(2.2); opacity: .7; }
