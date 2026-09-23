@@ -564,7 +564,6 @@
   function loader() {
     const root = $('#loader'), word = $('#loader-word'), mark = $('#loader-mark'), wm = $('#loader-wordmark');
     const lineBox = root.querySelector('.loader__line'), line = $('#loader-line');
-    let seen = false; try { seen = sessionStorage.getItem('kiodem-seen') === '1'; sessionStorage.setItem('kiodem-seen', '1'); } catch (e) {}
     const finish = () => { root.classList.add('is-done'); hero.style.opacity = ''; };
     const showDock = () => { if (dockShown) return; dockShown = true; assembleDock(true); };
     hero.style.opacity = '0';
@@ -577,7 +576,8 @@
     }
 
     const last = GREETING_BY_LANG[lang] || 'Welcome';
-    const seq = seen ? [] : GREETINGS.filter((g) => g !== last).concat([last]);
+    const seq = GREETINGS.filter((g) => g !== last).concat([last]);   // zawsze pelna lista, jezyk uzytkownika na koncu
+    const STEP = 0.17;                                                  // sekundy na jedno powitanie
     const flyIn = () => {
       F.entering = true; build(); F.tiles.forEach((x) => { x.enter = 1; });
       const far = Math.max(...F.tiles.map((x) => x.d0)) || 1;
@@ -590,14 +590,10 @@
     const sweep = { v: 0 };
 
     // cienka linia rosnie od lewej do prawej w rytmie powitan; gdy dochodzi do konca, powitania gasna
-    const span = seq.length ? seq.length * 0.13 + 0.45 : 0.6;
+    const span = seq.length * STEP + 0.45;
     tl.to(line, { scaleX: 1, duration: span, ease: 'power1.inOut' }, 0);
-    if (seq.length) {
-      seq.forEach((g, i) => tl.call(() => { word.textContent = g; }, null, i * 0.13));
-      tl.to(word, { opacity: 0, y: -10, duration: .35, ease: 'power2.in' }, span);
-    } else {
-      tl.set(word, { opacity: 0 });
-    }
+    seq.forEach((g, i) => tl.call(() => { word.textContent = g; }, null, i * STEP));
+    tl.to(word, { opacity: 0, y: -10, duration: .35, ease: 'power2.in' }, span);
     // znak odslania sie od lewej do prawej, jakby linia go rysowala, a sama linia gasnie
     tl.add('mark', span + 0.1);
     tl.set(mark, { opacity: 1 }, 'mark');
