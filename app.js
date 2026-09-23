@@ -28,7 +28,8 @@
   const F = { ox: 0, oy: 0, tx: 0, ty: 0, vx: 0, vy: 0, rx: 0, ry: 0, prx: 0, pry: 0,
               cw: 224, ch: 168, cols: 0, rows: 0, W: 0, H: 0, tiles: [], dragging: false, moved: false,
               lastX: 0, lastY: 0, lastT: 0, idle: 0, entering: false, dirty: true,
-              paused: false, dock: 0, docked: false };
+              paused: false, dock: 0, docked: false,
+              zoom: 0, focus: null, zooming: false };         // najazd kamery na klikniety kafelek
 
   const hash = (a, b) => { let h = (a * 73856093) ^ (b * 19349663); h = (h ^ (h >>> 13)) * 1274126177; return ((h ^ (h >>> 16)) >>> 0) / 4294967295; };
   const lerp = (a, b, k) => a + (b - a) * k;
@@ -88,7 +89,7 @@
       tile.d0 = Math.hypot(wrap(tile.px, F.W) + jx, wrap(tile.py, F.H) + jy);
       el.addEventListener('pointerenter', () => { tile.hover = 1; renderTile(tile); });
       el.addEventListener('pointerleave', () => { tile.hover = 0; renderTile(tile); });
-      el.addEventListener('click', (e) => { if (F.moved) { e.preventDefault(); return; } openFromTile(it); });
+      el.addEventListener('click', (e) => { if (F.moved) { e.preventDefault(); return; } zoomToTile(tile); });
       field.appendChild(el);
       F.tiles.push(tile);
     }
@@ -100,9 +101,9 @@
   function centreFade(cx, cy) {
     const r = Math.hypot(cx / (F.W > 1200 ? 1.35 : 1.1), cy);
     const d = F.dock;                                   // 0 = logo w srodku, 1 = logo u gory
-    const lo = F.cw * (1.3 - 1.1 * d), hi = F.cw * (2.5 - 1.8 * d);
+    const lo = F.cw * 0.7, hi = F.cw * 1.1;              // ciemno tylko pod samym znakiem
     const k = clamp((r - lo) / (hi - lo), 0, 1);
-    return k * k * (3 - 2 * k);
+    return Math.max(d, k * k * (3 - 2 * k));             // logo zadokowane u gory = zadnego ciemnego srodka
   }
   function renderTile(tl) {
     const wx = wrap(tl.px + F.ox, F.W) + tl.jx, wy = wrap(tl.py + F.oy, F.H) + tl.jy;
@@ -111,13 +112,17 @@
     const sx = wx * 1.6 + Math.sign(wx || 1) * innerWidth * 0.6;
     const sy = wy * 1.6 + Math.sign(wy || 1) * innerHeight * 0.6;
     const x = lerp(wx, sx, e) - tl.w / 2, y = lerp(wy, sy, e) - tl.h / 2;
-    const z = tl.z + (tl.hover ? 46 : 0) - 520 * e;
+    const zk = F.zoom, focused = F.focus === tl;
+    const z = tl.z + (tl.hover ? 46 : 0) - 520 * e + (focused ? 160 * zk : 0);
     const s = tl.hover ? 1.04 : 1;
-    tl.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,' + z.toFixed(1) + 'px) rotateZ(' + tl.rot.toFixed(2) + 'deg) scale(' + s + ')';
-    const fade = Math.round((0.03 + 0.97 * centreFade(wx, wy)) * tl.base * (1 - tl.enter) * 100) / 100;
+    const rot = focused ? tl.rot * (1 - zk) : tl.rot;                 // klikniety kafelek prostuje sie do kamery
+    tl.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,' + z.toFixed(1) + 'px) rotateZ(' + rot.toFixed(2) + 'deg) scale(' + s + ')';
+    let fade = (0.03 + 0.97 * centreFade(wx, wy)) * tl.base * (1 - tl.enter);
+    if (zk > 0) fade = focused ? lerp(fade, 1, Math.min(1, zk * 3)) : fade * (1 - zk);   // fokus jasny mimo srodka, reszta gasnie
+    fade = Math.round(fade * 100) / 100;
     if (fade !== tl.lastFade) {                          // zapis stylu tylko gdy wartosc sie zmienia
       tl.el.style.opacity = fade;
-      const pe = fade < 0.35 ? 'none' : '';
+      const pe = fade < 0.15 ? 'none' : '';                // tylko naprawde zgaszone kafelki nie lapia klikniec
       if (pe !== tl.lastPe) { tl.el.style.pointerEvents = pe; tl.lastPe = pe; }
       tl.lastFade = fade;
     }
@@ -139,18 +144,19 @@
     const tRx = clamp(-dy * 0.06, -9, 9), tRy = clamp(dx * 0.06, -9, 9);
     F.rx = lerp(F.rx, tRx, 0.08); F.ry = lerp(F.ry, tRy, 0.08);
     const breath = reduced ? 0 : Math.sin(now / 2600) * 1.2;
-    field.style.transform = 'rotateX(' + (F.rx + F.prx + breath).toFixed(3) + 'deg) rotateY(' + (F.ry + F.pry).toFixed(3) + 'deg)';
+    field.style.transform = 'translateZ(' + (F.zoom * 560).toFixed(1) + 'px) rotateX(' + ((F.rx + F.prx + breath) * (1 - F.zoom)).toFixed(3) + 'deg) rotateY(' + ((F.ry + F.pry) * (1 - F.zoom)).toFixed(3) + 'deg)';
     if (moving || F.dirty || F.entering) { for (const tl of F.tiles) renderTile(tl); F.dirty = false; }
     requestAnimationFrame(frame);
   }
 
   /* wejscie: przeciaganie, kolko, dotyk, klawiatura */
   viewport.addEventListener('pointerdown', (e) => {
-    if (e.button !== 0 || e.target.closest('.tile') && false) return;
+    if (e.button !== 0 || F.zooming) return;
     F.dragging = true; F.moved = false; F.vx = F.vy = 0;
     F.lastX = e.clientX; F.lastY = e.clientY; F.lastT = performance.now();
     viewport.classList.add('is-dragging');
-    viewport.setPointerCapture(e.pointerId);
+    // wskaznik przechwytujemy dopiero gdy zaczyna sie przeciaganie: przechwycony od razu
+    // przekierowuje click na viewport i kafelki przestaja byc klikalne
   });
   viewport.addEventListener('pointermove', (e) => {
     if (F.dragging) {
@@ -158,7 +164,7 @@
       const dt = Math.max(1, now - F.lastT);
       F.tx += dx; F.ty += dy;
       F.vx = lerp(F.vx, dx / dt * 14, 0.5); F.vy = lerp(F.vy, dy / dt * 14, 0.5);
-      if (Math.abs(dx) + Math.abs(dy) > 2) { F.moved = true; hideHint(); dock(true); }
+      if (Math.abs(dx) + Math.abs(dy) > 2 && !F.moved) { F.moved = true; hideHint(); dock(true); try { viewport.setPointerCapture(e.pointerId); } catch (x) {} }
       F.lastX = e.clientX; F.lastY = e.clientY; F.lastT = now;
     } else if (!coarse) {                                 // kamera lekko za kursorem
       F.pry = (e.clientX / innerWidth - .5) * 5; F.prx = -(e.clientY / innerHeight - .5) * 5;
@@ -390,12 +396,35 @@
     if (!current) return;
     current = null;
     F.paused = false; F.dirty = true; viewport.classList.remove('is-blurred');
+    zoomOut();
     panel.classList.remove('is-open');
     panel.setAttribute('aria-hidden', 'true');
     hero.classList.remove('is-quiet');
     document.querySelectorAll('.dock__btn').forEach((b) => b.setAttribute('aria-current', 'false'));
     history.replaceState(null, '', location.pathname);
     if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll: true });
+  }
+  /* Klik w kafelek: pole najpierw dojezdza tak, zeby kafelek stanal na srodku, kamera najezdza
+     na niego (translateZ pola + kafelek do przodu), reszta pola gasnie - i dopiero wtedy otwiera sie
+     sekcja. Zamkniecie panelu odjezdza kamera z powrotem. */
+  function zoomToTile(tile) {
+    if (F.zooming || current) return;
+    const wx = wrap(tile.px + F.ox, F.W) + tile.jx, wy = wrap(tile.py + F.oy, F.H) + tile.jy;
+    F.tx = F.ox - wx; F.ty = F.oy - wy; F.vx = F.vy = 0;
+    F.focus = tile; F.zooming = true; hideHint(); dock(true);      // logo do gory: po powrocie kafelek zostaje na srodku, nie pod znakiem
+    hero.classList.add('is-quiet');
+    if (reduced || !window.gsap) { F.zoom = 1; F.dirty = true; F.zooming = false; openFromTile(tile.it); return; }
+    gsap.to(F, { zoom: 1, duration: .9, ease: 'power3.inOut', overwrite: 'auto',
+      onUpdate: () => { F.dirty = true; },
+      onComplete: () => { F.zooming = false; openFromTile(tile.it); } });
+  }
+  function zoomOut() {
+    if (!F.focus) return;
+    if (reduced || !window.gsap) { F.zoom = 0; F.focus = null; F.dirty = true; return; }
+    F.zooming = true;
+    gsap.to(F, { zoom: 0, duration: .8, ease: 'power3.inOut', overwrite: 'auto',
+      onUpdate: () => { F.dirty = true; },
+      onComplete: () => { F.focus = null; F.zooming = false; F.dirty = true; } });
   }
   function openFromTile(it) {
     if (it.kind === 'work') openPanel('work', 'case-' + it.data.id);
@@ -562,7 +591,7 @@
 
   /* ─── loader: powitania, pierscien, znak, logotyp, wejscie pola ────────── */
   function loader() {
-    const root = $('#loader'), word = $('#loader-word'), mark = $('#loader-mark'), wm = $('#loader-wordmark');
+    const root = $('#loader'), word = $('#loader-word'), strip = $('#loader-strip'), mark = $('#loader-mark'), wm = $('#loader-wordmark');
     const lineBox = root.querySelector('.loader__line'), line = $('#loader-line');
     const finish = () => { root.classList.add('is-done'); hero.style.opacity = ''; };
     const showDock = () => { if (dockShown) return; dockShown = true; assembleDock(true); };
@@ -577,7 +606,9 @@
 
     const last = GREETING_BY_LANG[lang] || 'Welcome';
     const seq = GREETINGS.filter((g) => g !== last).concat([last]);   // zawsze pelna lista, jezyk uzytkownika na koncu
-    const STEP = 0.17;                                                  // sekundy na jedno powitanie
+    const STEP = 0.2, ROLL = 0.12;                                      // sekundy na slowo i na przewiniecie rolki
+    strip.innerHTML = seq.map((g) => '<span>' + esc(g) + '</span>').join('');
+    const rowH = strip.firstElementChild.getBoundingClientRect().height;
     const flyIn = () => {
       F.entering = true; build(); F.tiles.forEach((x) => { x.enter = 1; });
       const far = Math.max(...F.tiles.map((x) => x.d0)) || 1;
@@ -592,7 +623,8 @@
     // cienka linia rosnie od lewej do prawej w rytmie powitan; gdy dochodzi do konca, powitania gasna
     const span = seq.length * STEP + 0.45;
     tl.to(line, { scaleX: 1, duration: span, ease: 'power1.inOut' }, 0);
-    seq.forEach((g, i) => tl.call(() => { word.textContent = g; }, null, i * STEP));
+    // rolka: pasek slow przewija sie o jeden wiersz w gore, jak licznik; kazde slowo chwile stoi
+    for (let i = 1; i < seq.length; i++) tl.to(strip, { y: -i * rowH, duration: ROLL, ease: 'power2.inOut' }, i * STEP - ROLL);
     tl.to(word, { opacity: 0, y: -10, duration: .35, ease: 'power2.in' }, span);
     // znak odslania sie od lewej do prawej, jakby linia go rysowala, a sama linia gasnie
     tl.add('mark', span + 0.1);

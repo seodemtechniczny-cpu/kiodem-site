@@ -76,9 +76,11 @@ a { color: inherit; }
 }
 .loader__word {
   font-weight: 600; letter-spacing: -.03em;
-  font-size: clamp(26px, 4.4vw, 42px); line-height: 1;
+  font-size: clamp(26px, 4.4vw, 42px); line-height: 1.2;
   white-space: nowrap;
+  height: 1.2em; overflow: hidden;                 /* maska rolki: widac jedno slowo naraz */
 }
+.loader__strip span { display: block; height: 1.2em; line-height: 1.2em; text-align: center; }
 .loader__flip { transform-style: preserve-3d; display: grid; place-items: center; }
 .loader__mark {
   width: 118px; height: 90px; color: var(--ivory);
