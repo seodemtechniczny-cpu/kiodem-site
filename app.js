@@ -35,7 +35,8 @@
               lastX: 0, lastY: 0, lastT: 0, idle: 0, entering: false, dirty: true,
               paused: false, dock: 0, docked: false,
               zoom: 0, focus: null, zooming: false,           // najazd kamery na klikniety kafelek
-              map: 0, lastInput: 0 };                         // tryb mapy (odjazd kamery), ostatni ruch uzytkownika
+              map: 0, lastInput: 0,                          // tryb mapy (odjazd kamery), ostatni ruch uzytkownika
+              okoX: 0, okoY: 0, gleb: -1150 };                // os wjazdu w litere D i glebokosc, z ktorej nadlatuja kafelki
 
   const hash = (a, b) => { let h = (a * 73856093) ^ (b * 19349663); h = (h ^ (h >>> 13)) * 1274126177; return ((h ^ (h >>> 16)) >>> 0) / 4294967295; };
   const lerp = (a, b, k) => a + (b - a) * k;
@@ -140,13 +141,12 @@
   }
   function renderTile(tl) {
     const wx = wrap(tl.px + F.ox, F.W) + tl.jx, wy = wrap(tl.py + F.oy, F.H) + tl.jy;
-    // start lotu: ten sam kierunek co miejsce docelowe, ale poza krawedzia ekranu i glebiej
+    // start lotu: kafelki stoja gleboko, sciagniete ku osi wjazdu w litere D,
+    // i nadlatuja na swoje miejsca, gdy kamera przechodzi przez misę znaku
     const e = tl.enter;
-    const sx = wx * 1.6 + Math.sign(wx || 1) * innerWidth * 0.6;
-    const sy = wy * 1.6 + Math.sign(wy || 1) * innerHeight * 0.6;
-    const x = lerp(wx, sx, e) - tl.w / 2, y = lerp(wy, sy, e) - tl.h / 2;
+    const x = lerp(wx, F.okoX * 0.35, e) - tl.w / 2, y = lerp(wy, F.okoY * 0.35, e) - tl.h / 2;
     const zk = F.zoom, focused = F.focus === tl;
-    const z = tl.z + (tl.hover ? 46 : 0) - 520 * e + (focused ? 160 * zk : 0);
+    const z = lerp(tl.z, F.gleb, e) + (tl.hover ? 46 : 0) + (focused ? 160 * zk : 0);
     const s = tl.hover ? 1.04 : 1;
     const rot = focused ? tl.rot * (1 - zk) : tl.rot;                 // klikniety kafelek prostuje sie do kamery
     tl.el.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,' + z.toFixed(1) + 'px) rotateZ(' + rot.toFixed(2) + 'deg) scale(' + s + ')';
@@ -698,7 +698,10 @@
   function loader() {
     const root = $('#loader'), word = $('#loader-word'), strip = $('#loader-strip'), mark = $('#loader-mark'), wm = $('#loader-wordmark');
     const lineBox = root.querySelector('.loader__line'), line = $('#loader-line');
-    const finish = () => { root.classList.add('is-done'); hero.style.opacity = ''; };
+    const finish = () => {
+      root.classList.add('is-done'); hero.style.opacity = ''; viewport.style.clipPath = '';
+      [$('.top'), $('.dock'), $('.navi')].forEach((e) => { if (e) e.style.opacity = ''; });
+    };
     const showDock = () => { if (dockShown) return; dockShown = true; assembleDock(true); };
     hero.style.opacity = '0';
 
@@ -720,7 +723,7 @@
       F.entering = true; build(); F.tiles.forEach((x) => { x.enter = 1; });
       const far = Math.max(...F.tiles.map((x) => x.d0)) || 1;
       let left = F.tiles.length;
-      F.tiles.forEach((x) => gsap.to(x, { enter: 0, duration: 1.35, ease: 'expo.out', delay: (x.d0 / far) * 0.75,
+      F.tiles.forEach((x) => gsap.to(x, { enter: 0, duration: 1.25, ease: 'power2.out', delay: (x.d0 / far) * 0.9,
         onComplete: () => { if (--left === 0) { F.entering = false; F.dirty = true; } } }));
     };
     const tl = gsap.timeline();
@@ -733,40 +736,96 @@
     // rolka: pasek slow przewija sie o jeden wiersz w gore, jak licznik; kazde slowo chwile stoi
     for (let i = 1; i < seq.length; i++) tl.to(strip, { y: -i * rowH, duration: ROLL, ease: 'power2.inOut' }, i * STEP - ROLL);
     tl.to(word, { opacity: 0, y: -10, duration: .35, ease: 'power2.in' }, span);
-    // znak odslania sie od lewej do prawej, jakby linia go rysowala, a sama linia gasnie
-    tl.add('mark', span + 0.1);
-    tl.set(mark, { opacity: 1 }, 'mark');
-    tl.to(sweep, { v: 100, duration: .8, ease: 'power2.inOut', onUpdate: () => mark.style.setProperty('--sweep', sweep.v + '%') }, 'mark');
-    tl.to(lineBox, { opacity: 0, duration: .5, ease: 'power2.out' }, 'mark+=.5');
-    // obrot znaku jak monety
-    tl.to(mark, { rotationY: 360, duration: 1.05, ease: 'power3.inOut', transformPerspective: 800 }, 'mark+=.75');
-    // po obrocie znak jedzie na miejsce litery D w logotypie, a z niego rozwijaja sie K, I, O i M
+    /* ── po powitaniach: znak, z niego nazwa, wjazd w litere D ─────────────
+       Rozmycie jest zlozone z kopii logotypu w roznych skalach, a nie z filtra CSS.
+       Filtr trzeba przemalowac w kazdej klatce; zmierzone na tej scenie: piec klatek
+       powyzej 20 ms i jedna 50 ms. Kopie ida po transformacji i przezroczystosci,
+       czyli po stronie kompozytora, i daja zero klatek powyzej 20 ms. Smuga rozciagnieta
+       wzdluz kierunku ruchu to zreszta to, co naprawde robi kamera wjezdzajaca w ksztalt. */
     const L = (n) => wm.querySelector('.wm-' + n);
-    tl.add('name', 'mark+=1.85');
-    tl.set(wm, { opacity: 1, filter: 'none', scale: 1 }, 'name');
-    tl.set([L('k'), L('i'), L('o'), L('m'), L('de')], { opacity: 0 }, 'name');
-    tl.set(mark, { transformOrigin: '0 0', rotationY: 0 }, 'name');
-    // cel mierzony w chwili startu (funkcje), bo zalezy od rozmiaru okna: prostokat litery D w logotypie
-    const geo = () => { const r = L('de').getBoundingClientRect(), m = mark.getBoundingClientRect(); return { r, m }; };
-    tl.to(mark, { x: () => { const g = geo(); return g.r.left - g.m.left; }, y: () => { const g = geo(); return g.r.top - g.m.top; },
-                  scaleX: () => { const g = geo(); return g.r.height / g.m.height; }, scaleY: () => { const g = geo(); return g.r.height / g.m.height; },
-                  duration: .75, ease: 'expo.inOut', immediateRender: false }, 'name');
-    tl.to(L('de'), { opacity: 1, duration: .25 }, 'name+=.6');
-    tl.to(mark, { opacity: 0, duration: .3 }, 'name+=.7');
-    // litery wysuwaja sie spod D: O, I, K w lewo, M w prawo (jednostki viewBoxu logotypu)
-    tl.fromTo(L('o'), { x: 250, opacity: 0 }, { x: 0, opacity: 1, duration: .9, ease: 'expo.out' }, 'name+=.8');
-    tl.fromTo(L('i'), { x: 320, opacity: 0 }, { x: 0, opacity: 1, duration: .9, ease: 'expo.out' }, 'name+=.88');
-    tl.fromTo(L('k'), { x: 560, opacity: 0 }, { x: 0, opacity: 1, duration: .95, ease: 'expo.out' }, 'name+=.96');
-    tl.fromTo(L('m'), { x: -420, opacity: 0 }, { x: 0, opacity: 1, duration: .9, ease: 'expo.out' }, 'name+=.84');
-    // kafelki przylatuja spoza ekranu na swoje miejsca, kurtyna znika
-    tl.add('field', 'name+=1.5');
-    tl.call(flyIn, null, 'field');
-    tl.to(root, { backgroundColor: 'rgba(8,10,15,0)', duration: .8 }, 'field');
-    tl.set(hero, { opacity: 1 }, 'field+=.6');
-    tl.call(() => decode($('.hero__line')), null, 'field+=.6');
-    tl.to(wm, { opacity: 0, duration: .3 }, 'field+=.6');
-    tl.call(showDock, null, 'field+=.8');
-    tl.call(finish, null, 'field+=1');
+    const maly = innerWidth <= 820;
+    const SMUG = 7, SKOK = 0.042;
+    const START_SKALA = maly ? 6.5 : 12, DOJAZD = maly ? 20 : 34;
+    F.gleb = maly ? -880 : -1150;
+
+    wm.style.opacity = '1'; wm.style.filter = 'none'; wm.style.transform = 'none';
+    const wmR = wm.getBoundingClientRect(), deR = L('de').getBoundingClientRect();
+    const OKO = { x: deR.left + deR.width * 0.22, y: deR.top + deR.height * 0.5 };   // misa litery D
+    F.okoX = OKO.x - innerWidth / 2; F.okoY = OKO.y - innerHeight / 2;
+
+    const warstwa = document.createElement('div');
+    warstwa.style.cssText = 'position:fixed;inset:0;pointer-events:none;';
+    root.appendChild(warstwa);
+    const kopie = [];
+    for (let i = 0; i < SMUG; i++) {
+      const c = wm.cloneNode(true);
+      c.removeAttribute('id');
+      c.style.cssText = 'position:fixed;left:' + wmR.left + 'px;top:' + wmR.top + 'px;width:' + wmR.width +
+                        'px;height:' + wmR.height + 'px;transform-origin:0 0;opacity:0;filter:none;will-change:transform,opacity;';
+      warstwa.appendChild(c);
+      kopie.push(c);
+    }
+    wm.style.display = 'none';
+    mark.style.display = 'none';
+
+    const LIT = ['k', 'i', 'o', 'm'];
+    const SPOD_D = { k: 560, i: 320, o: 250, m: -420 };          // wysuniecie spod litery D, w jednostkach logotypu
+    const grupy = (n) => kopie.map((c) => c.querySelector('.wm-' + n));
+    LIT.forEach((n) => gsap.set(grupy(n), { opacity: 0, x: SPOD_D[n] }));
+
+    const chrome = [$('.top'), $('.dock'), $('.navi')].filter(Boolean);
+    chrome.forEach((e) => { e.style.opacity = '0'; });
+
+    const S = { on: 0, sk: START_SKALA, smuga: 1, otwor: 0 };
+    const ox = OKO.x - wmR.left, oy = OKO.y - wmR.top;
+    const rysujWjazd = () => {
+      if (!S.on) return;
+      for (let i = 0; i < kopie.length; i++) {
+        const sk = S.sk * (1 + i * SKOK * S.smuga);
+        kopie[i].style.transform = 'translate(' + ox.toFixed(2) + 'px,' + oy.toFixed(2) + 'px) scale(' + sk.toFixed(4) +
+                                   ') translate(' + (-ox).toFixed(2) + 'px,' + (-oy).toFixed(2) + 'px)';
+        kopie[i].style.opacity = (i === 0 ? lerp(1, 1 / SMUG, S.smuga) : lerp(0, 1 / SMUG, S.smuga)).toFixed(3);
+      }
+      const r = S.otwor * Math.hypot(innerWidth, innerHeight) * 0.85;
+      viewport.style.clipPath = 'circle(' + r.toFixed(1) + 'px at ' + OKO.x.toFixed(1) + 'px ' + OKO.y.toFixed(1) + 'px)';
+    };
+    tl.eventCallback('onUpdate', rysujWjazd);
+
+    // 1. wychodzimy ze znaku: kamera cofa sie, znak ze smugi staje sie ostry
+    tl.add('znak', span + 0.15);
+    tl.set(S, { on: 1 }, 'znak');
+    tl.to(lineBox, { opacity: 0, duration: .40, ease: 'power2.out' }, 'znak');
+    tl.to(S, { sk: 1, duration: 1.05, ease: 'expo.out' }, 'znak');
+    tl.to(S, { smuga: 0, duration: .85, ease: 'power2.out' }, 'znak+=.15');
+
+    // 2. z niego rozwija sie nazwa: K, I, O w lewo, M w prawo
+    tl.add('nazwa', 'znak+=1.20');
+    LIT.forEach((n) => tl.to(grupy(n), { x: 0, opacity: 1, duration: .85, ease: 'expo.out' }, 'nazwa'));
+
+    // 3. wjazd w litere D: misa otwiera sie na pole, kafelki nadlatuja z glebi i rosna
+    tl.add('wjazd', 'znak+=2.35');
+    tl.to(S, { sk: DOJAZD, duration: 1.75, ease: 'power2.in' }, 'wjazd');
+    tl.to(S, { smuga: 1, duration: .95, ease: 'power2.in' }, 'wjazd+=.25');
+    tl.to(S, { otwor: 1, duration: 1.45, ease: 'power2.inOut' }, 'wjazd+=.45');
+    tl.to(root, { backgroundColor: 'rgba(8,10,15,0)', duration: .50 }, 'wjazd+=.35');
+    tl.call(flyIn, null, 'wjazd+=.55');
+    tl.to(S, { smuga: 0, duration: .50, ease: 'power2.out' }, 'wjazd+=1.45');
+    tl.to(kopie, { opacity: 0, duration: .40, ease: 'power2.out' }, 'wjazd+=1.50');
+    tl.to(chrome, { opacity: 1, duration: .45, ease: 'power2.out' }, 'wjazd+=1.85');
+    tl.set(hero, { opacity: 1 }, 'wjazd+=2.05');
+    tl.call(() => decode($('.hero__line')), null, 'wjazd+=2.05');
+    tl.call(showDock, null, 'wjazd+=2.25');
+    tl.set(S, { on: 0 }, 'wjazd+=2.50');                 // przestajemy ruszac clipPath przed sprzataniem
+    tl.call(finish, null, 'wjazd+=2.55');
+
+    /* Pierwszy ruch uzytkownika przyspiesza sekwencje zamiast ja uciac: kto zna strone,
+       nie czeka, a kto wchodzi pierwszy raz, widzi calosc. */
+    const przyspiesz = () => {
+      if (root.classList.contains('is-done')) return;
+      gsap.to(tl, { timeScale: 5, duration: .35, ease: 'power2.in', overwrite: true });
+    };
+    ['pointerdown', 'wheel', 'keydown', 'touchstart'].forEach((ev) =>
+      addEventListener(ev, przyspiesz, { once: true, passive: true }));
   }
 
   /* ─── kursor z etykieta i magnetyczne przyciski (tylko wskaznik precyzyjny) ── */

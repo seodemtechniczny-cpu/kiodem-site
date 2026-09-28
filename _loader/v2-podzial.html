@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="pl" data-scene="kiodem-loader">
+<head>
+<meta charset="utf-8">
+<title>KIODEM — podział i litery</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { --obsydian:#080A0F; --grafit:#121722; --kosc:#F1EEE7; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:100%; height:100%; overflow:hidden; background:var(--obsydian); }
+  #scena { position:fixed; inset:0; perspective:1100px; perspective-origin:50% 50%; overflow:hidden; }
+  #pole { position:absolute; left:50%; top:50%; width:0; height:0; transform-style:preserve-3d; }
+  .kawalek {
+    position:absolute; left:0; top:0; width:1px; height:1px;
+    background:var(--kosc); transform-origin:0 0; will-change:transform, opacity;
+  }
+  #litery { position:fixed; inset:0; width:100%; height:100%; pointer-events:none; }
+  #litery rect.wypelnienie { fill:var(--kosc); }
+</style>
+</head>
+<body>
+<div id="scena"><div id="pole"></div></div>
+<svg id="litery" aria-hidden="true"></svg>
+
+<script src="assets/gsap.min.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var W = innerWidth, H = innerHeight;
+  var mobile = W <= 820;
+  var redukcja = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ── te same funkcje co w app.js, żeby ostatnia klatka pasowała do pola ── */
+  var hash = function (a, b) { var h = (a * 73856093) ^ (b * 19349663); h = (h ^ (h >>> 13)) * 1274126177; return ((h ^ (h >>> 16)) >>> 0) / 4294967295; };
+  var lerp = function (a, b, k) { return a + (b - a) * k; };
+  var clamp = function (v, lo, hi) { return Math.min(hi, Math.max(lo, v)); };
+  var wrap = function (v, size) { return ((v % size) + size) % size - size / 2; };
+
+  /* ── pole docelowe: dokładnie build() z app.js ─────────────────────────── */
+  var cw = mobile ? 214 : 340, ch = mobile ? 164 : 250;
+  var cols = Math.ceil(W / cw) + 3, rows = Math.ceil(H / ch) + 3;
+  if (cols % 2 === 0) cols++;
+  if (rows % 2 === 0) rows++;
+  var FW = cols * cw, FH = rows * ch;
+
+  function rozmiaryPuli() {                       // pool(): 5 sekcji + 10 obszarów + 2 live
+    var items = [], i;
+    for (i = 0; i < 5; i++) items.push({ w: 240, h: 150 });
+    for (i = 0; i < 12; i++) items.push({ w: 232, h: 138 });
+    var seed = 7;
+    for (i = items.length - 1; i > 0; i--) {
+      seed = (seed * 9301 + 49297) % 233280;
+      var j = Math.floor(seed / 233280 * (i + 1));
+      var t = items[i]; items[i] = items[j]; items[j] = t;
+    }
+    return items;
+  }
+
+  function centreFade(cx, cy) {                   // F.dock = 0, F.map = 0: pierwsza żywa klatka
+    var r = Math.hypot(cx / (FW > 1200 ? 1.35 : 1.1), cy);
+    var mob = cw < 300;
+    var lo = cw * (mob ? 0.5 : 0.7), hi = cw * (mob ? 0.85 : 1.1);
+    var k = clamp((r - lo) / (hi - lo), 0, 1);
+    return k * k * (3 - 2 * k);
+  }
+
+  var items = rozmiaryPuli(), gniazda = [], k = 0, scale = mobile ? 0.78 : 1;
+  for (var r = 0; r < rows; r++) for (var c = 0; c < cols; c++) {
+    if (hash(c * 7 + 2, r * 11 + 5) > 0.66) continue;
+    var it = items[k % items.length]; k++;
+    var h1 = hash(c + 1, r + 1), h2 = hash(r + 7, c + 3), h3 = hash(c * 3 + 1, r * 5 + 2);
+    var tw = Math.round(it.w * scale), th = Math.round(it.h * scale);
+    var jx = (h1 - 0.5) * (cw - tw - 10), jy = (h2 - 0.5) * (ch - th - 10);
+    var wx = wrap(c * cw + cw / 2, FW) + jx, wy = wrap(r * ch + ch / 2, FH) + jy;
+    var band = h3 < 0.34 ? -260 : h3 < 0.72 ? -90 : 40;
+    var base = band === -260 ? 0.55 : band === -90 ? 0.82 : 1;
+    gniazda.push({
+      x: W / 2 + wx - tw / 2, y: H / 2 + wy - th / 2, w: tw, h: th,
+      z: band + (h1 - 0.5) * 40,                  // ten sam plan glebi co tile.z
+      rot: (h2 - 0.5) * 3,                        // ten sam przechyl co tile.rot
+      op: (0.03 + 0.97 * centreFade(wx, wy)) * base,
+      d: Math.hypot(wx, wy)
+    });
+  }
+  gniazda.sort(function (a, b) { return a.d - b.d; });
+
+  /* ── podział: tyle pokoleń, ile trzeba, żeby trafić w liczbę kafelków ──── */
+  var GLEB = clamp(Math.round(Math.log2(gniazda.length)), 4, 6);
+  var LISCI = Math.pow(2, GLEB);
+  var SZCZELINA = mobile ? 5 : 8;
+
+  var ziarno = 20260928;
+  function rng() { ziarno = (ziarno * 1664525 + 1013904223) % 4294967296; return ziarno / 4294967296; }
+
+  var wezly = [];
+  function buduj(x, y, w, h, d) {
+    var n = { x: x, y: y, w: w, h: h, glebokosc: d, szpara: { v: 0 } };
+    wezly.push(n);
+    if (d === 0) { n.lisc = true; return n; }
+    var pion = w >= h;
+    var f = 0.36 + rng() * 0.28;
+    n.os = pion ? 'v' : 'h';
+    n.at = f;
+    if (pion) { n.a = buduj(x, y, w * f, h, d - 1); n.b = buduj(x + w * f, y, w * (1 - f), h, d - 1); }
+    else { n.a = buduj(x, y, w, h * f, d - 1); n.b = buduj(x, y + h * f, w, h * (1 - f), d - 1); }
+    return n;
+  }
+
+  var hStart = H * 0.56, wStart = Math.min(hStart * 1.36, W * 0.78);
+  var korzen = buduj((W - wStart) / 2, (H - hStart) / 2, wStart, hStart, GLEB);
+
+  var liscie = wezly.filter(function (n) { return n.lisc; });
+  liscie.forEach(function (n) { n.fg = { v: 0 }; n.op = { v: 1 }; });
+
+  function uklad(n, x, y, w, h) {
+    if (n.lisc) { n.tx = x; n.ty = y; n.tw = w; n.th = h; return; }
+    var g = n.szpara.v * SZCZELINA;
+    if (n.os === 'v') {
+      var wa = w * n.at - g / 2, wb = w * (1 - n.at) - g / 2;
+      uklad(n.a, x, y, Math.max(1, wa), h);
+      uklad(n.b, x + w * n.at + g / 2, y, Math.max(1, wb), h);
+    } else {
+      var ha = h * n.at - g / 2, hb = h * (1 - n.at) - g / 2;
+      uklad(n.a, x, y, w, Math.max(1, ha));
+      uklad(n.b, x, y + h * n.at + g / 2, w, Math.max(1, hb));
+    }
+  }
+
+  /* ── elementy kawałków ─────────────────────────────────────────────────── */
+  var pole = document.getElementById('pole');
+  liscie.forEach(function (n) {
+    var el = document.createElement('div');
+    el.className = 'kawalek';
+    pole.appendChild(el);
+    n.el = el;
+  });
+
+  /* ── litery: jeden pełnoekranowy SVG, klipy w pikselach ekranu ─────────── */
+  var SCIEZKI = {"o": "M4355 2314 c-396 -39 -689 -168 -901 -397 -80 -87 -128 -156 -181 -262 -88 -175 -118 -324 -110 -542 6 -177 31 -275 105 -428 117 -240 306 -418 565 -532 210 -93 424 -129 712 -120 310 10 531 76 760 226 85 56 221 183 286 269 60 79 130 216 159 307 79 259 61 566 -48 799 -109 233 -285 412 -522 531 -107 54 -290 111 -411 129 -107 16 -343 27 -414 20z m363 -242 c117 -38 214 -95 304 -180 87 -83 147 -165 199 -276 74 -159 105 -352 88 -549 -41 -476 -402 -837 -835 -837 -374 0 -690 269 -807 688 -18 66 -21 103 -21 257 0 167 2 187 28 270 55 183 140 328 258 441 85 82 170 136 274 173 117 43 170 51 304 46 94 -2 132 -9 208 -33z", "de": "M7600 2278 c0 -13 -1 -164 -1 -335 -1 -172 -5 -313 -8 -313 -4 0 -23 33 -43 73 -135 273 -398 474 -725 554 l-108 27 -572 3 -572 4 114 -115 115 -116 273 0 c408 0 517 -16 693 -101 80 -38 118 -64 183 -124 130 -123 202 -257 242 -446 18 -88 20 -126 16 -244 -6 -160 -22 -233 -77 -351 -52 -112 -105 -188 -188 -266 -121 -114 -262 -184 -428 -213 -65 -11 -169 -15 -418 -15 l-331 0 -72 -73 c-39 -41 -92 -89 -117 -108 -25 -19 -46 -37 -46 -41 0 -12 883 -9 1042 2 219 16 342 47 508 130 117 59 236 146 314 231 64 69 139 178 170 247 10 23 22 42 26 42 3 0 7 -147 8 -327 l1 -328 911 -2 910 -2 0 120 0 119 -674 0 -674 0 -6 23 c-7 31 -8 781 0 812 l6 25 494 0 494 0 0 115 0 115 -494 0 -495 0 -6 53 c-4 28 -5 178 -3 332 l3 280 663 3 662 2 0 115 0 115 -895 0 -895 0 0 -22z", "k": "M30 1180 l0 -1110 240 0 240 0 0 474 0 475 26 20 c15 12 30 21 34 21 3 0 218 -223 476 -495 l469 -495 328 0 329 0 -499 511 c-274 281 -555 571 -625 643 l-126 133 246 204 c135 112 365 303 511 423 147 120 289 238 316 262 l50 44 -172 0 -172 0 -478 -392 c-263 -215 -528 -433 -590 -485 -62 -51 -115 -93 -118 -93 -3 0 -5 218 -5 485 l0 485 -240 0 -240 0 0 -1110z", "i": "M2440 1180 l0 -1110 235 0 235 0 0 1110 0 1110 -235 0 -235 0 0 -1110z", "m": "M9840 1186 l0 -1103 38 -4 c20 -3 73 -4 117 -4 l80 0 5 775 5 775 423 -705 c233 -388 426 -706 430 -707 4 -1 32 35 63 80 196 289 746 1091 847 1236 113 162 122 172 123 140 1 -39 9 -1418 9 -1526 l0 -73 255 0 255 0 0 1110 0 1110 -224 0 -225 0 -46 -67 c-158 -230 -569 -835 -725 -1068 -102 -151 -187 -275 -190 -275 -5 0 -153 247 -403 674 -73 123 -199 339 -282 480 l-150 255 -202 1 -203 0 0 -1104z"};
+  var VB_W = 1246, VB_H = 228.443615;
+  var wmW = Math.min(W * 0.62, 1100), wmH = wmW * VB_H / VB_W;
+  var wmX = (W - wmW) / 2, wmY = (H - wmH) / 2;
+  var ws = wmW / VB_W;
+
+  var svg = document.getElementById('litery');
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(name, attrs) {
+    var e = document.createElementNS(NS, name);
+    for (var a in attrs) e.setAttribute(a, attrs[a]);
+    return e;
+  }
+  function grupaLitery(dPath) {                   // ścieżka logotypu w układzie ekranu
+    var zew = el('g', { transform: 'translate(' + wmX + ',' + wmY + ') scale(' + ws + ')' });
+    var wew = el('g', { transform: 'translate(-3.000000,231.610727) scale(0.100000,-0.100000)' });
+    wew.appendChild(el('path', { d: dPath }));
+    zew.appendChild(wew);
+    return zew;
+  }
+
+  var defs = el('defs', {});
+  svg.appendChild(defs);
+
+  // ramki liter mierzone po wyrenderowaniu
+  var pomiar = el('g', { opacity: '0' });
+  var klucze = ['k', 'i', 'o', 'de', 'm'];
+  var pomiarGrupy = {};
+  klucze.forEach(function (key) {
+    var g = grupaLitery(SCIEZKI[key]);
+    pomiarGrupy[key] = g;
+    pomiar.appendChild(g);
+  });
+  svg.appendChild(pomiar);
+
+  var ramki = {};
+  klucze.forEach(function (key) {
+    var r = pomiarGrupy[key].getBoundingClientRect();     // getBBox() gubi transformacje samej grupy
+    ramki[key] = { x: r.left, y: r.top, width: r.width, height: r.height };
+  });
+  svg.removeChild(pomiar);
+
+  // Napis powstaje sam: obrys każdej litery rysuje się jak pociągnięcie pisaka,
+  // a dopiero za nim dochodzi lico. Żadnych prostokątów wjeżdżających pod maskę.
+  var TRANS = 'translate(' + wmX + ',' + wmY + ') scale(' + ws + ') translate(-3.000000,231.610727) scale(0.100000,-0.100000)';
+  var LITERY = klucze.map(function (key) {
+    var g = el('g', {});
+    var obrys = el('path', { d: SCIEZKI[key], transform: TRANS, fill: 'none',
+                             stroke: 'var(--kosc)', 'stroke-width': 1.5,
+                             'vector-effect': 'non-scaling-stroke', 'stroke-linejoin': 'round' });
+    var lico = el('path', { d: SCIEZKI[key], transform: TRANS, fill: 'var(--kosc)', opacity: 0 });
+    g.appendChild(obrys); g.appendChild(lico);
+    svg.appendChild(g);
+    var dl = obrys.getTotalLength();
+    obrys.style.strokeDasharray = dl;
+    return { id: key, ramka: ramki[key], obrys: obrys, lico: lico, dlugosc: dl, stan: { rys: 0, lico: 0, obr: 0 } };
+  });
+  LITERY.sort(function (a, b) { return a.ramka.x - b.ramka.x; });
+
+  uklad(korzen, korzen.x, korzen.y, korzen.w, korzen.h);
+
+  liscie.forEach(function (n, i) { n.gniazdo = gniazda[i % gniazda.length]; });
+
+  // Pas, w ktorym stanie wyraz. Kawalki, ktore w niego wchodza, rozstepuja sie
+  // w gore albo w dol o dokladnie tyle, ile trzeba, zeby go zwolnic.
+  var pasGora = Infinity, pasDol = -Infinity;
+  LITERY.forEach(function (L) { pasGora = Math.min(pasGora, L.ramka.y); pasDol = Math.max(pasDol, L.ramka.y + L.ramka.height); });
+  var LUZ = mobile ? 16 : 26;
+  pasGora -= LUZ; pasDol += LUZ;
+  var pasSrodek = (pasGora + pasDol) / 2;
+  liscie.forEach(function (n) {
+    n.roz = { v: 0 };
+
+    var sr = n.ty + n.th / 2;
+    n.pchU = sr < pasSrodek ? -Math.max(0, n.ty + n.th - pasGora) : Math.max(0, pasDol - n.ty);
+  });
+
+  /* ── rysowanie: jedna funkcja, wszystko z timeline’u, więc seek działa ─── */
+  function rysuj() {
+    uklad(korzen, korzen.x, korzen.y, korzen.w, korzen.h);
+    for (var i = 0; i < liscie.length; i++) {
+      var n = liscie[i];
+      var x = n.tx, y = n.ty + n.pchU * n.roz.v, w = n.tw, h = n.th;
+      if (n.fg.v > 0) {                             // rozejście w pole
+        var g = n.gniazdo, f = n.fg.v;
+        x = lerp(x, g.x, f); y = lerp(y, g.y, f);
+        w = lerp(w, g.w, f); h = lerp(h, g.h, f);
+      }
+      var nak = n.fg.v > 0.5 ? 0 : 0.75;                 // nachodzenie tylko dopoki kawalki sa zlaczone
+      var sw = Math.max(0.01, w + nak), sh = Math.max(0.01, h + nak);
+      var z = n.gniazdo.z * n.fg.v, rot = n.gniazdo.rot * n.fg.v;
+      // srodek w ukladzie pola (pole stoi w srodku ekranu), skala zamiast width/height:
+      // zero przeliczen ukladu, a rzut w perspektywie wychodzi taki sam jak dla kafelka
+      var cx = x + w / 2 - W / 2, cy = y + h / 2 - H / 2;
+      n.el.style.transform = 'translate3d(' + cx.toFixed(2) + 'px,' + cy.toFixed(2) + 'px,' + z.toFixed(1) + 'px) rotate(' + rot.toFixed(2) + 'deg) scale(' + sw.toFixed(2) + ',' + sh.toFixed(2) + ') translate(-0.5px,-0.5px)';
+      var op = n.op.v;
+      if (n.fg.v > 0) op = lerp(op, n.gniazdo.op, n.fg.v);
+      n.el.style.opacity = op.toFixed(3);
+    }
+    for (var j = 0; j < LITERY.length; j++) {
+      var L2 = LITERY[j], st = L2.stan;
+      L2.obrys.style.strokeDashoffset = (L2.dlugosc * (1 - st.rys)).toFixed(1);
+      L2.obrys.style.opacity = st.obr;
+      L2.lico.setAttribute('opacity', st.lico);
+    }
+  }
+
+  /* ── oś czasu ──────────────────────────────────────────────────────────── */
+  var TRZYM = 0.28;
+  var tl = gsap.timeline({ paused: true, onUpdate: rysuj });
+  tl.to({}, { duration: TRZYM });
+
+  // Pęknięcia idą stopniowo: w każdym pokoleniu szczeliny otwierają się jedna po
+  // drugiej, od środka bloku na zewnątrz, więc rysa rozchodzi się po materiale
+  // zamiast pękać wszędzie naraz.
+  var srodekBl = { x: korzen.x + korzen.w / 2, y: korzen.y + korzen.h / 2 };
+  var ROZBIEG = [0.36, 0.34, 0.29, 0.22, 0.17, 0.13];   // ile trwa rozejście pokolenia
+  var PEKNIECIE = 0.40;                                  // ile otwiera się jedna szczelina
+  var t = TRZYM;
+  for (var g2 = 0; g2 < GLEB; g2++) {
+    var poziom = GLEB - g2;
+    var grupa = wezly.filter(function (n) { return n.glebokosc === poziom && !n.lisc; });
+    grupa.sort(function (a, b) {
+      return Math.hypot(a.x + a.w / 2 - srodekBl.x, a.y + a.h / 2 - srodekBl.y) -
+             Math.hypot(b.x + b.w / 2 - srodekBl.x, b.y + b.h / 2 - srodekBl.y);
+    });
+    var rozbieg = ROZBIEG[Math.min(g2, ROZBIEG.length - 1)];
+    grupa.forEach(function (n, i) {
+      var kiedy = t + (grupa.length > 1 ? i / (grupa.length - 1) : 0) * rozbieg;
+      tl.to(n.szpara, { v: 1, duration: PEKNIECIE, ease: 'power2.out' }, kiedy);
+    });
+    t += rozbieg * 0.55;                                 // pokolenia zachodzą na siebie
+  }
+  t += PEKNIECIE * 0.5;
+
+  // blok rozstępuje się wzdłuż linii wyrazu i zwalnia pas na nazwę
+  var T_ROZ = t;
+  tl.to(liscie.map(function (n) { return n.roz; }), { v: 1, duration: 0.70, ease: 'expo.inOut' }, T_ROZ);
+
+  // nazwa pisze się sama, litera po literze
+  var T_NAP = T_ROZ + 0.30;
+  var KROK = 0.13, RYS = 0.55;
+  LITERY.forEach(function (L, i) {
+    var kiedy = T_NAP + i * KROK;
+    tl.to(L.stan, { obr: 1, duration: 0.10 }, kiedy);
+    tl.to(L.stan, { rys: 1, duration: RYS, ease: 'power1.inOut' }, kiedy);
+    tl.to(L.stan, { lico: 1, duration: 0.34, ease: 'power2.out' }, kiedy + RYS * 0.72);
+    tl.to(L.stan, { obr: 0, duration: 0.26, ease: 'power2.out' }, kiedy + RYS * 0.86);
+  });
+
+  var T_TRZYM = T_NAP + (LITERY.length - 1) * KROK + RYS + 0.30;
+  var T_POLE = T_TRZYM + 0.26;
+
+  liscie.forEach(function (n) {
+    var od = Math.min(n.gniazdo.d / 900, 0.5);
+    tl.to(n.fg, { v: 1, duration: 0.92, ease: 'expo.inOut' }, T_POLE + od * 0.5);
+  });
+  LITERY.forEach(function (L, i) {
+    tl.to(L.stan, { lico: 0, duration: 0.30, ease: 'power2.in' }, T_POLE + 0.06 + i * 0.03);
+  });
+
+  tl.to({}, { duration: 0.26 });
+
+  /* ── umowa z render_html.mjs ───────────────────────────────────────────── */
+  window.DURATION = tl.duration();
+  window.seek = function (s) { tl.time(Math.max(0, Math.min(window.DURATION, s))); rysuj(); };
+  window.ready = (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve())
+    .then(function () { rysuj(); return true; });
+  window.__scena = tl;
+  window.__gniazda = gniazda;   // do porownania geometrii z polem witryny
+
+  // pod rendererem i przy prefers-reduced-motion nie odtwarzamy: klatki bierze seek()
+  var podRenderem = navigator.webdriver || /noplay/.test(location.search);
+  if (redukcja) { window.seek(window.DURATION); }
+  else if (!podRenderem) { tl.play(0); }
+  else { window.seek(0); }
+})();
+</script>
+</body>
+</html>

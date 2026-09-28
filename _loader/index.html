@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="pl" data-scene="kiodem-loader-v3">
+<head>
+<meta charset="utf-8">
+<title>KIODEM — znak, napis, wjazd w D</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { --obsydian:#080A0F; --grafit:#121722; --kosc:#F1EEE7; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:100%; height:100%; overflow:hidden; background:var(--obsydian); }
+  #scena { position:fixed; inset:0; perspective:1100px; perspective-origin:50% 50%; overflow:hidden; }
+  #pole  { position:absolute; left:50%; top:50%; width:0; height:0; transform-style:preserve-3d; }
+  .kawalek { position:absolute; left:0; top:0; width:1px; height:1px; background:var(--kosc);
+             transform-origin:0 0; will-change:transform, opacity; }
+  /* Rozmycie przy wjezdzie jest zlozone z kopii w roznych skalach, a nie z filtru CSS:
+     filtr trzeba przemalowac w kazdej klatce (zmierzone: 5 klatek powyzej 20 ms i jedna 50 ms),
+     a kopie ida po transformacji i przezroczystosci, czyli po stronie kompozytora. */
+  .marka { position:fixed; inset:0; width:100%; height:100%; pointer-events:none; }
+  .marka path { fill: var(--kosc); }
+</style>
+</head>
+<body>
+<div id="scena"><div id="pole"></div></div>
+<svg class="marka" id="marka" aria-hidden="true"></svg>
+
+<script src="assets/gsap.min.js"></script>
+<script>
+(function () {
+  'use strict';
+  var W = innerWidth, H = innerHeight;
+  var mobile = W <= 820;
+  var redukcja = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var hash = function (a, b) { var h = (a * 73856093) ^ (b * 19349663); h = (h ^ (h >>> 13)) * 1274126177; return ((h ^ (h >>> 16)) >>> 0) / 4294967295; };
+  var lerp = function (a, b, k) { return a + (b - a) * k; };
+  var clamp = function (v, lo, hi) { return Math.min(hi, Math.max(lo, v)); };
+  var wrap = function (v, size) { return ((v % size) + size) % size - size / 2; };
+
+  /* ── pole docelowe: dokladnie build() z app.js ─────────────────────────── */
+  var cw = mobile ? 214 : 340, ch = mobile ? 164 : 250;
+  var cols = Math.ceil(W / cw) + 3, rows = Math.ceil(H / ch) + 3;
+  if (cols % 2 === 0) cols++;
+  if (rows % 2 === 0) rows++;
+  var FW = cols * cw, FH = rows * ch;
+
+  function rozmiaryPuli() {
+    var items = [], i;
+    for (i = 0; i < 5; i++) items.push({ w: 240, h: 150 });
+    for (i = 0; i < 12; i++) items.push({ w: 232, h: 138 });
+    var seed = 7;
+    for (i = items.length - 1; i > 0; i--) {
+      seed = (seed * 9301 + 49297) % 233280;
+      var j = Math.floor(seed / 233280 * (i + 1));
+      var t = items[i]; items[i] = items[j]; items[j] = t;
+    }
+    return items;
+  }
+  function centreFade(cx, cy) {
+    var r = Math.hypot(cx / (FW > 1200 ? 1.35 : 1.1), cy);
+    var mob = cw < 300;
+    var lo = cw * (mob ? 0.5 : 0.7), hi = cw * (mob ? 0.85 : 1.1);
+    var k = clamp((r - lo) / (hi - lo), 0, 1);
+    return k * k * (3 - 2 * k);
+  }
+
+  var items = rozmiaryPuli(), gniazda = [], k = 0, scale = mobile ? 0.78 : 1;
+  for (var r = 0; r < rows; r++) for (var c = 0; c < cols; c++) {
+    if (hash(c * 7 + 2, r * 11 + 5) > 0.66) continue;
+    var it = items[k % items.length]; k++;
+    var h1 = hash(c + 1, r + 1), h2 = hash(r + 7, c + 3), h3 = hash(c * 3 + 1, r * 5 + 2);
+    var tw = Math.round(it.w * scale), th = Math.round(it.h * scale);
+    var jx = (h1 - 0.5) * (cw - tw - 10), jy = (h2 - 0.5) * (ch - th - 10);
+    var wx = wrap(c * cw + cw / 2, FW) + jx, wy = wrap(r * ch + ch / 2, FH) + jy;
+    var band = h3 < 0.34 ? -260 : h3 < 0.72 ? -90 : 40;
+    var base = band === -260 ? 0.55 : band === -90 ? 0.82 : 1;
+    gniazda.push({ x: W / 2 + wx - tw / 2, y: H / 2 + wy - th / 2, w: tw, h: th,
+                   z: band + (h1 - 0.5) * 40, rot: (h2 - 0.5) * 3,
+                   op: (0.03 + 0.97 * centreFade(wx, wy)) * base, d: Math.hypot(wx, wy) });
+  }
+  gniazda.sort(function (a, b) { return a.d - b.d; });
+
+  /* ── kafelki: jeden element na gniazdo, przylatuja z glebi przez otwor ──── */
+  var pole = document.getElementById('pole');
+  var kafelki = gniazda.map(function (g) {
+    var e = document.createElement('div');
+    e.className = 'kawalek';
+    pole.appendChild(e);
+    return { g: g, el: e, wejscie: { v: 1 } };
+  });
+
+  /* ── znak i logotyp: te same sciezki co w witrynie ─────────────────────── */
+  var SCIEZKI = {"o": "M4355 2314 c-396 -39 -689 -168 -901 -397 -80 -87 -128 -156 -181 -262 -88 -175 -118 -324 -110 -542 6 -177 31 -275 105 -428 117 -240 306 -418 565 -532 210 -93 424 -129 712 -120 310 10 531 76 760 226 85 56 221 183 286 269 60 79 130 216 159 307 79 259 61 566 -48 799 -109 233 -285 412 -522 531 -107 54 -290 111 -411 129 -107 16 -343 27 -414 20z m363 -242 c117 -38 214 -95 304 -180 87 -83 147 -165 199 -276 74 -159 105 -352 88 -549 -41 -476 -402 -837 -835 -837 -374 0 -690 269 -807 688 -18 66 -21 103 -21 257 0 167 2 187 28 270 55 183 140 328 258 441 85 82 170 136 274 173 117 43 170 51 304 46 94 -2 132 -9 208 -33z", "de": "M7600 2278 c0 -13 -1 -164 -1 -335 -1 -172 -5 -313 -8 -313 -4 0 -23 33 -43 73 -135 273 -398 474 -725 554 l-108 27 -572 3 -572 4 114 -115 115 -116 273 0 c408 0 517 -16 693 -101 80 -38 118 -64 183 -124 130 -123 202 -257 242 -446 18 -88 20 -126 16 -244 -6 -160 -22 -233 -77 -351 -52 -112 -105 -188 -188 -266 -121 -114 -262 -184 -428 -213 -65 -11 -169 -15 -418 -15 l-331 0 -72 -73 c-39 -41 -92 -89 -117 -108 -25 -19 -46 -37 -46 -41 0 -12 883 -9 1042 2 219 16 342 47 508 130 117 59 236 146 314 231 64 69 139 178 170 247 10 23 22 42 26 42 3 0 7 -147 8 -327 l1 -328 911 -2 910 -2 0 120 0 119 -674 0 -674 0 -6 23 c-7 31 -8 781 0 812 l6 25 494 0 494 0 0 115 0 115 -494 0 -495 0 -6 53 c-4 28 -5 178 -3 332 l3 280 663 3 662 2 0 115 0 115 -895 0 -895 0 0 -22z", "k": "M30 1180 l0 -1110 240 0 240 0 0 474 0 475 26 20 c15 12 30 21 34 21 3 0 218 -223 476 -495 l469 -495 328 0 329 0 -499 511 c-274 281 -555 571 -625 643 l-126 133 246 204 c135 112 365 303 511 423 147 120 289 238 316 262 l50 44 -172 0 -172 0 -478 -392 c-263 -215 -528 -433 -590 -485 -62 -51 -115 -93 -118 -93 -3 0 -5 218 -5 485 l0 485 -240 0 -240 0 0 -1110z", "i": "M2440 1180 l0 -1110 235 0 235 0 0 1110 0 1110 -235 0 -235 0 0 -1110z", "m": "M9840 1186 l0 -1103 38 -4 c20 -3 73 -4 117 -4 l80 0 5 775 5 775 423 -705 c233 -388 426 -706 430 -707 4 -1 32 35 63 80 196 289 746 1091 847 1236 113 162 122 172 123 140 1 -39 9 -1418 9 -1526 l0 -73 255 0 255 0 0 1110 0 1110 -224 0 -225 0 -46 -67 c-158 -230 -569 -835 -725 -1068 -102 -151 -187 -275 -190 -275 -5 0 -153 247 -403 674 -73 123 -199 339 -282 480 l-150 255 -202 1 -203 0 0 -1104z"};
+  var VB_W = 1246, VB_H = 228.443615;
+  var wmW = Math.min(W * (mobile ? 0.86 : 0.62), 1100), wmH = wmW * VB_H / VB_W;
+  var wmX = (W - wmW) / 2, wmY = (H - wmH) / 2;
+  var ws = wmW / VB_W;
+  var TRANS = 'translate(' + wmX + ',' + wmY + ') scale(' + ws + ') translate(-3.000000,231.610727) scale(0.100000,-0.100000)';
+  var NS = 'http://www.w3.org/2000/svg';
+  function el(n, a) { var e = document.createElementNS(NS, n); for (var q in a) e.setAttribute(q, a[q]); return e; }
+
+  var KOLEJ = ['k', 'i', 'o', 'de', 'm'];
+  var SMUG = 7, SMUG_SKOK = 0.042;                 // ile kopii i jak bardzo rozchodza sie w skali
+  var svgM = document.getElementById('marka');
+  svgM.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  var warstwy = [];
+  for (var wi = 0; wi < SMUG; wi++) {
+    var korzen = el('g', {});
+    var grupy = {};
+    KOLEJ.forEach(function (key) {
+      var g = el('g', {});
+      g.appendChild(el('path', { d: SCIEZKI[key], transform: TRANS }));
+      korzen.appendChild(g);
+      grupy[key] = g;
+    });
+    svgM.appendChild(korzen);
+    warstwy.push({ korzen: korzen, grupy: grupy });
+  }
+
+  // ramki liter w pikselach ekranu
+  var ramki = {};
+  KOLEJ.forEach(function (key) {
+    var b = warstwy[0].grupy[key].getBoundingClientRect();
+    ramki[key] = { x: b.left, y: b.top, w: b.width, h: b.height };
+  });
+  // srodek misy litery D: lewa czesc zrosnietego ksztaltu D+E
+  var deR = ramki.de;
+  var OKO = { x: deR.x + deR.w * 0.22, y: deR.y + deR.h * 0.5 };
+
+  /* ── stan sceny ────────────────────────────────────────────────────────── */
+  var S = {
+    znakSkala: 1, znakX: 0, znakY: 0,       // znak przed zlozeniem napisu
+    litery: 0,                               // wysuniecie K, I, O, M spod znaku
+    wjazd: 0,                                // wjazd w litere D
+    rozmycie: 0,
+    otwor: 0,                                // otwor w misie D, przez ktory widac pole
+    poleWejscie: 1
+  };
+
+  // znak na starcie: bardzo blisko, wysrodkowany na oku litery D
+  var START_SKALA = mobile ? 6.5 : 12;
+  var DOJAZD_SKALA = mobile ? 20 : 34;
+
+  function rysuj() {
+    // 1. znak i napis. Kazda kopia dostaje troche wieksza skale i mniejsza
+    //    przezroczystosc, wiec przy wjezdzie powstaje smuga rozciagnieta wzdluz
+    //    kierunku ruchu, czyli dokladnie to, co robi kamera wjezdzajaca w ksztalt.
+    var skB = S.znakSkala * (1 + (DOJAZD_SKALA - 1) * S.wjazd);
+    var tx = OKO.x + S.znakX, ty = OKO.y + S.znakY;
+    for (var i = 0; i < warstwy.length; i++) {
+      var sk = skB * (1 + i * SMUG_SKOK * S.rozmycie);
+      warstwy[i].korzen.setAttribute('transform',
+        'translate(' + tx.toFixed(2) + ',' + ty.toFixed(2) + ') scale(' + sk.toFixed(4) + ') translate(' + (-OKO.x).toFixed(2) + ',' + (-OKO.y).toFixed(2) + ')');
+      var op = i === 0 ? lerp(1, 1 / SMUG, S.rozmycie) : lerp(0, 1 / SMUG, S.rozmycie);
+      warstwy[i].korzen.setAttribute('opacity', op.toFixed(3));
+      KOLEJ.forEach(function (key) {
+        if (key === 'de') return;
+        var R = ramki[key], kier = (R.x + R.w / 2) < (deR.x + deR.w / 2) ? -1 : 1;
+        var dx = kier * (deR.x + deR.w / 2 - (R.x + R.w / 2)) * (1 - S.litery);
+        warstwy[i].grupy[key].setAttribute('transform', 'translate(' + (-dx).toFixed(2) + ',0)');
+        warstwy[i].grupy[key].setAttribute('opacity', S.litery > 0.02 ? 1 : 0);
+      });
+    }
+
+    // 2. otwor w misie D: przez niego widac pole, ktore rosnie zza napisu
+    var promien = S.otwor * Math.hypot(W, H) * 0.85;
+    pole.parentNode.style.clipPath = 'circle(' + promien.toFixed(1) + 'px at ' + OKO.x.toFixed(1) + 'px ' + OKO.y.toFixed(1) + 'px)';
+
+    // 3. kafelki: z daleka, rosna w kierunku swoich miejsc
+    for (var j = 0; j < kafelki.length; j++) {
+      var t = kafelki[j], g = t.g, e = t.wejscie.v;
+      var cx = g.x + g.w / 2 - W / 2, cy = g.y + g.h / 2 - H / 2;
+      // start: ten sam kierunek, ale duzo glebiej i blizej osi wjazdu
+      var sx = lerp(cx, (OKO.x - W / 2) * 0.35, e), sy = lerp(cy, (OKO.y - H / 2) * 0.35, e);
+      var z = lerp(g.z, mobile ? -880 : -1150, e);
+      var sw = Math.max(0.01, g.w), sh = Math.max(0.01, g.h);
+      e = Math.max(0, e);
+      t.el.style.transform = 'translate3d(' + sx.toFixed(2) + 'px,' + sy.toFixed(2) + 'px,' + z.toFixed(1) + 'px) rotate(' + (g.rot * (1 - e)).toFixed(2) + 'deg) scale(' + sw.toFixed(2) + ',' + sh.toFixed(2) + ') translate(-0.5px,-0.5px)';
+      t.el.style.opacity = (g.op * (1 - e) * S.poleWejscie).toFixed(3);
+    }
+  }
+
+  /* ── os czasu ──────────────────────────────────────────────────────────── */
+  var tl = gsap.timeline({ paused: true, onUpdate: rysuj });
+
+  // 1. wychodzimy ze znaku: kamera cofa sie, znak z ogromnego staje sie soba
+  S.znakSkala = START_SKALA; S.rozmycie = 1;
+  tl.to(S, { znakSkala: 1, duration: 1.05, ease: 'expo.out' }, 0);
+  tl.to(S, { rozmycie: 0, duration: 0.85, ease: 'power2.out' }, 0.15);
+
+  // 2. z niego rozwija sie nazwa: K, I, O w lewo, M w prawo
+  tl.to(S, { litery: 1, duration: 0.85, ease: 'expo.out' }, 1.20);
+
+  // 3. wjazd w litere D: dluzszy, bo to jest ten moment. Rozmycie narasta,
+  //    misa otwiera sie na pole, a kafelki nadlatuja z glebi i rosna.
+  var T_WJ = 2.35;
+  tl.to(S, { wjazd: 1, duration: 1.75, ease: 'power2.in' }, T_WJ);
+  tl.to(S, { rozmycie: 1, duration: 0.95, ease: 'power2.in' }, T_WJ + 0.25);
+  tl.to(S, { otwor: 1, duration: 1.45, ease: 'power2.inOut' }, T_WJ + 0.45);
+  // 'power2.out' zamiast 'expo.out': expo dowozi kafelki w pierwszej trzeciej ruchu
+  // i ostatnia sekunda stala martwa. Teraz nadlatuja przez caly wjazd.
+  kafelki.forEach(function (t) {
+    tl.to(t.wejscie, { v: 0, duration: 1.25, ease: 'power2.out' }, T_WJ + 0.70 + Math.min(t.g.d / 900, 0.5) * 0.9);
+  });
+  tl.to(S, { rozmycie: 0, duration: 0.50, ease: 'power2.out' }, T_WJ + 1.45);
+  tl.to({}, { duration: 0.25 });
+
+  /* ── umowa z render_html.mjs ───────────────────────────────────────────── */
+  window.DURATION = tl.duration();
+  window.seek = function (s) { tl.time(clamp(s, 0, window.DURATION)); rysuj(); };
+  window.ready = (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () { rysuj(); return true; });
+  window.__scena = tl;
+  window.__gniazda = gniazda;
+
+  var podRenderem = navigator.webdriver || /noplay/.test(location.search);
+  if (redukcja) { window.seek(window.DURATION); }
+  else if (!podRenderem) { tl.play(0); }
+  else { window.seek(0); }
+})();
+</script>
+</body>
+</html>
