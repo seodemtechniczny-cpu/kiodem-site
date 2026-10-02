@@ -41,9 +41,8 @@ let logoWlasne = false;
 const wykonczenie = () => par.wykonczenia.find((x) => x.id === stan.wyk);
 function uporzadkuj(zmienioneWyk) { // reguły zależne od materiału i logo
 	const wk = wykonczenie();
-	if (wk.szklo) { stan.str = 'polysk'; if (zmienioneWyk) stan.cokol = 'zloto'; }
+	if (wk.szklo) { if (zmienioneWyk) { stan.str = 'polysk'; stan.cokol = 'zloto'; } } // połysk to tylko punkt startu: szkło bywa też satynowe i ryflowane
 	else if (zmienioneWyk) { stan.cokol = 'material'; if (stan.str === 'polysk' && wk.grupa !== 'kamien' && !wk.wlasny) stan.str = 'mat'; }
-	if (!logoWlasne && stan.logo !== 'brak') stan.logo = 'zloto'; // logo MEUME jest zawsze złote
 	if (!tryb3d) {
 		if (!wk.klatki) stan.wyk = 'trawertyn';
 		stan.szer = par.zastepczy.szerokosci.reduce((a, b) => (Math.abs(b - stan.szer) < Math.abs(a - stan.szer) ? b : a));
@@ -95,11 +94,11 @@ if (tryb3d) {
 		} catch (blad) { pole.classList.add('blad'); pole.textContent = blad.message || 'Nie udało się wczytać tego pliku.'; }
 		e.target.value = '';
 	});
-	$('#logo-meume').addEventListener('click', () => { logoMeume(); logoWlasne = false; $('#logo-meume').hidden = true; etykietaFrontu(true); $('#logo-stan').textContent = 'Wróciło logo MEUME, zawsze złote.'; uporzadkuj(false); odswiez(); });
+	$('#logo-meume').addEventListener('click', () => { logoMeume(); logoWlasne = false; $('#logo-meume').hidden = true; etykietaFrontu(true); $('#logo-stan').textContent = 'Wróciło logo MEUME.'; odswiez(); });
 	plotno.addEventListener('lada:szafki', () => przelaczSzafki());
 	plotno.addEventListener('lada:ruch', () => { $('#podpowiedz').classList.add('zgasla'); oznaczWidok(null); });
 	// do pomiarów i nagrań; wlasneLogo: true udaje wgrane logo (odblokowuje wykonania)
-	window.__lada = { silnik, stan, ustaw: (zm) => { if ('wlasneLogo' in zm) { logoWlasne = zm.wlasneLogo; delete zm.wlasneLogo; } Object.assign(stan, zm); uporzadkuj('wyk' in zm); return odswiez(); } };
+	window.__lada = { silnik, stan, ustaw: (zm) => { if ('wlasneLogo' in zm) { logoWlasne = zm.wlasneLogo; delete zm.wlasneLogo; } const zmWyk = 'wyk' in zm && zm.wyk !== stan.wyk && !('str' in zm); Object.assign(stan, zm); uporzadkuj(zmWyk); return odswiez(); } };
 } else {
 	const { utworzKlatki } = await import('./zastepczy.js');
 	silnik = await utworzKlatki(plotno, par);
@@ -114,9 +113,6 @@ async function odswiez(natychmiast = false) {
 	zaznacz('szerK', stan.szer); $('#wymiary').checked = stan.wymiary;
 	for (const e of document.querySelectorAll('input[type="color"]')) e.value = stan[e.dataset.pole || e.id]; // kolor światła ma dwa pola: przy logo i przy LED pod ladą
 	const wk = wykonczenie();
-	for (const e of document.querySelectorAll('input[name="str"]')) e.disabled = !!wk.szklo && e.value !== 'polysk';
-	for (const e of document.querySelectorAll('input[name="logo"]')) e.disabled = !logoWlasne && !['zloto', 'brak'].includes(e.value);
-	$('#str-uwaga').hidden = !wk.szklo;
 	for (const e of document.querySelectorAll('[data-gdy]')) e.hidden = !e.dataset.gdy.split('|').some((w) => { const [n, v] = w.split('='); return stan[n] === v; });
 	document.querySelector('.plytka.kolor')?.style.setProperty('--wybrany', stan.kolorLady);
 	const hex = (k) => stan[k].toUpperCase();

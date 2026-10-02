@@ -280,7 +280,7 @@ export async function utworzScene(plotno, par, zasoby = 'zasoby/') {
 		const hB = Math.min(w.hBlatu, H - 0.26); // blat roboczy: przy niskiej ladzie schodzi, żeby została wnęka pod nadstawką
 		const mB = stan.blat && stan.blat !== 'lada' ? matBlat : null;
 		const u = uklad(W, w), wew = W - 2 * t, zT = -D / 2; // zT = płaszczyzna tyłu
-		const ryfle = stan.str === 'ryfle' && !wyk.szklo;
+		const ryfle = stan.str === 'ryfle';
 		for (const L of [lada, odbicie]) {
 			const c = L.c;
 			c.cokol.material = stan.cokol === 'zloto' ? matZloto : matWyk;
@@ -324,7 +324,7 @@ export async function utworzScene(plotno, par, zasoby = 'zasoby/') {
 			// złota listwa tylko przy szkle
 			const yL = H - w.listwaOdGory, lh = w.listwaH;
 			c.listwaF.visible = c.listwaL.visible = c.listwaP.visible = !!wyk.szklo;
-			ustaw(c.listwaF, W + 0.002, lh, 0.002, 0, yL, D / 2);
+			ustaw(c.listwaF, W + 0.002, lh, 0.002, 0, yL, D / 2 + (ryfle ? 0.0112 : 0)); // przy ryflach listwa leży na ich grzbietach
 			ustaw(c.listwaL, 0.002, lh, D, -W / 2, yL, 0); ustaw(c.listwaP, 0.002, lh, D, W / 2, yL, 0);
 			c.ryfle.visible = ryfle;
 			// gniazda na wewnętrznej stronie frontu, we wnęce nad blatem roboczym; przepust w blacie
@@ -603,8 +603,8 @@ export async function utworzScene(plotno, par, zasoby = 'zasoby/') {
 			matBlat.map = nowy.blat === 'marmur' && mapy._blat ? mapy._blat : BIALA;
 			if (matBlat.map !== BIALA) matBlat.map.repeat.set(nWyk.kafel[0] / 1.2, nWyk.kafel[1] / 1.2); // UV są w skali kafla wykończenia
 		}
-		const szklo = !!nWyk.szklo, pol = szklo || nowy.str === 'polysk';
-		Object.assign(wlasnCel, { r: szklo ? 0.07 : pol ? 0.3 : 0.56, cc: pol ? 1 : 0.0001, ccr: szklo ? 0.02 : 0.06, ns: nWyk.normalna ? (pol ? 0.35 : 0.8) : 0, ior: szklo ? 2.1 : 1.5 });
+		const szklo = !!nWyk.szklo, mat = nowy.str === 'mat', pol = !mat && (szklo || nowy.str === 'polysk'); // szkło: połysk, satyna (mat) albo ryflowane z połyskiem
+		Object.assign(wlasnCel, { r: szklo ? (mat ? 0.42 : 0.07) : pol ? 0.3 : 0.56, cc: pol ? 1 : 0.0001, ccr: szklo ? 0.02 : 0.06, ns: nWyk.normalna ? (pol ? 0.35 : 0.8) : 0, ior: szklo && !mat ? 2.1 : 1.5 });
 		if (popWyk !== nWyk) {
 			przejscie.uMapB.value = matWyk.map; przejscie.uKolorB.value.copy(matWyk.color);
 			przejscie.uSkalaB.value.set(kafel[0] / popKafel[0], kafel[1] / popKafel[1]);
