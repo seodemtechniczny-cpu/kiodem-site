@@ -134,7 +134,11 @@ form { display: flex; flex-direction: column; gap: 2rem; }
 [data-tylko="klatki"] { display: none; }
 .tryb-klatki [data-tylko="3d"] { display: none; }
 .tryb-klatki [data-tylko="klatki"] { display: flex; }
-.tryb-klatki #plotno { object-fit: contain; }
+.tryb-klatki #plotno { object-fit: contain;
+	/* miękkie krawędzie klatki: tło sceny pod spodem ma ten sam gradient, więc kadr nie ma widocznej ramki */
+	-webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 7%, #000 93%, transparent 100%), linear-gradient(to right, transparent 0, #000 5%, #000 95%, transparent 100%);
+	mask-image: linear-gradient(to bottom, transparent 0, #000 7%, #000 93%, transparent 100%), linear-gradient(to right, transparent 0, #000 5%, #000 95%, transparent 100%);
+	-webkit-mask-composite: source-in; mask-composite: intersect; }
 .tryb-klatki .widoki button[data-widok="logo"], .tryb-klatki #szafki { display: none; }
 
 @media (max-width: 880px) {
