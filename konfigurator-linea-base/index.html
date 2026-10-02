@@ -114,7 +114,9 @@
 			<fieldset class="grupa" data-grupa="otoczenie" data-tylko="3d">
 				<legend>Otoczenie</legend>
 				<div class="wybor" role="radiogroup" aria-labelledby="pos-nazwa" id="posadzka"><span class="nazwa-pola" id="pos-nazwa">Posadzka</span></div>
+				<label class="paleta" data-gdy="posadzka=mikrocement|posadzka=kolor">Kolor posadzki <input type="color" id="kolorPosadzki" value="#b9b4ac"></label>
 				<div class="wybor" role="radiogroup" aria-labelledby="sc-nazwa" id="otoczenie"><span class="nazwa-pola" id="sc-nazwa">Ściana</span></div>
+				<label class="paleta" data-gdy="otoczenie=farba|otoczenie=beton|otoczenie=mikrocement">Kolor ściany <input type="color" id="kolorSciany" value="#d9d4cc"></label>
 				<div class="wybor" role="radiogroup" aria-labelledby="pora-nazwa" id="pora"><span class="nazwa-pola" id="pora-nazwa">Światło</span></div>
 				<label class="przelacznik"><input type="checkbox" id="wymiary" checked> Pokaż wymiary</label>
 			</fieldset>
@@ -133,7 +135,7 @@
 		</section>
 	</aside>
 </main>
-<script type="module" src="js/glowny.js?v=6"></script>
+<script type="module" src="js/glowny.js?v=8"></script>
 <noscript><p class="bez-js">Konfigurator wymaga włączonego JavaScriptu.</p></noscript>
 </body>
 </html>

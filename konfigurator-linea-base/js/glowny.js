@@ -21,7 +21,7 @@ const POLA = [
 	['wys', par.wysokosci], ['akcent', id(par.akcenty)], ['blat', id(par.blaty)], ['gniazda', id(par.gniazda)], ['przepust', id(par.przepusty)],
 	['posadzka', id(par.posadzki)], ['pora', id(par.pory)], ['gniazdaKolor', id(par.gniazdaKolory)], ['ladowarka', id(par.ladowarki)], ['led', id(par.ledy)],
 ];
-const KOLORY = ['kolorLady', 'kolorBlatu', 'kolorLogo', 'kolorLed'];
+const KOLORY = ['kolorLady', 'kolorBlatu', 'kolorLogo', 'kolorLed', 'kolorSciany', 'kolorPosadzki']; // nowe kolory dopisuj na końcu
 const koduj = (s) => POLA.map(([n, lista]) => lista.indexOf(s[n]).toString(36)).join('');
 function dekoduj(kod) {
 	if (!kod || kod.length > POLA.length) return null;
@@ -31,7 +31,7 @@ function dekoduj(kod) {
 }
 function kolory(tekst) { // &kolory=24403a-1a1a1a-ffffff-ffd9a0
 	const cz = (tekst || '').split('-'), s = {};
-	if (cz.length === KOLORY.length && cz.every((c) => /^[0-9a-f]{6}$/i.test(c))) KOLORY.forEach((n, i) => { s[n] = '#' + cz[i].toLowerCase(); });
+	if (cz.length <= KOLORY.length && cz.every((c) => /^[0-9a-f]{6}$/i.test(c))) cz.forEach((c, i) => { s[KOLORY[i]] = '#' + c.toLowerCase(); }); // starszy, krótszy zapis też się czyta
 	return s;
 }
 const zKodu = dekoduj(q.get('lada')) || {};
@@ -132,8 +132,10 @@ async function odswiez(natychmiast = false) {
 	const wyc = new URL(par.adresWyceny); wyc.searchParams.set('konfiguracja', kod); $('#wycena').href = wyc;
 	$('#szafki').setAttribute('aria-pressed', stan.otwarte); $('#szafki').textContent = stan.otwarte ? 'Zamknij szafki' : 'Otwórz szafki';
 	// podpisy na scenie: jasne, gdy tło pod nimi jest ciemne (wieczór u góry, ciemna posadzka na dole)
-	const scenaEl = $('.scena'); scenaEl.classList.toggle('wieczor', tryb3d && stan.pora === 'wieczor');
-	scenaEl.classList.toggle('ciemny-dol', tryb3d && (stan.pora === 'wieczor' || ['ciemna', 'beton', 'jodelka'].includes(stan.posadzka)));
+	const scenaEl = $('.scena'); const ciemny = (hex, prog = 150) => { const n = parseInt(hex.slice(1), 16); return 0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255) < prog; };
+	const scianaBarwiona = ['farba', 'beton', 'mikrocement'].includes(stan.otoczenie), posBarwiona = ['mikrocement', 'kolor'].includes(stan.posadzka);
+	scenaEl.classList.toggle('wieczor', tryb3d && (stan.pora === 'wieczor' || (scianaBarwiona && ciemny(stan.kolorSciany, 175))));
+	scenaEl.classList.toggle('ciemny-dol', tryb3d && (stan.pora === 'wieczor' || ['ciemna', 'beton', 'jodelka'].includes(stan.posadzka) || (posBarwiona && ciemny(stan.kolorPosadzki))));
 	await silnik.zastosuj(stan, natychmiast);
 }
 function oznaczWidok(n) { for (const p of document.querySelectorAll('[data-widok]')) p.classList.toggle('biezacy', p.dataset.widok === n); }

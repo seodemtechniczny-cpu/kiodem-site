@@ -350,17 +350,17 @@ export async function utworzScene(plotno, par, zasoby = 'zasoby/') {
 	}
 
 	// ——— podłoga: lustrzana kopia lady pod półprzezroczystą posadzką + analityczny cień kontaktowy ———
-	const podlogaU = { uKolor: { value: new T.Color(KOLOR_PODLOGI) }, uKrycie: { value: 0.66 }, uMapa: { value: BIALA }, uMapaMoc: { value: 0 }, uKafel: { value: 1 }, uPlyta: { value: 0 }, uFuga: { value: 0 }, uJasnosc: { value: 1 } };
+	const podlogaU = { uKolor: { value: new T.Color(KOLOR_PODLOGI) }, uKrycie: { value: 0.66 }, uMapa: { value: BIALA }, uMapaMoc: { value: 0 }, uKafel: { value: 1 }, uPlyta: { value: 0 }, uFuga: { value: 0 }, uFugaSzer: { value: 0.0015 }, uBarwa: { value: new T.Color(1, 1, 1) }, uJasnosc: { value: 1 } };
 	const podloga = new T.Mesh(new T.CircleGeometry(16, 64), new T.ShaderMaterial({
 		uniforms: podlogaU, transparent: true, depthWrite: false,
 		vertexShader: 'varying vec2 vP; void main(){ vP = position.xy; gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 ); }',
-		fragmentShader: `uniform vec3 uKolor; uniform float uKrycie, uMapaMoc, uKafel, uPlyta, uFuga, uJasnosc; uniform sampler2D uMapa; varying vec2 vP;
+		fragmentShader: `uniform vec3 uKolor, uBarwa; uniform float uKrycie, uMapaMoc, uKafel, uPlyta, uFuga, uFugaSzer, uJasnosc; uniform sampler2D uMapa; varying vec2 vP;
 			void main(){
 				vec3 k = uKolor;
 				if ( uMapaMoc > 0.0 ) {
 					float fuga = 0.0;
-					if ( uPlyta > 0.0 ) { vec2 f = abs( fract( vP / uPlyta ) - 0.5 ); fuga = smoothstep( 0.4985, 0.5, max( f.x, f.y ) ); }
-					k = texture2D( uMapa, vP / uKafel ).rgb * ( 1.0 - uFuga * fuga );
+					if ( uPlyta > 0.0 ) { vec2 f = abs( fract( vP / uPlyta ) - 0.5 ); fuga = smoothstep( 0.5 - uFugaSzer, 0.5, max( f.x, f.y ) ); }
+					k = texture2D( uMapa, vP / uKafel ).rgb * uBarwa * ( 1.0 - uFuga * fuga );
 				}
 				float a = uKrycie * ( 1.0 - smoothstep( 5.0, 15.0, length( vP ) ) );
 				gl_FragColor = vec4( k * uJasnosc, a );
@@ -442,13 +442,31 @@ export async function utworzScene(plotno, par, zasoby = 'zasoby/') {
 		}
 		sciana.visible = tak;
 	}
+	// ściana gładka w dowolnym kolorze: farba, suchy beton albo mikrocement (szara tekstura × kolor z palety)
+	const scianaGladka = new T.Group(); scianaGladka.visible = false; scena.add(scianaGladka);
+	const matSciany = new T.MeshStandardMaterial({ color: '#d9d4cc', roughness: 0.9 });
+	for (const lus of [1, -1]) { const m = new T.Mesh(new T.PlaneGeometry(10.8, 3.0), matSciany); m.position.set(0, lus * 1.5, -1.5); m.scale.y = lus; m.receiveShadow = lus > 0; scianaGladka.add(m); }
+	const scianyTekstury = {};
+	async function ustawSciane(ids, kolor) {
+		await wlaczMarmur(ids === 'marmur');
+		const sc = par.otoczenia.find((x) => x.id === ids);
+		scianaGladka.visible = !!(sc && sc.tekstura);
+		if (!scianaGladka.visible) return;
+		if (!scianyTekstury[ids]) { const t = await tekstura(sc.tekstura); if (t) { t.wrapS = t.wrapT = T.RepeatWrapping; t.repeat.set(10.8 / sc.kafel, 3.0 / sc.kafel); scianyTekstury[ids] = t; } }
+		if (matSciany.map !== (scianyTekstury[ids] || null)) { matSciany.map = scianyTekstury[ids] || null; matSciany.needsUpdate = true; }
+		matSciany.color.set(kolor); matSciany.roughness = sc.szorstkosc;
+	}
 	const posTekstury = {}; let posadzka = null, jasnosc = 1, jasnoscCel = 1, ledCel = 0;
-	async function ustawPosadzke(idp) {
+	const sredniPos = new T.Color(KOLOR_PODLOGI); // średni kolor posadzki: horyzont i gaszenie odbicia
+	async function ustawPosadzke(idp, kolor) {
 		const p = par.posadzki.find((x) => x.id === idp) || par.posadzki[0];
 		if (p.tekstura && !posTekstury[p.id]) { const t = await tekstura(p.tekstura); if (t) { t.wrapS = t.wrapT = T.RepeatWrapping; posTekstury[p.id] = t; } }
 		posadzka = p; const t = posTekstury[p.id];
-		podlogaU.uMapa.value = t || BIALA; podlogaU.uMapaMoc.value = t ? 1 : 0; podlogaU.uKafel.value = p.kafel || 1;
-		podlogaU.uPlyta.value = p.plyta || 0; podlogaU.uFuga.value = p.fuga || 0; podlogaU.uKrycie.value = p.krycie; podlogaU.uKolor.value.set(p.sredni);
+		podlogaU.uMapa.value = t || BIALA; podlogaU.uMapaMoc.value = (t || p.plyta) ? 1 : 0; podlogaU.uKafel.value = p.kafel || 1;
+		podlogaU.uPlyta.value = p.plyta || 0; podlogaU.uFuga.value = p.fuga || 0; podlogaU.uFugaSzer.value = p.fugaSzer || 0.0015; podlogaU.uKrycie.value = p.krycie;
+		podlogaU.uBarwa.value.set(p.barwiona ? kolor : (p.barwa || '#ffffff')); // mikrocement: szara tekstura × kolor z palety
+		sredniPos.set(p.wlasny || p.barwiona ? kolor : p.sredni); if (p.barwiona) sredniPos.multiplyScalar(p.jasnosc || 0.8);
+		podlogaU.uKolor.value.copy(sredniPos);
 		ustawJasnosc(jasnosc);
 	}
 	const kolorPos = new T.Color();
@@ -456,7 +474,7 @@ export async function utworzScene(plotno, par, zasoby = 'zasoby/') {
 		jasnosc = j; const f = 0.2 + 0.8 * j, g = 0.26 + 0.74 * j;
 		scena.environmentIntensity = 0.38 * f; slonce.intensity = 1.55 * f; tylne.intensity = 1.15 * f;
 		podlogaU.uJasnosc.value = g;
-		kolorPos.set(posadzka ? posadzka.sredni : KOLOR_PODLOGI).multiplyScalar(g);
+		kolorPos.copy(sredniPos).multiplyScalar(g);
 		for (const m of mgly) m.color.copy(kolorPos);
 		tloU.uDol.value.copy(kolorPos); tloU.uGora.value.set(KOLOR_TLA_GORA).multiplyScalar(g * (0.2 + 0.8 * j)); // wieczorem ściana gaśnie mocniej niż posadzka
 	}
@@ -620,8 +638,8 @@ export async function utworzScene(plotno, par, zasoby = 'zasoby/') {
 			Object.assign(b, d); Object.assign(wlasn, wlasnCel); przejscie.uPostep.value = 1;
 			matWyk.roughness = wlasn.r; matWyk.clearcoat = wlasn.cc; matWyk.clearcoatRoughness = wlasn.ccr; matWyk.normalScale.setScalar(wlasn.ns); matWyk.ior = wlasn.ior;
 		}
-		await wlaczMarmur(nowy.otoczenie === 'marmur');
-		await ustawPosadzke(nowy.posadzka);
+		await ustawSciane(nowy.otoczenie, nowy.kolorSciany || '#d9d4cc');
+		await ustawPosadzke(nowy.posadzka, nowy.kolorPosadzki || '#b9b4ac');
 		jasnoscCel = nowy.pora === 'wieczor' ? 0 : 1; ledCel = nowy.led === 'tak' ? 1 : 0;
 		ledU.uLed.value.set(nowy.kolorLed || '#ffd9a0'); matLed.color.copy(ledU.uLed.value);
 		if (pierwszy || natychmiast) { ustawJasnosc(jasnoscCel); ledU.uMoc.value = ledCel; }

@@ -67,7 +67,9 @@
     "pora": "dzien",
     "gniazdaKolor": "bialy",
     "ladowarka": "nie",
-    "led": "nie"
+    "led": "nie",
+    "kolorSciany": "#d9d4cc",
+    "kolorPosadzki": "#b9b4ac"
   },
   "kolory": {
     "wnetrze": "#d3c9bf",
@@ -336,6 +338,27 @@
     {
       "id": "marmur",
       "nazwa": "Ściana z marmuru"
+    },
+    {
+      "id": "farba",
+      "nazwa": "Farba",
+      "tekstura": "farba.webp",
+      "kafel": 0.9,
+      "szorstkosc": 0.92
+    },
+    {
+      "id": "beton",
+      "nazwa": "Suchy beton",
+      "tekstura": "beton-suchy.webp",
+      "kafel": 2.6,
+      "szorstkosc": 0.95
+    },
+    {
+      "id": "mikrocement",
+      "nazwa": "Mikrocement",
+      "tekstura": "mikrocement.webp",
+      "kafel": 3.2,
+      "szorstkosc": 0.5
     }
   ],
   "zastepczy": {
@@ -460,6 +483,35 @@
       "fuga": 0.35,
       "krycie": 0.52,
       "sredni": "#3d3e3e"
+    },
+    {
+      "id": "kafle",
+      "nazwa": "Białe kafle, jasna fuga",
+      "plyta": 0.6,
+      "fuga": 0.1,
+      "fugaSzer": 0.004,
+      "krycie": 0.6,
+      "barwa": "#f6f6f3",
+      "sredni": "#f1f1ee"
+    },
+    {
+      "id": "mikrocement",
+      "nazwa": "Mikrocement",
+      "tekstura": "mikrocement.webp",
+      "kafel": 3.2,
+      "plyta": 0,
+      "fuga": 0,
+      "krycie": 0.82,
+      "barwiona": true,
+      "jasnosc": 0.82,
+      "sredni": "#b9b4ac"
+    },
+    {
+      "id": "kolor",
+      "nazwa": "Własny kolor",
+      "krycie": 0.66,
+      "wlasny": true,
+      "sredni": "#b9b4ac"
     }
   ],
   "pory": [
