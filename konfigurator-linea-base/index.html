@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Linea Base, konfigurator 3D | MEUME Design</title>
+<link rel="preload" href="zasoby/fonty/Bevellier-Medium.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="zasoby/fonty/Satoshi-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/styl.css?v=4">
+</head>
+<body>
+<main class="uklad">
+	<section class="scena" aria-label="Podgląd lady Linea Base">
+		<canvas id="plotno" tabindex="0" aria-label="Lada Linea Base w trzech wymiarach. Przeciągnij, aby obrócić, albo użyj przycisków widoku poniżej."></canvas>
+		<span class="wymiar" id="wymiar-szer" aria-hidden="true"></span>
+		<span class="wymiar" id="wymiar-gleb" aria-hidden="true"></span>
+		<span class="wymiar" id="wymiar-wys" aria-hidden="true"></span>
+		<header class="znak">
+			<img src="zasoby/logo/meume.svg" alt="MEUME Design" width="57" height="31">
+			<p>Pokaz konfiguratora</p>
+		</header>
+		<p class="ladowanie" id="ladowanie" role="status">Przygotowuję ladę…</p>
+		<p class="podpowiedz" id="podpowiedz" hidden>Przeciągnij, aby obrócić. Kliknij drzwiczki albo szufladę, aby je otworzyć.</p>
+		<div class="widoki" role="group" aria-label="Widok">
+			<button type="button" data-widok="trzy">Trzy czwarte</button>
+			<button type="button" data-widok="przod">Przód</button>
+			<button type="button" data-widok="recepcja">Od strony recepcji</button>
+			<button type="button" data-widok="logo">Logo z bliska</button>
+			<button type="button" id="szafki" aria-pressed="false">Otwórz szafki</button>
+		</div>
+	</section>
+
+	<aside class="panel" aria-label="Konfiguracja">
+		<div class="tytul">
+			<h1>Linea Base</h1>
+			<p>Lada recepcyjna na wymiar. Ustaw szerokość, wybierz wykończenie i sprawdź, jak wygląda z Twoim logo.</p>
+		</div>
+		<p class="uwaga-trybu" id="uwaga-trybu" hidden>Ta przeglądarka ma wyłączoną akcelerację grafiki, więc pokazuję obrót z gotowych ujęć. Zmiana wymiaru co 10 cm, struktury i własne logo działają po jej włączeniu.</p>
+
+		<form id="formularz" novalidate>
+			<fieldset class="grupa" data-grupa="wymiary">
+				<legend>Wymiary</legend>
+				<div class="miarka" data-tylko="3d" style="--kroki: 19">
+					<label for="szer">Szerokość</label>
+					<output for="szer" id="szer-wynik">140 cm</output>
+					<input type="range" id="szer" name="szer" min="60" max="250" step="10" value="140" aria-describedby="szer-opis">
+					<div class="podzialka" aria-hidden="true"></div>
+					<p id="szer-opis" class="drobne"><span>60 cm</span><span>co 10 cm</span><span>250 cm</span></p>
+				</div>
+				<div class="miarka" data-tylko="3d" style="--kroki: 4">
+					<label for="wys">Wysokość</label>
+					<output for="wys" id="wys-wynik">110 cm</output>
+					<input type="range" id="wys" name="wys" min="90" max="130" step="10" value="110" aria-describedby="wys-opis">
+					<div class="podzialka" aria-hidden="true"></div>
+					<p id="wys-opis" class="drobne"><span>90 cm</span><span>co 10 cm</span><span>130 cm</span></p>
+				</div>
+				<div class="wybor" data-tylko="klatki" role="radiogroup" aria-label="Szerokość" id="szer-klatki"></div>
+				<div class="wybor" role="radiogroup" aria-labelledby="gleb-nazwa" id="gleb" data-tylko="3d">
+					<span class="nazwa-pola" id="gleb-nazwa">Głębokość</span>
+				</div>
+			</fieldset>
+
+			<fieldset class="grupa" data-grupa="wykonczenie">
+				<legend>Wykończenie</legend>
+				<p class="nazwa-pola">Z oferty Linea Base</p>
+				<div class="probki" id="wyk-oferta" role="radiogroup" aria-label="Wykończenia z oferty"></div>
+				<p class="nazwa-pola" data-tylko="3d">Laminaty, przykłady</p>
+				<div class="probki" id="wyk-laminaty" role="radiogroup" aria-label="Laminaty" data-tylko="3d"></div>
+				<p class="nazwa-pola" data-tylko="3d">Kamień i spiek, przykłady</p>
+				<div class="probki" id="wyk-kamien" role="radiogroup" aria-label="Kamień i spiek" data-tylko="3d"></div>
+				<p class="nazwa-pola" data-tylko="3d">Lakier w dowolnym kolorze</p>
+				<div class="probki" id="wyk-kolor" role="radiogroup" aria-label="Własny kolor" data-tylko="3d"></div>
+				<label class="paleta" data-tylko="3d" data-gdy="wyk=kolor">Kolor obudowy <input type="color" id="kolorLady" value="#24403a"></label>
+			</fieldset>
+
+			<fieldset class="grupa" data-grupa="struktura" data-tylko="3d">
+				<legend>Powierzchnia, cokół i akcenty</legend>
+				<div class="wybor" role="radiogroup" aria-labelledby="str-nazwa" id="str"><span class="nazwa-pola" id="str-nazwa">Powierzchnia frontu</span></div>
+				<p class="drobne" id="str-uwaga" hidden>Szkło ma zawsze gładką powierzchnię z połyskiem.</p>
+				<div class="wybor" role="radiogroup" aria-labelledby="cokol-nazwa" id="cokol"><span class="nazwa-pola" id="cokol-nazwa">Cokół</span></div>
+				<div class="wybor" role="radiogroup" aria-labelledby="akcent-nazwa" id="akcent"><span class="nazwa-pola" id="akcent-nazwa">Kolor akcentów (cokół, listwa, gałki)</span></div>
+			</fieldset>
+
+			<fieldset class="grupa" data-grupa="blat" data-tylko="3d">
+				<legend>Blat</legend>
+				<div class="wybor" role="radiogroup" aria-label="Blat" id="blat"></div>
+				<label class="paleta" data-gdy="blat=kolor">Kolor blatu <input type="color" id="kolorBlatu" value="#1a1a1a"></label>
+			</fieldset>
+
+			<fieldset class="grupa" data-grupa="logo" data-tylko="3d">
+				<legend>Logo na froncie</legend>
+				<div class="wybor" role="radiogroup" aria-label="Wykonanie logo" id="logo"></div>
+				<label class="paleta" data-gdy="logo=kolor">Kolor logo <input type="color" id="kolorLogo" value="#ffffff"></label>
+				<label class="paleta" data-gdy="logo=led">Kolor światła <input type="color" id="kolorLed" value="#ffd9a0"></label>
+				<div class="wgraj">
+					<label class="przycisk-plik" for="plik-logo">Wgraj własne logo</label>
+					<input type="file" id="plik-logo" accept=".svg,image/svg+xml,image/png,image/jpeg,image/webp">
+					<button type="button" class="tekstowy" id="logo-meume" hidden>Wróć do logo MEUME</button>
+				</div>
+				<p class="drobne" id="logo-stan" role="status">Logo MEUME jest zawsze złote. Po wgraniu własnego wybierzesz wykonanie: SVG zamieniam na litery przestrzenne, PNG na płaski nadruk. Plik zostaje w Twojej przeglądarce.</p>
+			</fieldset>
+
+			<fieldset class="grupa" data-grupa="wyposazenie" data-tylko="3d">
+				<legend>Wyposażenie</legend>
+				<div class="wybor" role="radiogroup" aria-labelledby="gniazda-nazwa" id="gniazda"><span class="nazwa-pola" id="gniazda-nazwa">Gniazda we wnęce (2 × 230 V i USB na moduł)</span></div>
+				<div class="wybor" role="radiogroup" aria-labelledby="gk-nazwa" id="gniazdaKolor" data-gdy="gniazda=1|gniazda=2"><span class="nazwa-pola" id="gk-nazwa">Kolor modułów</span></div>
+				<div class="wybor" role="radiogroup" aria-label="Ładowarka indukcyjna" id="ladowarka"></div>
+				<div class="wybor" role="radiogroup" aria-label="Przepust kablowy" id="przepust"></div>
+				<div class="wybor" role="radiogroup" aria-label="Podświetlenie pod ladą" id="led"></div>
+				<label class="paleta" data-gdy="led=tak">Kolor światła <input type="color" id="kolorLedCokol" data-pole="kolorLed" value="#ffd9a0"></label>
+				<p class="drobne" data-gdy="led=tak">Światło LED najlepiej widać wieczorem: przełącz porę w grupie „Otoczenie”.</p>
+			</fieldset>
+
+			<fieldset class="grupa" data-grupa="otoczenie" data-tylko="3d">
+				<legend>Otoczenie</legend>
+				<div class="wybor" role="radiogroup" aria-labelledby="pos-nazwa" id="posadzka"><span class="nazwa-pola" id="pos-nazwa">Posadzka</span></div>
+				<div class="wybor" role="radiogroup" aria-labelledby="sc-nazwa" id="otoczenie"><span class="nazwa-pola" id="sc-nazwa">Ściana</span></div>
+				<div class="wybor" role="radiogroup" aria-labelledby="pora-nazwa" id="pora"><span class="nazwa-pola" id="pora-nazwa">Światło</span></div>
+				<label class="przelacznik"><input type="checkbox" id="wymiary" checked> Pokaż wymiary</label>
+			</fieldset>
+		</form>
+
+		<section class="podsumowanie" aria-labelledby="pods-nazwa">
+			<h2 id="pods-nazwa">Twoja konfiguracja</h2>
+			<dl id="lista"></dl>
+			<div class="akcje">
+				<a class="glowny" id="wycena" href="#">Zapytaj o wycenę tej konfiguracji</a>
+				<button type="button" class="tekstowy" id="kopiuj">Skopiuj link do tej konfiguracji</button>
+				<button type="button" class="tekstowy" id="pobierz">Pobierz obraz tej konfiguracji</button>
+				<span class="drobne" id="kopiuj-stan" role="status"></span>
+			</div>
+			<p class="drobne">Pokaz możliwości. Kolory i rysunek materiałów na ekranie są poglądowe, a lista wykończeń nie jest jeszcze ofertą.</p>
+		</section>
+	</aside>
+</main>
+<script type="module" src="js/glowny.js?v=4"></script>
+<noscript><p class="bez-js">Konfigurator wymaga włączonego JavaScriptu.</p></noscript>
+</body>
+</html>

@@ -1,0 +1,509 @@
+{
+  "uwaga": "Jedno źródło wymiarów i opcji dla strony (js/) i dla Blendera (blender/lada.py). Metry.",
+  "wymiary": {
+    "H": 1.1,
+    "hCokolu": 0.1,
+    "cofniecieCokolu": 0.06,
+    "plyta": 0.02,
+    "hBlatu": 0.8,
+    "glebNadstawki": 0.3,
+    "hSzuflady": 0.18,
+    "szczelina": 0.003,
+    "szerSrodka": 0.6,
+    "minDrzwi": 0.14,
+    "listwaOdGory": 0.1,
+    "listwaH": 0.012,
+    "logoUdzial": 0.8,
+    "logoGrubosc": 0.016,
+    "logoA": 0.6,
+    "logoB": 0.1
+  },
+  "szerokosci": [
+    60,
+    70,
+    80,
+    90,
+    100,
+    110,
+    120,
+    130,
+    140,
+    150,
+    160,
+    170,
+    180,
+    190,
+    200,
+    210,
+    220,
+    230,
+    240,
+    250
+  ],
+  "glebokosci": [
+    50,
+    60,
+    70,
+    80
+  ],
+  "domyslne": {
+    "szer": 140,
+    "gleb": 50,
+    "wyk": "trawertyn",
+    "str": "mat",
+    "cokol": "material",
+    "logo": "zloto",
+    "otoczenie": "studio",
+    "wys": 110,
+    "akcent": "zloto",
+    "blat": "lada",
+    "gniazda": "0",
+    "przepust": "nie",
+    "kolorLady": "#24403a",
+    "kolorBlatu": "#1a1a1a",
+    "kolorLogo": "#ffffff",
+    "kolorLed": "#ffd9a0",
+    "posadzka": "jasna",
+    "pora": "dzien",
+    "gniazdaKolor": "bialy",
+    "ladowarka": "nie",
+    "led": "nie"
+  },
+  "kolory": {
+    "wnetrze": "#d3c9bf",
+    "zloto": "#e8cc93"
+  },
+  "wykonczenia": [
+    {
+      "id": "dab",
+      "nazwa": "Dąb Casella naturalny",
+      "rodzaj": "Imitacja drewna",
+      "zrodlo": "klientka",
+      "tekstura": "dab.webp",
+      "normalna": "dab-nor.webp",
+      "kafel": [
+        0.5,
+        0.9
+      ],
+      "kolor": "#ffffff",
+      "szklo": false,
+      "klatki": true,
+      "wnetrze": "front",
+      "grupa": "oferta"
+    },
+    {
+      "id": "trawertyn",
+      "nazwa": "Trawertyn",
+      "rodzaj": "Laminat",
+      "zrodlo": "klientka",
+      "tekstura": "trawertyn.webp",
+      "kafel": [
+        1.6,
+        1.2
+      ],
+      "kolor": "#ffffff",
+      "szklo": false,
+      "klatki": true,
+      "grupa": "oferta"
+    },
+    {
+      "id": "kaszmir",
+      "nazwa": "Lacobel Kaszmir",
+      "rodzaj": "Szkło lakierowane",
+      "zrodlo": "klientka",
+      "tekstura": null,
+      "kafel": [
+        1,
+        1
+      ],
+      "kolor": "#d1ccc8",
+      "szklo": true,
+      "klatki": true,
+      "grupa": "oferta"
+    },
+    {
+      "id": "onyx",
+      "nazwa": "Onyx",
+      "rodzaj": "Szkło z nadrukiem kamienia",
+      "zrodlo": "klientka",
+      "tekstura": "onyx.webp",
+      "kafel": [
+        2.46,
+        0.823
+      ],
+      "kolor": "#ffffff",
+      "szklo": true,
+      "klatki": true,
+      "grupa": "oferta"
+    },
+    {
+      "id": "almond",
+      "nazwa": "Almond",
+      "rodzaj": "Laminat",
+      "zrodlo": "próbka klientki, do potwierdzenia",
+      "tekstura": "almond.webp",
+      "kafel": [
+        0.9,
+        1.2
+      ],
+      "kolor": "#ececec",
+      "szklo": false,
+      "grupa": "laminaty"
+    },
+    {
+      "id": "beton-jasny",
+      "nazwa": "Beton jasny",
+      "rodzaj": "Laminat",
+      "zrodlo": "próbka klientki, do potwierdzenia",
+      "tekstura": "beton-jasny.webp",
+      "kafel": [
+        0.9,
+        1.2
+      ],
+      "kolor": "#ececec",
+      "szklo": false,
+      "grupa": "laminaty"
+    },
+    {
+      "id": "crystal",
+      "nazwa": "Crystal",
+      "rodzaj": "Laminat",
+      "zrodlo": "próbka klientki, do potwierdzenia",
+      "tekstura": "crystal.webp",
+      "kafel": [
+        0.9,
+        1.2
+      ],
+      "kolor": "#ececec",
+      "szklo": false,
+      "grupa": "laminaty"
+    },
+    {
+      "id": "pietro",
+      "nazwa": "Pietro",
+      "rodzaj": "Laminat",
+      "zrodlo": "próbka klientki, do potwierdzenia",
+      "tekstura": "pietro.webp",
+      "kafel": [
+        0.9,
+        1.2
+      ],
+      "kolor": "#ececec",
+      "szklo": false,
+      "grupa": "laminaty"
+    },
+    {
+      "id": "rust",
+      "nazwa": "Rust",
+      "rodzaj": "Laminat",
+      "zrodlo": "próbka klientki, do potwierdzenia",
+      "tekstura": "rust.webp",
+      "kafel": [
+        0.9,
+        1.2
+      ],
+      "kolor": "#ececec",
+      "szklo": false,
+      "grupa": "laminaty"
+    },
+    {
+      "id": "san-luca",
+      "nazwa": "San Luca",
+      "rodzaj": "Laminat",
+      "zrodlo": "próbka klientki, do potwierdzenia",
+      "tekstura": "san-luca.webp",
+      "kafel": [
+        0.9,
+        1.2
+      ],
+      "kolor": "#ececec",
+      "szklo": false,
+      "grupa": "laminaty"
+    },
+    {
+      "id": "carrara",
+      "nazwa": "Carrara",
+      "rodzaj": "Spiek, biały marmur",
+      "zrodlo": "przykład CC0",
+      "grupa": "kamien",
+      "tekstura": "carrara.webp",
+      "kafel": [
+        1.2,
+        1.2
+      ],
+      "kolor": "#ffffff",
+      "szklo": false
+    },
+    {
+      "id": "nero",
+      "nazwa": "Nero",
+      "rodzaj": "Spiek, czarny marmur",
+      "zrodlo": "przykład CC0",
+      "grupa": "kamien",
+      "tekstura": "nero.webp",
+      "kafel": [
+        1.2,
+        1.2
+      ],
+      "kolor": "#ffffff",
+      "szklo": false
+    },
+    {
+      "id": "crema",
+      "nazwa": "Crema",
+      "rodzaj": "Spiek, beżowy marmur",
+      "zrodlo": "przykład CC0",
+      "grupa": "kamien",
+      "tekstura": "crema.webp",
+      "kafel": [
+        1.2,
+        1.2
+      ],
+      "kolor": "#ffffff",
+      "szklo": false
+    },
+    {
+      "id": "kolor",
+      "nazwa": "Własny kolor",
+      "rodzaj": "Lakier, pełna paleta",
+      "zrodlo": "przykład",
+      "grupa": "kolor",
+      "tekstura": null,
+      "kafel": [
+        1,
+        1
+      ],
+      "kolor": "#ffffff",
+      "szklo": false,
+      "wlasny": true
+    }
+  ],
+  "struktury": [
+    {
+      "id": "mat",
+      "nazwa": "Gładka, mat"
+    },
+    {
+      "id": "polysk",
+      "nazwa": "Gładka, połysk"
+    },
+    {
+      "id": "ryfle",
+      "nazwa": "Panel ryflowany"
+    }
+  ],
+  "cokoly": [
+    {
+      "id": "material",
+      "nazwa": "W materiale lady"
+    },
+    {
+      "id": "zloto",
+      "nazwa": "W kolorze akcentu"
+    }
+  ],
+  "loga": [
+    {
+      "id": "front",
+      "nazwa": "W kolorze frontu"
+    },
+    {
+      "id": "zloto",
+      "nazwa": "Złote"
+    },
+    {
+      "id": "brak",
+      "nazwa": "Bez logo"
+    },
+    {
+      "id": "srebro",
+      "nazwa": "Srebrne"
+    },
+    {
+      "id": "kolor",
+      "nazwa": "Własny kolor"
+    },
+    {
+      "id": "led",
+      "nazwa": "Podświetlane"
+    }
+  ],
+  "otoczenia": [
+    {
+      "id": "studio",
+      "nazwa": "Bez ściany"
+    },
+    {
+      "id": "marmur",
+      "nazwa": "Ściana z marmuru"
+    }
+  ],
+  "zastepczy": {
+    "szerokosci": [
+      60,
+      140,
+      250
+    ],
+    "klatek": 36
+  },
+  "adresWyceny": "https://meumedesign.com/wycena/?model=816",
+  "wysokosci": [
+    90,
+    100,
+    110,
+    120,
+    130
+  ],
+  "akcenty": [
+    {
+      "id": "zloto",
+      "nazwa": "Złoty"
+    },
+    {
+      "id": "srebro",
+      "nazwa": "Srebrny"
+    },
+    {
+      "id": "bialy",
+      "nazwa": "Biały"
+    }
+  ],
+  "blaty": [
+    {
+      "id": "lada",
+      "nazwa": "Jak lada"
+    },
+    {
+      "id": "bialy",
+      "nazwa": "Biały"
+    },
+    {
+      "id": "czarny",
+      "nazwa": "Czarny"
+    },
+    {
+      "id": "marmur",
+      "nazwa": "Marmur"
+    },
+    {
+      "id": "kolor",
+      "nazwa": "Własny kolor"
+    }
+  ],
+  "gniazda": [
+    {
+      "id": "0",
+      "nazwa": "Bez gniazd"
+    },
+    {
+      "id": "1",
+      "nazwa": "Jeden moduł"
+    },
+    {
+      "id": "2",
+      "nazwa": "Dwa moduły"
+    }
+  ],
+  "przepusty": [
+    {
+      "id": "nie",
+      "nazwa": "Bez przepustu"
+    },
+    {
+      "id": "tak",
+      "nazwa": "Przepust kablowy"
+    }
+  ],
+  "posadzki": [
+    {
+      "id": "jasna",
+      "nazwa": "Jasna żywica",
+      "sredni": "#e9e6e2",
+      "krycie": 0.66
+    },
+    {
+      "id": "marmur",
+      "nazwa": "Marmur",
+      "tekstura": "marmur.webp",
+      "kafel": 2.4,
+      "plyta": 1.2,
+      "fuga": 0.22,
+      "krycie": 0.62,
+      "sredni": "#d0c3b0"
+    },
+    {
+      "id": "jodelka",
+      "nazwa": "Dąb w jodełkę",
+      "tekstura": "posadzka-jodelka.webp",
+      "kafel": 1.05,
+      "plyta": 0,
+      "fuga": 0,
+      "krycie": 0.86,
+      "sredni": "#99785b"
+    },
+    {
+      "id": "beton",
+      "nazwa": "Beton szlifowany",
+      "tekstura": "posadzka-beton.webp",
+      "kafel": 3.0,
+      "plyta": 0,
+      "fuga": 0,
+      "krycie": 0.8,
+      "sredni": "#605c59"
+    },
+    {
+      "id": "ciemna",
+      "nazwa": "Ciemny kamień",
+      "tekstura": "nero.webp",
+      "kafel": 2.4,
+      "plyta": 1.2,
+      "fuga": 0.35,
+      "krycie": 0.52,
+      "sredni": "#3d3e3e"
+    }
+  ],
+  "pory": [
+    {
+      "id": "dzien",
+      "nazwa": "Dzień"
+    },
+    {
+      "id": "wieczor",
+      "nazwa": "Wieczór"
+    }
+  ],
+  "gniazdaKolory": [
+    {
+      "id": "bialy",
+      "nazwa": "Białe"
+    },
+    {
+      "id": "czarny",
+      "nazwa": "Czarne"
+    },
+    {
+      "id": "akcent",
+      "nazwa": "W kolorze akcentu"
+    }
+  ],
+  "ladowarki": [
+    {
+      "id": "nie",
+      "nazwa": "Bez ładowarki"
+    },
+    {
+      "id": "tak",
+      "nazwa": "Ładowarka indukcyjna w blacie"
+    }
+  ],
+  "ledy": [
+    {
+      "id": "nie",
+      "nazwa": "Bez podświetlenia"
+    },
+    {
+      "id": "tak",
+      "nazwa": "LED pod ladą"
+    }
+  ]
+}
