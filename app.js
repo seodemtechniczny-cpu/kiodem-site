@@ -693,6 +693,7 @@
     const href = (p) => (PG.slug[p][lang] ? base + PG.slug[p][lang] : '/' + PG.slug[p].en) + '/';
     document.querySelectorAll('.dock__btn').forEach((b) => { b.href = href(b.dataset.panel === 'brief' ? 'contact' : b.dataset.panel); });
     document.querySelectorAll('.legal a').forEach((a) => { const p = a.dataset.legal; a.href = href(p); a.textContent = PG.label[p][lang]; });
+    document.querySelectorAll('[data-klient]').forEach((a) => { a.href = 'https://klient.kiodem.com/login?lang=' + lang; a.textContent = PG.label.client[lang]; });
     $('#panel-close').setAttribute('aria-label', t('close'));
     if (META[lang]) { document.title = META[lang].title; const md = document.querySelector('meta[name="description"]'); if (md) md.content = META[lang].description; }
     naviBtn.textContent = CURSOR.map[lang]; naviBtn.setAttribute('aria-label', CURSOR.map[lang]);

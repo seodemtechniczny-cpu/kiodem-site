@@ -42,6 +42,8 @@ def localize(html, lang):
     html = html.replace('data-legal="privacy">Privacy policy<', 'data-legal="privacy">%s<' % U["privacy"])
     html = html.replace('data-legal="terms">Terms of service<', 'data-legal="terms">%s<' % U["terms"])
     html = re.sub(r'(<span class="sr-only">)[^<]*(</span></h1>)', lambda m: m.group(1) + M["title"] + m.group(2), html)
+    html = html.replace('href="https://klient.kiodem.com/login?lang=en" data-klient>Client<',
+                        'href="https://klient.kiodem.com/login?lang=%s" data-klient>%s<' % (lang, S.D["PAGES"]["label"]["client"][lang]))
     # zasoby o poziom wyzej
     for pat in ('href="assets/', 'href="styles.css', 'src="data.js', 'src="app.js', 'src="assets/'):
         html = html.replace(pat, pat.replace('="', '="../'))

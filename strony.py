@@ -208,7 +208,7 @@ def head(l, page, title, desc, ld, noindex=False):
 <link rel="icon" href="/assets/brand/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/assets/brand/apple-touch-icon.png">
 <link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/assets/page.css?v=1">
+<link rel="stylesheet" href="/assets/page.css?v=2">
 <script src="/assets/js/region.js?v=1"></script>
 <script type="application/ld+json">{json.dumps(ld, ensure_ascii=False)}</script>
 </head>
@@ -227,6 +227,7 @@ def chrome_top(l, page):
     return f"""<header class="head"><div class="wrap">
 <a class="logo" href="{base(l)}" aria-label="KIODEM, {e(U['home'])}">{LOGO}</a>
 <nav class="nav" aria-label="{e(U['menu'])}">{nav}</nav>
+<a class="klient" href="https://klient.kiodem.com/login?lang={l}">{e(D["PAGES"]["label"]["client"][l])}</a>
 <nav class="langs" aria-label="{e(U['lang'])}">{langs}</nav>
 </div></header>
 """

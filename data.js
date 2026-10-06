@@ -627,7 +627,8 @@ window.KIODEM_DATA = (function () {
     label: {
       faq:     { en: "Questions", pl: "Pytania", de: "Fragen", fr: "Questions", es: "Preguntas" },
       privacy: { en: "Privacy policy", pl: "Polityka prywatności", de: "Privacy policy (EN)", fr: "Privacy policy (EN)", es: "Privacy policy (EN)" },
-      terms:   { en: "Terms of service", pl: "Regulamin", de: "Terms of service (EN)", fr: "Terms of service (EN)", es: "Terms of service (EN)" }
+      terms:   { en: "Terms of service", pl: "Regulamin", de: "Terms of service (EN)", fr: "Terms of service (EN)", es: "Terms of service (EN)" },
+      client:  { en: "Client", pl: "Klient", de: "Kunden", fr: "Client", es: "Cliente" }
     }
   };
 
