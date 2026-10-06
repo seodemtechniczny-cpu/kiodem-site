@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KIODEM — 3D work samples</title>
+<meta name="description" content="3D product configurators, walkthroughs and product stories built by KIODEM, plus websites, search, ads and measurement.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="../assets/brand/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap">
+<style>
+  :root{--obsidian:#080A0F;--graphite:#121722;--ivory:#F1EEE7;--ink-70:rgba(241,238,231,.72);--ink-45:rgba(241,238,231,.46);--ink-10:rgba(241,238,231,.10)}
+  *{box-sizing:border-box;margin:0}
+  html{background:var(--obsidian)}
+  body{background:var(--obsidian);color:var(--ivory);font:16px/1.55 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+  header{padding:48px 0 32px;border-bottom:1px solid var(--ink-10)}
+  .mark{font-weight:700;letter-spacing:.32em;font-size:14px}
+  h1{font-size:clamp(30px,5vw,52px);line-height:1.08;font-weight:600;margin:28px 0 14px;max-width:16ch}
+  .lead{color:var(--ink-70);max-width:58ch}
+  section{padding:56px 0;border-bottom:1px solid var(--ink-10)}
+  h2{font-size:clamp(22px,3vw,30px);font-weight:600;margin-bottom:8px}
+  .kicker{color:var(--ink-45);font-size:13px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+  .txt{color:var(--ink-70);max-width:62ch;margin-bottom:24px}
+  .grid{display:grid;gap:12px}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .tall{display:grid;grid-template-columns:repeat(2,minmax(0,300px));gap:16px}
+  figure{background:var(--graphite);overflow:hidden}
+  figure img,figure video{display:block;width:100%;height:auto;background:var(--graphite)}
+  figcaption{font-size:13px;color:var(--ink-45);padding:10px 12px}
+  ul.points{list-style:none;padding:0;margin:0 0 24px;color:var(--ink-70);max-width:62ch}
+  ul.points li{padding:6px 0 6px 18px;position:relative}
+  ul.points li::before{content:"";position:absolute;left:0;top:15px;width:8px;height:1px;background:var(--ivory)}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+  .card{background:var(--graphite);padding:18px}
+  .card b{display:block;margin-bottom:4px}
+  .card span{display:block;color:var(--ink-45);font-size:13px;margin-bottom:10px}
+  .card p{color:var(--ink-70);font-size:14px}
+  footer{padding:48px 0 64px}
+  .cta{display:inline-block;margin-top:14px;padding:12px 18px;border:1px solid var(--ivory);text-decoration:none}
+  @media (max-width:720px){.g3,.g2{grid-template-columns:1fr}.tall{grid-template-columns:1fr 1fr}}
+  /* wejscie elementow: przesuniecie, bez zmiany przezroczystosci (zasada: zero fade'ow) */
+  .rise{transform:translateY(24px);transition:transform .7s cubic-bezier(.22,1,.36,1)}
+  .rise.in{transform:none}
+  @media (prefers-reduced-motion:reduce){.rise{transform:none;transition:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="mark">KIODEM</div>
+    <h1>3D your customers can change themselves</h1>
+    <p class="lead">Configurators, walkthroughs and product stories that run on your own website: the customer
+      picks size, finish and details and sees the product change. Below, work I built in 2026, plus the
+      websites, search and ads side of what I do.</p>
+  </div>
+</header>
+
+<main>
+<section class="rise">
+  <div class="wrap">
+    <div class="kicker">3D configurator · furniture</div>
+    <h2>Reception counter, configured live</h2>
+    <p class="txt">Finishes, glass, logo, height on a 10 cm slider, sockets, LED and the room around it change
+      on screen. A live three.js scene with soft shadows, plus a pre-rendered mode for computers without a
+      graphics card. Built from the maker's 2D renders, with no 3D source files.</p>
+    <figure><video data-src="media/linea.mp4" poster="media/linea.webp" muted loop playsinline preload="none" width="960" height="540"></video>
+      <figcaption>Live configurator, 24 s</figcaption></figure>
+    <div class="grid g3" style="margin-top:12px">
+      <figure><img loading="lazy" src="media/linea-1.webp" width="960" height="540" alt="Counter in travertine"><figcaption>Travertine front</figcaption></figure>
+      <figure><img loading="lazy" src="media/linea-2.webp" width="960" height="540" alt="Oak with black top"><figcaption>Oak, black top</figcaption></figure>
+      <figure><img loading="lazy" src="media/linea-3.webp" width="960" height="540" alt="Custom colour with marble top"><figcaption>Any colour, marble top</figcaption></figure>
+      <figure><img loading="lazy" src="media/linea-4.webp" width="960" height="540" alt="Backlit logo"><figcaption>Backlit logo</figcaption></figure>
+      <figure><img loading="lazy" src="media/linea-5.webp" width="960" height="540" alt="Sockets and cable pass-through"><figcaption>Sockets and cable pass-through</figcaption></figure>
+      <figure><img loading="lazy" src="media/linea-6.webp" width="960" height="540" alt="Evening light with LED under the counter"><figcaption>Evening, LED under the counter</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="rise">
+  <div class="wrap">
+    <div class="kicker">3D walkthrough + configurator · houses and garden buildings</div>
+    <h2>A timber house you walk through and price</h2>
+    <p class="txt">One scroll goes from the foundation slab to the living room. Along the way the visitor sees each
+      build stage with its materials and cost, then changes the sofa, kitchen, floor, cladding and roof.
+      The price and the payment schedule update with every choice, and the configuration saves into a link.</p>
+    <figure><video data-src="media/dom.mp4" poster="media/dom.webp" muted loop playsinline preload="none" width="960" height="540"></video>
+      <figcaption>Walkthrough from the slab to the living room, 17 s</figcaption></figure>
+    <div class="grid g3" style="margin-top:12px">
+      <figure><img loading="lazy" src="media/dom-sofa.webp" width="960" height="540" alt="Sofa variant station"><figcaption>Sofa: four fabrics</figcaption></figure>
+      <figure><img loading="lazy" src="media/dom-kuchnia.webp" width="960" height="540" alt="Kitchen variant station"><figcaption>Kitchen: three fronts</figcaption></figure>
+      <figure><img loading="lazy" src="media/dom-elewacja.webp" width="960" height="540" alt="Cladding variant station"><figcaption>Cladding and roof</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="rise">
+  <div class="wrap">
+    <div class="kicker">3D product story · vehicles</div>
+    <h2>An electric bike that assembles itself as you scroll</h2>
+    <p class="txt">An exploded view for a product page: parts come together while the visitor scrolls, then the
+      finished bike turns on a stand. Modelled from the maker’s photos.</p>
+    <div class="grid g3">
+      <figure><img loading="lazy" src="media/bonnell-rozstrzelenie.webp" width="1280" height="720" alt="Exploded view"><figcaption>Exploded view</figcaption></figure>
+      <figure><img loading="lazy" src="media/bonnell-silnik.webp" width="1280" height="720" alt="Drive unit"><figcaption>Drive unit</figcaption></figure>
+      <figure><img loading="lazy" src="media/bonnell-gotowy.webp" width="1280" height="720" alt="Assembled bike"><figcaption>Assembled</figcaption></figure>
+    </div>
+    <div class="tall" style="margin-top:12px">
+      <figure><video data-src="media/surron.mp4" poster="media/surron.webp" muted loop playsinline preload="none" width="540" height="960"></video><figcaption>Electric motorbike in 3D, 22 s</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="rise">
+  <div class="wrap">
+    <div class="kicker">How it works</div>
+    <h2>From what you already have</h2>
+    <ul class="points">
+      <li>CAD or GLB files, catalogue renders, or product photos. No new shoot unless one is needed.</li>
+      <li>Real changes to the shape, not swapped photos: sizes on a slider, other parts, your own materials.</li>
+      <li>Runs on phones and on computers without a graphics card.</li>
+      <li>On request: price on screen, a saved-configuration link, an enquiry form, AR in the room via a QR code.</li>
+      <li>Fixed price agreed before work starts. No monthly licence; the code is yours.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="rise">
+  <div class="wrap">
+    <div class="kicker">Also</div>
+    <h2>Websites, search, ads and measurement</h2>
+    <p class="txt">The other half of the work: sites and shops judged by enquiries, Google Ads that follow
+      enquiries rather than clicks, and tracking that counts every call, form and order once.</p>
+    <div class="cards" id="work"></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="txt">Michał Smoliński, KIODEM · Gliwice, Poland · working in English</p>
+    <a class="cta" href="mailto:michal@kiodem.com?subject=3D%20configurator">michal@kiodem.com</a>
+  </div>
+</footer>
+
+<script src="../data.js"></script>
+<script>
+  // Karty pozostalych realizacji z tego samego zrodla co strona glowna (data.js, wersja EN).
+  (function () {
+    var d = window.KIODEM_DATA, box = document.getElementById("work");
+    if (!d || !box) return;
+    d.WORK.filter(function (w) { return w.id !== "kiodem"; }).forEach(function (w) {
+      var el = document.createElement("div");
+      el.className = "card";
+      el.innerHTML = "<b></b><span></span><p></p>";
+      el.querySelector("b").textContent = w.name;
+      el.querySelector("span").textContent = w.sector.en;
+      el.querySelector("p").textContent = w.what.en;
+      box.appendChild(el);
+    });
+  })();
+  // Wideo pobiera sie dopiero przy przewinieciu; poza ekranem pauza.
+  (function () {
+    var vids = document.querySelectorAll("video[data-src]");
+    var rises = document.querySelectorAll(".rise");
+    if (!("IntersectionObserver" in window)) {
+      vids.forEach(function (v) { v.src = v.dataset.src; });
+      rises.forEach(function (r) { r.classList.add("in"); });
+      return;
+    }
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        var v = e.target;
+        if (e.isIntersecting) {
+          if (!v.src) v.src = v.dataset.src;
+          v.play().catch(function () {});
+        } else if (v.src) v.pause();
+      });
+    }, { rootMargin: "200px 0px" });
+    vids.forEach(function (v) { io.observe(v); });
+    var ro = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); ro.unobserve(e.target); } });
+    }, { threshold: .08 });
+    rises.forEach(function (r) { ro.observe(r); });
+  })();
+</script>
+</body>
+</html>
