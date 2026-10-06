@@ -37,11 +37,12 @@
   "sameAs":["https://www.linkedin.com/in/michal-smolinski"]}
 ]}
 </script>
+<link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="assets/brand/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/brand/apple-touch-icon.png">
 <script src="assets/js/region.js?v=1"></script>
 <link rel="preload" href="assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="styles.css?v=19">
+<link rel="stylesheet" href="styles.css?v=20">
 </head>
 <body>
 
@@ -63,6 +64,7 @@
 </svg>
 
 <div class="loader" id="loader" aria-live="polite">
+  <button class="loader__skip" id="loader-skip" type="button">Skip</button>
   <div class="loader__stage">
     <div class="loader__line" aria-hidden="true"><i class="loader__line-fill" id="loader-line"></i></div>
     <div class="loader__word" id="loader-word"><div class="loader__strip" id="loader-strip"><span>Welcome</span></div></div>
@@ -128,6 +130,6 @@
 
 <script src="assets/js/gsap-3.12.5.min.js"></script>
 <script src="data.js?v=19"></script>
-<script src="app.js?v=20"></script>
+<script src="app.js?v=21"></script>
 </body>
 </html>

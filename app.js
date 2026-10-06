@@ -307,6 +307,29 @@
     gsap.to([$('.hero__line'), hint], { opacity: on ? 0 : 1, duration: .35, overwrite: 'auto' });
   }
 
+  const SKIP = { en: 'Skip', pl: 'Pomiń', de: 'Überspringen', fr: 'Passer', es: 'Saltar' };
+
+  /* Lekkie rysunki liniowe w sekcjach O mnie i Kontakt. Rysuja sie kreska (stroke-dashoffset),
+     bez zanikania. O mnie: brief, budowa, liczby, polaczone jedna linia (ta sama osoba od poczatku
+     do konca). Kontakt: koperta i odpowiedz w ciagu dnia roboczego. */
+  const ILU = {
+    about: '<svg viewBox="0 0 360 110" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
+      '<path class="d" pathLength="1" style="--d:0s" d="M14 24h34l10 10v54H14z M48 24v10h10 M22 46h26 M22 56h26 M22 66h18"/>' +
+      '<path class="d" pathLength="1" style="--d:.25s" d="M62 56 C 100 56, 104 30, 140 40"/>' +
+      '<path class="d" pathLength="1" style="--d:.45s" d="M168 38l-16 18 16 18 M196 38l16 18-16 18 M187 34l-10 44"/>' +
+      '<path class="d" pathLength="1" style="--d:.7s" d="M222 72 C 250 84, 262 52, 290 60"/>' +
+      '<path class="d" pathLength="1" style="--d:.9s" d="M300 88V64 M316 88V44 M332 88V54 M348 88V30 M294 88h60"/>' +
+      '<circle class="d" pathLength="1" style="--d:1.15s" cx="348" cy="22" r="3"/></svg>',
+    contact: '<svg viewBox="0 0 360 110" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">' +
+      '<path class="d" pathLength="1" style="--d:0s" d="M16 26h112v66H16z"/>' +
+      '<path class="d" pathLength="1" style="--d:.2s" d="M16 26l56 40 56-40"/>' +
+      '<path class="d" pathLength="1" style="--d:.45s" d="M140 58 C 180 30, 214 30, 246 52 M238 42l9 10-12 4"/>' +
+      '<circle class="d" pathLength="1" style="--d:.7s" cx="296" cy="58" r="36"/>' +
+      '<path class="d" pathLength="1" style="--d:.95s" d="M296 36v22l14 10"/>' +
+      '<path class="d" pathLength="1" style="--d:1.1s" d="M296 22v4 M296 90v4 M260 58h4 M328 58h4"/></svg>'
+  };
+  const ilu = (k) => '<figure class="ilu" aria-hidden="true">' + ILU[k] + '</figure>';
+
   /* ─── panele ───────────────────────────────────────────────────────────── */
   let current = null, lastFocus = null;
   function esc(s) { return String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
@@ -317,13 +340,20 @@
       panelTitle.textContent = L['nav.work'];
       const block = (title, items) => items && items[lang] && items[lang].length
         ? '<h4 class="case__h">' + esc(title) + '</h4><ul class="list list--tight">' + items[lang].map((d) => '<li>' + esc(d) + '</li>').join('') + '</ul>' : '';
-      return '<p class="lead">' + L.workLead + '</p>' + WORK.map((w) =>
+      // lista: wiersz = numer, nazwa, branza; najechanie pokazuje miniature przy kursorze, klik rozwija szczegoly
+      return '<p class="lead">' + L.workLead + '</p>' + WORK.map((w, i) =>
         '<article class="case" id="case-' + w.id + '">' +
-        (w.img ? '<img class="case__thumb" src="' + ROOT + 'assets/work/' + w.img + '.webp" alt="' + esc(w.name) + '" width="720" height="540" loading="lazy" onload="this.classList.add(\'is-loaded\')" onerror="this.remove()">' : '') +
-        '<h3 class="display">' + esc(w.name) + '</h3><p class="case__meta">' + esc(w.sector[lang]) + '</p>' +
+        '<h3 class="case__h3"><button type="button" class="case__row" aria-expanded="false" aria-controls="cb-' + w.id + '"' +
+        (w.img ? ' data-img="' + ROOT + 'assets/work/' + w.img + '.webp"' : '') + '>' +
+        '<span class="case__nr" aria-hidden="true">' + String(i + 1).padStart(2, '0') + '</span>' +
+        '<span class="case__name display">' + esc(w.name) + '</span>' +
+        '<span class="case__sector">' + esc(w.sector[lang]) + '</span>' +
+        '<span class="case__plus" aria-hidden="true"></span></button></h3>' +
+        '<div class="case__body" id="cb-' + w.id + '" hidden>' +
+        (w.img ? '<img class="case__thumb" src="' + ROOT + 'assets/work/' + w.img + '.webp" alt="' + esc(w.name) + '" width="720" height="540" loading="lazy">' : '') +
         '<p class="case__what">' + esc(w.what[lang]) + '</p>' +
         block(L.caseTech, w.tech) + block(L.caseResult, w.result) + block(L.caseAdvice, w.advice) +
-        (w.url ? '<a class="case__link" href="' + w.url + '" target="_blank" rel="noopener">' + L.visit + '</a>' : '') + '</article>').join('');
+        (w.url ? '<a class="case__link" href="' + w.url + '" target="_blank" rel="noopener">' + L.visit + '</a>' : '') + '</div></article>').join('');
     }
     if (name === 'services') {
       panelTitle.textContent = L['nav.services'];
@@ -335,7 +365,7 @@
     }
     if (name === 'about') {
       panelTitle.textContent = L.aboutTitle;
-      return '<p class="lead">' + L.aboutLead + '</p>' + L.about.map((p) => '<p>' + p + '</p>').join('') +
+      return '<p class="lead">' + L.aboutLead + '</p>' + ilu('about') + L.about.map((p) => '<p>' + p + '</p>').join('') +
         '<dl class="facts">' + L.facts.map((f) => '<dt>' + f[0] + '</dt><dd>' + f[1] + '</dd>').join('') + '</dl>';
     }
     if (name === 'process') {
@@ -349,7 +379,7 @@
       return '<p class="lead">' + L.brief.intro + '</p><div class="brief" id="brief" data-nodecode><div class="brief__progress"></div><div class="brief__stage"></div></div>';
     }
     panelTitle.textContent = L.contactTitle;
-    return '<p class="lead">' + L.contactLead + '</p>' +
+    return '<p class="lead">' + L.contactLead + '</p>' + ilu('contact') +
       '<a class="contact__mail display" href="mailto:' + L.mail + '">' + L.mail + '</a>' +
       '<div class="contact__rows"><a href="tel:+48789350367">' + L.phone + '</a>' +
       '<a href="https://www.linkedin.com/in/michal-smolinski" target="_blank" rel="noopener">' + L.linkedin + '</a></div>' +
@@ -477,6 +507,7 @@
     panelBody.classList.toggle('is-calm', name !== 'work');
     panelBody.querySelectorAll('figure.chart').forEach(renderChart);
     if (name === 'brief') Brief.start();
+    if (name === 'work' && !coarse) panelBody.querySelectorAll('.case__row[data-img]').forEach((r) => { const i = new Image(); i.src = r.dataset.img; });
     F.paused = true; viewport.classList.add('is-blurred');
     panel.classList.add('is-open');
     panel.setAttribute('aria-hidden', 'false');
@@ -489,6 +520,7 @@
     flowIn([...panelBody.children]);
     if (anchor) {
       const el = document.getElementById(anchor);
+      if (el && el.classList.contains('case')) rozwin(el, true);
       if (el) { el.classList.add('is-target'); setTimeout(() => el.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }), 900); }
     }
     if (push !== false) history.replaceState(null, '', '#' + name + (anchor ? '/' + anchor.replace(/^(case|service)-/, '') : ''));
@@ -496,6 +528,7 @@
   function closePanel() {
     if (!current) return;
     current = null;
+    P.on = false; peek.classList.remove('is-on');
     F.paused = false; F.dirty = true; viewport.classList.remove('is-blurred');
     zoomOut();
     panel.classList.remove('is-open');
@@ -555,7 +588,47 @@
     });
   }
   $('#panel-close').addEventListener('click', closePanel);
-  panelBody.addEventListener('click', (e) => { const b = e.target.closest('[data-open]'); if (b) openPanel(b.dataset.open); });
+  panelBody.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-open]'); if (b) { openPanel(b.dataset.open); return; }
+    const r = e.target.closest('.case__row'); if (r) rozwin(r.closest('.case'));
+  });
+  function rozwin(c, tylkoOtworz) {
+    if (!c) return;
+    const r = c.querySelector('.case__row'), body = c.querySelector('.case__body');
+    const otwarte = r.getAttribute('aria-expanded') === 'true';
+    if (otwarte && tylkoOtworz) return;
+    r.setAttribute('aria-expanded', String(!otwarte)); body.hidden = otwarte; c.classList.toggle('is-open', !otwarte);
+    if (!otwarte && !reduced && window.gsap) gsap.fromTo(body, { y: -10 }, { y: 0, duration: .5, ease: 'power3.out' });
+  }
+  /* Miniatura przy kursorze (tylko wskaznik precyzyjny): wjezdza skala od zera, jedzie za kursorem
+     z lekkim opoznieniem; zero przezroczystosci, tylko transform. */
+  const peek = document.createElement('div');
+  peek.className = 'work-peek'; peek.setAttribute('aria-hidden', 'true'); peek.innerHTML = '<img alt="">';
+  panel.appendChild(peek);
+  const peekImg = peek.querySelector('img');
+  const P = { x: 0, y: 0, tx: 0, ty: 0, on: false, raf: 0 };
+  const peekLoop = () => {
+    P.x += (P.tx - P.x) * 0.22; P.y += (P.ty - P.y) * 0.22;
+    peek.style.transform = 'translate3d(' + P.x.toFixed(1) + 'px,' + P.y.toFixed(1) + 'px,0)';
+    P.raf = (P.on || Math.abs(P.tx - P.x) + Math.abs(P.ty - P.y) > 0.5) ? requestAnimationFrame(peekLoop) : 0;
+  };
+  if (!coarse) {
+    panelBody.addEventListener('pointerover', (e) => {
+      const r = e.target.closest('.case__row[data-img]'); if (!r || current !== 'work') return;
+      if (peekImg.getAttribute('src') !== r.dataset.img) peekImg.src = r.dataset.img;
+      if (!P.on) { P.x = P.tx = e.clientX + 28; P.y = P.ty = e.clientY - 90; }
+      P.on = true; peek.classList.add('is-on'); if (!P.raf) P.raf = requestAnimationFrame(peekLoop);
+    });
+    panelBody.addEventListener('pointermove', (e) => {
+      if (!P.on) return;
+      const w = peek.offsetWidth || 300;
+      P.tx = Math.min(e.clientX + 28, innerWidth - w - 16); P.ty = Math.max(16, Math.min(e.clientY - 90, innerHeight - w * 0.75 - 16));
+    });
+    panelBody.addEventListener('pointerout', (e) => {
+      const r = e.target.closest('.case__row'); if (!r || r.contains(e.relatedTarget)) return;
+      P.on = false; peek.classList.remove('is-on');
+    });
+  }
   panel.addEventListener('click', (e) => { if (e.target === panel) closePanel(); });
   $('#home').addEventListener('click', () => { closePanel(); F.tx = F.ty = 0; dock(false); });
   function route() {
@@ -828,12 +901,19 @@
 
     /* Pierwszy ruch uzytkownika przyspiesza sekwencje zamiast ja uciac: kto zna strone,
        nie czeka, a kto wchodzi pierwszy raz, widzi calosc. */
-    const przyspiesz = () => {
-      if (root.classList.contains('is-done')) return;
-      gsap.to(tl, { timeScale: 5, duration: .35, ease: 'power2.in', overwrite: true });
+    const przyspiesz = (e, ile) => {
+      if (root.classList.contains('is-done') || tl.timeScale() >= (ile || 5)) return;
+      gsap.to(tl, { timeScale: ile || 5, duration: .35, ease: 'power2.in', overwrite: true });
     };
     ['pointerdown', 'wheel', 'keydown', 'touchstart'].forEach((ev) =>
       addEventListener(ev, przyspiesz, { once: true, passive: true }));
+    // dyskretny przycisk: przewija sekwencje szybciej (x8), ale jej nie ucina - znak i nazwa nadal sie skladaja
+    const skip = $('#loader-skip');
+    if (skip) {
+      skip.textContent = SKIP[lang] || SKIP.en;
+      setTimeout(() => skip.classList.add('is-on'), 700);
+      skip.addEventListener('click', (e) => { e.stopPropagation(); przyspiesz(e, 8); skip.classList.remove('is-on'); skip.disabled = true; });
+    }
   }
 
   /* ─── kursor z etykieta i magnetyczne przyciski (tylko wskaznik precyzyjny) ── */
