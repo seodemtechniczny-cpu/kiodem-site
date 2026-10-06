@@ -680,10 +680,11 @@
   const langBox = $('.lang');
   langBox.innerHTML = LANGS.map((l) => '<button class="lang__btn" type="button" data-lang="' + l + '" aria-pressed="false">' + l.toUpperCase() + '</button>')
     .join('<span class="lang__sep" aria-hidden="true"></span>');
-  function applyLang(next) {
+  // remember = wybor reczny (przycisk jezyka); automatyczny wybor nie zapisuje sie, zeby region.js mogl zadzialac
+  function applyLang(next, remember) {
     lang = next;
     document.documentElement.lang = lang;
-    try { localStorage.setItem('kiodem-lang', lang); } catch (e) {}
+    if (remember) try { localStorage.setItem('kiodem-lang', lang); } catch (e) {}
     document.querySelectorAll('[data-i18n]:not(.dock__btn)').forEach((el) => { el.textContent = t(el.dataset.i18n); });
     assembleDock(dockShown);
     document.querySelectorAll('.lang__btn').forEach((b) => b.setAttribute('aria-pressed', b.dataset.lang === lang ? 'true' : 'false'));
@@ -698,7 +699,7 @@
     build();
     if (current) { panelBody.innerHTML = renderPanel(current); panelBody.querySelectorAll('figure.chart').forEach(renderChart); if (current === 'brief') Brief.start(); flowIn([...panelBody.children]); }
   }
-  document.querySelectorAll('.lang__btn').forEach((b) => b.addEventListener('click', () => { if (b.dataset.lang !== lang) applyLang(b.dataset.lang); }));
+  document.querySelectorAll('.lang__btn').forEach((b) => b.addEventListener('click', () => { if (b.dataset.lang !== lang) applyLang(b.dataset.lang, true); }));
 
   /* ─── loader: powitania, pierscien, znak, logotyp, wejscie pola ────────── */
   function loader() {
