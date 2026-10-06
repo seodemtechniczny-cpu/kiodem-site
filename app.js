@@ -808,7 +808,8 @@
       F.tiles.forEach((x) => gsap.to(x, { enter: 0, duration: 1.25, ease: 'power2.out', delay: (x.d0 / far) * 0.9,
         onComplete: () => { if (--left === 0) { F.entering = false; F.dirty = true; } } }));
     };
-    const tl = gsap.timeline();
+    const TEMPO = 1.5;                                  // cala sekwencja o 50% szybciej (decyzja 06.10.2026)
+    const tl = gsap.timeline().timeScale(TEMPO);
     window.__kiodemLoader = tl;                         // do podgladu klatek w narzedziach deweloperskich
     const sweep = { v: 0 };
 
