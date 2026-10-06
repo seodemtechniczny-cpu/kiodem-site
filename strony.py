@@ -301,7 +301,9 @@ def build_lang(l):
     body = '<p class="lead">%s</p>' % e(L["workLead"])
     for i, w in enumerate(WORK):
         body += '<article class="item" id="case-%s"><h2>%s</h2><p class="meta">%s</p>' % (w["id"], e(w["name"]), e(w["sector"][l]))
-        if w.get("img"):
+        if w.get("video"):
+            body += '<video src="/assets/work/%s" poster="/assets/work/%s-film.webp" controls muted loop playsinline preload="none" style="display:block;width:100%%;height:auto;margin:16px 0 4px;background:#121722"></video>' % (w["video"], w["img"])
+        elif w.get("img"):
             body += '<img src="/assets/work/%s.webp" alt="%s" width="720" height="540"%s>' % (w["img"], e(w["name"]), "" if i == 0 else ' loading="lazy" decoding="async"')
         body += "<p>%s</p>" % e(w["what"][l])
         for key, lab in (("tech", L["caseTech"]), ("result", L["caseResult"]), ("advice", L["caseAdvice"])):

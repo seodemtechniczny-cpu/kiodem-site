@@ -350,7 +350,8 @@
         '<span class="case__sector">' + esc(w.sector[lang]) + '</span>' +
         '<span class="case__plus" aria-hidden="true"></span></button></h3>' +
         '<div class="case__body" id="cb-' + w.id + '" hidden>' +
-        (w.img ? '<img class="case__thumb" src="' + ROOT + 'assets/work/' + w.img + '.webp" alt="' + esc(w.name) + '" width="720" height="540" loading="lazy">' : '') +
+        (w.video ? '<video class="case__video" src="' + ROOT + 'assets/work/' + w.video + '" poster="' + ROOT + 'assets/work/' + w.img + '-film.webp" controls muted loop playsinline preload="none"></video>'
+          : w.img ? '<img class="case__thumb" src="' + ROOT + 'assets/work/' + w.img + '.webp" alt="' + esc(w.name) + '" width="720" height="540" loading="lazy">' : '') +
         '<p class="case__what">' + esc(w.what[lang]) + '</p>' +
         block(L.caseTech, w.tech) + block(L.caseResult, w.result) + block(L.caseAdvice, w.advice) +
         (w.url ? '<a class="case__link" href="' + w.url + '" target="_blank" rel="noopener">' + L.visit + '</a>' : '') + '</div></article>').join('');
@@ -562,7 +563,7 @@
       onComplete: () => { F.focus = null; F.zooming = false; F.dirty = true; } });
   }
   function openFromTile(it) {
-    if (it.kind === 'live') { if (it.live === 'now') openPanel('contact'); else openPanel('work', 'case-kiodem'); return; }
+    if (it.kind === 'live') { if (it.live === 'now') openPanel('contact'); else openPanel('work'); return; }
     if (it.kind === 'work') openPanel('work', 'case-' + it.data.id);
     else if (it.kind === 'area') openPanel(it.data.to, it.data.anchor || null);
     else openPanel(it.to || 'about');
