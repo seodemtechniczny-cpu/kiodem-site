@@ -14,7 +14,7 @@ window.KIODEM_DATA = (function () {
       visit: "Visit the site", close: "Close",
       caseTech: "Under the hood", caseResult: "Measured", caseAdvice: "What I recommended",
       workLead: "Shops, clinics, schools and showrooms. Each one runs on its own numbers, so the work is judged by enquiries and sales, not by a launch.",
-      servicesLead: "Five things, done by one person who also answers the phone.",
+      servicesLead: "Six things, done by one person who also answers the phone.",
       aboutTitle: "About",
       aboutLead: "KIODEM is Michał Smoliński, working from Gliwice in southern Poland with clients in Poland, the United Kingdom and Germany.",
       about: [
@@ -27,7 +27,7 @@ window.KIODEM_DATA = (function () {
       mail: "michal@kiodem.com", phone: "+48 789 350 367", linkedin: "LinkedIn", write: "Write to me",
       contactNote: "Calls in English on weekdays 9 to 17 UK time. Or send the address of your site and I will come back with the short written check first.",
       contactBrief: "Or answer six questions and I will come back with a first take:",
-      sections: { work: "Nine sites and shops, judged by enquiries", services: "Websites, search, ads, measurement, automation", about: "One person does the work you talk to", contact: "One email is enough", brief: "Six questions, two minutes, an answer from me" },
+      sections: { work: "Ten projects, judged by enquiries", services: "Websites, search, ads, measurement, automation, 3D", about: "One person does the work you talk to", contact: "One email is enough", brief: "Six questions, two minutes, an answer from me" },
       brief: {
         intro: "Six questions, two minutes. The answer comes from me, not from a system.",
         steps: [
@@ -52,7 +52,7 @@ window.KIODEM_DATA = (function () {
       visit: "Zobacz stronę", close: "Zamknij",
       caseTech: "Od kuchni", caseResult: "Zmierzone", caseAdvice: "Co zarekomendowałem",
       workLead: "Sklepy, kliniki, szkoły i salony. Każda z tych firm działa na własnych liczbach, więc pracę ocenia się po zapytaniach i sprzedaży, nie po samym wdrożeniu.",
-      servicesLead: "Pięć rzeczy, które robi jedna osoba. Ta sama, która odbiera telefon.",
+      servicesLead: "Sześć rzeczy, które robi jedna osoba. Ta sama, która odbiera telefon.",
       aboutTitle: "O mnie",
       aboutLead: "KIODEM to Michał Smoliński. Pracuję z Gliwic z klientami w Polsce, Wielkiej Brytanii i Niemczech.",
       about: [
@@ -65,7 +65,7 @@ window.KIODEM_DATA = (function () {
       mail: "contact@kiodem.com", phone: "+48 789 350 367", linkedin: "LinkedIn", write: "Napisz do mnie",
       contactNote: "Rozmowy w dni robocze 9–17. Albo wyślij adres swojej strony, a najpierw odeślę krótkie pisemne sprawdzenie.",
       contactBrief: "Albo odpowiedz na sześć pytań, a wrócę z pierwszą oceną:",
-      sections: { work: "Dziewięć stron i sklepów, ocenianych po zapytaniach", services: "Strony, wyszukiwarka, reklamy, pomiar, automatyzacje", about: "Robotę robi ta sama osoba, z którą rozmawiasz", contact: "Wystarczy jeden mail", brief: "Sześć pytań, dwie minuty, odpowiedź ode mnie" },
+      sections: { work: "Dziesięć projektów, ocenianych po zapytaniach", services: "Strony, wyszukiwarka, reklamy, pomiar, automatyzacje, 3D", about: "Robotę robi ta sama osoba, z którą rozmawiasz", contact: "Wystarczy jeden mail", brief: "Sześć pytań, dwie minuty, odpowiedź ode mnie" },
       brief: {
         intro: "Sześć pytań, dwie minuty. Odpowiedź przychodzi ode mnie, nie z systemu.",
         steps: [
@@ -90,7 +90,7 @@ window.KIODEM_DATA = (function () {
       visit: "Website ansehen", close: "Schließen",
       caseTech: "Unter der Haube", caseResult: "Gemessen", caseAdvice: "Meine Empfehlung",
       workLead: "Läden, Praxen, Schulen und Ausstellungsräume. Jedes dieser Unternehmen lebt von eigenen Zahlen, deshalb zählt am Ende die Anfrage und der Verkauf, nicht der Launch.",
-      servicesLead: "Fünf Dinge, gemacht von einer Person, die auch ans Telefon geht.",
+      servicesLead: "Sechs Dinge, gemacht von einer Person, die auch ans Telefon geht.",
       aboutTitle: "Über mich",
       aboutLead: "KIODEM ist Michał Smoliński. Ich arbeite aus Gliwice im Süden Polens mit Kunden in Polen, Großbritannien und Deutschland.",
       about: [
@@ -103,7 +103,7 @@ window.KIODEM_DATA = (function () {
       mail: "michal@kiodem.com", phone: "+48 789 350 367", linkedin: "LinkedIn", write: "Schreiben Sie mir",
       contactNote: "Telefonate auf Englisch an Werktagen von 9 bis 17 Uhr. Oder schicken Sie die Adresse Ihrer Website, dann kommt zuerst die kurze schriftliche Prüfung.",
       contactBrief: "Oder beantworten Sie sechs Fragen, und ich melde mich mit einer ersten Einschätzung:",
-      sections: { work: "Neun Websites und Shops, gemessen an Anfragen", services: "Websites, Suche, Anzeigen, Messung, Automatisierung", about: "Die Arbeit macht die Person, mit der Sie sprechen", contact: "Eine E-Mail genügt", brief: "Sechs Fragen, zwei Minuten, eine Antwort von mir" },
+      sections: { work: "Zehn Projekte, gemessen an Anfragen", services: "Websites, Suche, Anzeigen, Messung, Automatisierung, 3D", about: "Die Arbeit macht die Person, mit der Sie sprechen", contact: "Eine E-Mail genügt", brief: "Sechs Fragen, zwei Minuten, eine Antwort von mir" },
       brief: {
         intro: "Sechs Fragen, zwei Minuten. Die Antwort kommt von mir, nicht von einem System.",
         steps: [
@@ -128,7 +128,7 @@ window.KIODEM_DATA = (function () {
       visit: "Voir le site", close: "Fermer",
       caseTech: "Sous le capot", caseResult: "Mesuré", caseAdvice: "Ce que j'ai recommandé",
       workLead: "Boutiques, cliniques, écoles et showrooms. Chacune vit de ses propres chiffres : le travail se juge aux demandes et aux ventes, pas à la mise en ligne.",
-      servicesLead: "Cinq choses, faites par une seule personne, celle qui répond aussi au téléphone.",
+      servicesLead: "Six choses, faites par une seule personne, celle qui répond aussi au téléphone.",
       aboutTitle: "À propos",
       aboutLead: "KIODEM, c'est Michał Smoliński. Je travaille depuis Gliwice, dans le sud de la Pologne, avec des clients en Pologne, au Royaume-Uni et en Allemagne.",
       about: [
@@ -141,7 +141,7 @@ window.KIODEM_DATA = (function () {
       mail: "michal@kiodem.com", phone: "+48 789 350 367", linkedin: "LinkedIn", write: "M'écrire",
       contactNote: "Appels en anglais en semaine de 9 h à 17 h. Ou envoyez l'adresse de votre site et je reviendrai d'abord avec la courte vérification écrite.",
       contactBrief: "Ou répondez à six questions et je reviendrai avec un premier avis :",
-      sections: { work: "Neuf sites et boutiques, jugés aux demandes", services: "Sites, recherche, publicité, mesure, automatisation", about: "Le travail est fait par la personne à qui vous parlez", contact: "Un seul e-mail suffit", brief: "Six questions, deux minutes, une réponse de ma part" },
+      sections: { work: "Dix projets, jugés aux demandes", services: "Sites, recherche, publicité, mesure, automatisation, 3D", about: "Le travail est fait par la personne à qui vous parlez", contact: "Un seul e-mail suffit", brief: "Six questions, deux minutes, une réponse de ma part" },
       brief: {
         intro: "Six questions, deux minutes. La réponse vient de moi, pas d'un système.",
         steps: [
@@ -166,7 +166,7 @@ window.KIODEM_DATA = (function () {
       visit: "Ver el sitio", close: "Cerrar",
       caseTech: "Por dentro", caseResult: "Medido", caseAdvice: "Lo que recomendé",
       workLead: "Tiendas, clínicas, escuelas y salas de exposición. Cada una vive de sus propios números: el trabajo se juzga por consultas y ventas, no por el lanzamiento.",
-      servicesLead: "Cinco cosas, hechas por una sola persona, la misma que contesta el teléfono.",
+      servicesLead: "Seis cosas, hechas por una sola persona, la misma que contesta el teléfono.",
       aboutTitle: "Sobre mí",
       aboutLead: "KIODEM es Michał Smoliński. Trabajo desde Gliwice, en el sur de Polonia, con clientes en Polonia, Reino Unido y Alemania.",
       about: [
@@ -179,7 +179,7 @@ window.KIODEM_DATA = (function () {
       mail: "michal@kiodem.com", phone: "+48 789 350 367", linkedin: "LinkedIn", write: "Escríbeme",
       contactNote: "Llamadas en inglés en días laborables de 9 a 17 h. O envía la dirección de tu web y primero te devuelvo la breve revisión escrita.",
       contactBrief: "O responde seis preguntas y vuelvo con una primera valoración:",
-      sections: { work: "Nueve webs y tiendas, juzgadas por consultas", services: "Webs, búsqueda, anuncios, medición, automatización", about: "El trabajo lo hace la persona con la que hablas", contact: "Basta con un correo", brief: "Seis preguntas, dos minutos, una respuesta mía" },
+      sections: { work: "Diez proyectos, juzgados por consultas", services: "Webs, búsqueda, anuncios, medición, automatización, 3D", about: "El trabajo lo hace la persona con la que hablas", contact: "Basta con un correo", brief: "Seis preguntas, dos minutos, una respuesta mía" },
       brief: {
         intro: "Seis preguntas, dos minutos. La respuesta viene de mí, no de un sistema.",
         steps: [
@@ -324,6 +324,23 @@ window.KIODEM_DATA = (function () {
                 de: ["Drei Etappen, jede für sich nutzbar: erst Seiten, dann Shop, zuletzt Konfigurator."],
                 fr: ["Trois étapes, chacune utilisable seule : les pages d'abord, la boutique ensuite, le configurateur en dernier."],
                 es: ["Tres fases, cada una útil por sí sola: primero las páginas, luego la tienda, al final el configurador."] } },
+    { id: "meume-3d", name: "MEUME · Linea Base 3D", url: null, img: null,
+  sector: { en: "Furniture maker, reception counters, Tychy", pl: "Producent mebli, lady recepcyjne, Tychy", de: "Möbelhersteller, Empfangstheken, Tychy", fr: "Fabricant de meubles, banques d'accueil, Tychy", es: "Fabricante de muebles, mostradores de recepción, Tychy" },
+  what: { en: "A 3D configurator for the Linea Base reception counter: finishes, glass, logo, height and accessories change on screen as the customer chooses.",
+          pl: "Konfigurator 3D lady recepcyjnej Linea Base: wykończenia, szkło, logo, wysokość i dodatki zmieniają się na ekranie w miarę wyboru klienta.",
+          de: "Ein 3D-Konfigurator für die Empfangstheke Linea Base: Oberflächen, Glas, Logo, Höhe und Zubehör ändern sich auf dem Bildschirm, während der Kunde wählt.",
+          fr: "Un configurateur 3D pour la banque d'accueil Linea Base : finitions, verre, logo, hauteur et accessoires changent à l'écran au fil des choix du client.",
+          es: "Un configurador 3D para el mostrador de recepción Linea Base: acabados, vidrio, logotipo, altura y accesorios cambian en pantalla según elige el cliente." },
+  tech: { en: ["A live three.js scene with soft shadows and ambient occlusion, plus a pre-rendered mode for computers without a graphics card.",
+               "Built from the client's 2D renders, with no 3D source files, and packaged as a WordPress plugin."],
+          pl: ["Scena three.js na żywo z miękkimi cieniami i okluzją otoczenia oraz tryb z gotowych ujęć dla komputerów bez karty graficznej.",
+               "Zbudowany z renderów 2D klientki, bez plików 3D, i zapakowany jako wtyczka WordPressa."],
+          de: ["Eine Live-Szene in three.js mit weichen Schatten und Umgebungsverdeckung, dazu ein vorgerenderter Modus für Rechner ohne Grafikkarte.",
+               "Aus den 2D-Renderings der Kundin gebaut, ohne 3D-Quelldateien, und als WordPress-Plugin verpackt."],
+          fr: ["Une scène three.js en temps réel avec ombres douces et occlusion ambiante, et un mode pré-rendu pour les ordinateurs sans carte graphique.",
+               "Construit à partir des rendus 2D de la cliente, sans fichiers 3D source, et livré sous forme d'extension WordPress."],
+          es: ["Una escena three.js en tiempo real con sombras suaves y oclusión ambiental, más un modo prerrenderizado para ordenadores sin tarjeta gráfica.",
+               "Hecho a partir de los renders 2D de la clienta, sin archivos 3D de origen, y empaquetado como plugin de WordPress."] } },
     { id: "voltgo", name: "VoltGo", url: "https://voltgo.pl/", img: "voltgo",
       sector: { en: "Electric vehicle rental marketplace", pl: "Marketplace wypożyczalni pojazdów elektrycznych", de: "Marktplatz für E-Fahrzeug-Vermietung", fr: "Place de marché de location de véhicules électriques", es: "Marketplace de alquiler de vehículos eléctricos" },
       what: { en: "Catalogue work on a custom CMS: vehicle versions, pricing and photos for rental stations.",
@@ -409,7 +426,44 @@ window.KIODEM_DATA = (function () {
               pl: "Integracje w Pythonie: feedy i stany hurtowni, faktury i CRM, sprawdzanie cen, monitoring i raporty. Pisane pod Twoje narzędzia, zostają z kodem.",
               de: "Python-Integrationen: Lieferanten-Feeds und Bestände, Rechnungen und CRM, Preisprüfungen, Monitoring und Berichte. Für Ihre Umgebung geschrieben, mit Quellcode übergeben.",
               fr: "Intégrations Python : flux et stocks fournisseurs, facturation et CRM, contrôle des prix, surveillance et rapports. Écrites pour votre installation, livrées avec le code.",
-              es: "Integraciones en Python: feeds y stock de proveedores, facturación y CRM, control de precios, monitorización e informes. Escritas para tu entorno, entregadas con el código." } }
+              es: "Integraciones en Python: feeds y stock de proveedores, facturación y CRM, control de precios, monitorización e informes. Escritas para tu entorno, entregadas con el código." } },
+    { id: "configurators", title: { en: "3D configurators", pl: "Konfiguratory 3D", de: "3D-Konfiguratoren", fr: "Configurateurs 3D", es: "Configuradores 3D" },
+  line: { en: "Customers build the product on your site",
+          pl: "Klient składa produkt sam, na Twojej stronie",
+          de: "Kunden stellen das Produkt auf Ihrer Website zusammen",
+          fr: "Le client compose le produit sur votre site",
+          es: "El cliente arma el producto en tu web" },
+  text: { en: "Interactive 3D on your website: the customer changes size, finish and details and sees the product change, with the price if you want it. Built from your CAD files, renders or photos; it also runs without a graphics card.",
+          pl: "Interaktywne 3D na Twojej stronie: klient zmienia wymiar, wykończenie i detale i widzi zmieniający się produkt, a jeśli chcesz, także cenę. Z Twoich plików CAD, renderów albo zdjęć; działa też bez karty graficznej.",
+          de: "Interaktives 3D auf Ihrer Website: Der Kunde ändert Maße, Oberflächen und Details und sieht das Produkt sich verändern, auf Wunsch mit Preis. Aus Ihren CAD-Dateien, Renderings oder Fotos; läuft auch ohne Grafikkarte.",
+          fr: "De la 3D interactive sur votre site : le client change dimensions, finitions et détails et voit le produit changer, avec le prix si vous le souhaitez. À partir de vos fichiers CAO, rendus ou photos ; fonctionne aussi sans carte graphique.",
+          es: "3D interactivo en tu web: el cliente cambia medidas, acabados y detalles y ve cómo cambia el producto, con el precio si lo quieres. A partir de tus archivos CAD, renders o fotos; funciona también sin tarjeta gráfica." },
+  details: {
+    en: ["The starting point is what you already have: a CAD model, catalogue renders or product photos. No new shoot unless one is needed.",
+         "Changes are real geometry, not swapped pictures: size on a slider, other legs or fronts, materials from your own range.",
+         "A fallback built from the same scene, so it also works without a graphics card and on older phones.",
+         "On request: price on screen, a link that saves the configuration, an enquiry form, and AR in the room via a QR code.",
+         "It runs on your site, not on a platform: no monthly licence, and the code stays with you."],
+    pl: ["Punktem wyjścia jest to, co już masz: model CAD, rendery z katalogu albo zdjęcia. Bez nowej sesji, chyba że jest potrzebna.",
+         "Zmiany to prawdziwa bryła, nie podmiana zdjęć: wymiar na suwaku, inne nogi albo fronty, materiały z Twojej oferty.",
+         "Tryb zapasowy z tej samej sceny, więc działa też bez karty graficznej i na starszych telefonach.",
+         "Na życzenie: cena na ekranie, link zapisujący konfigurację, formularz zapytania i AR w pokoju po zeskanowaniu kodu QR.",
+         "Działa na Twojej stronie, nie na platformie: bez miesięcznej licencji, a kod zostaje u Ciebie."],
+    de: ["Ausgangspunkt ist, was Sie schon haben: ein CAD-Modell, Katalog-Renderings oder Produktfotos. Kein neues Shooting, außer es ist nötig.",
+         "Änderungen sind echte Geometrie, keine ausgetauschten Bilder: Maße per Schieberegler, andere Füße oder Fronten, Materialien aus Ihrem Sortiment.",
+         "Ein Ersatzmodus aus derselben Szene, damit er auch ohne Grafikkarte und auf älteren Smartphones läuft.",
+         "Auf Wunsch: Preis auf dem Bildschirm, ein Link mit der gespeicherten Konfiguration, ein Anfrageformular und AR im Raum per QR-Code.",
+         "Er läuft auf Ihrer Website, nicht auf einer Plattform: keine monatliche Lizenz, und der Code bleibt bei Ihnen."],
+    fr: ["Le point de départ, c'est ce que vous avez déjà : un modèle CAO, des rendus de catalogue ou des photos. Pas de nouveau shooting, sauf si nécessaire.",
+         "Les changements sont une vraie géométrie, pas des images échangées : dimensions au curseur, autres pieds ou façades, matériaux de votre gamme.",
+         "Un mode de secours tiré de la même scène, pour fonctionner aussi sans carte graphique et sur les téléphones plus anciens.",
+         "Sur demande : prix à l'écran, lien qui enregistre la configuration, formulaire de demande et AR dans la pièce via un QR code.",
+         "Il tourne sur votre site, pas sur une plateforme : pas de licence mensuelle, et le code reste chez vous."],
+    es: ["El punto de partida es lo que ya tienes: un modelo CAD, renders de catálogo o fotos. Sin sesión nueva, salvo que haga falta.",
+         "Los cambios son geometría real, no fotos intercambiadas: medidas con un deslizador, otras patas o frentes, materiales de tu gama.",
+         "Un modo de respaldo hecho con la misma escena, para funcionar también sin tarjeta gráfica y en móviles antiguos.",
+         "Bajo pedido: precio en pantalla, un enlace que guarda la configuración, un formulario de consulta y AR en la habitación con un código QR.",
+         "Funciona en tu web, no en una plataforma: sin licencia mensual, y el código se queda contigo."] } }
   ];
 
   /* Obszary pracy: kafelki pola. Kazdy prowadzi do sekcji i kotwicy. */
@@ -435,6 +489,9 @@ window.KIODEM_DATA = (function () {
     { id: "journey", to: "about", anchor: null,
       title: { en: "Journey check", pl: "Sprawdzenie ścieżki", de: "Weg-Check", fr: "Vérification du parcours", es: "Revisión del recorrido" },
       line: { en: "From a search to an enquiry, and where it breaks", pl: "Od wyszukiwania do zapytania i gdzie to się urywa", de: "Von der Suche zur Anfrage, und wo es abreißt", fr: "De la recherche à la demande, et où ça casse", es: "De la búsqueda a la consulta, y dónde se rompe" } },
+    { id: "configurators", to: "services", anchor: "service-configurators",
+      title: { en: "3D configurators", pl: "Konfiguratory 3D", de: "3D-Konfiguratoren", fr: "Configurateurs 3D", es: "Configuradores 3D" },
+      line: { en: "The customer builds the product on your site", pl: "Klient składa produkt na Twojej stronie", de: "Der Kunde stellt das Produkt auf Ihrer Website zusammen", fr: "Le client compose le produit sur votre site", es: "El cliente arma el producto en tu web" } },
     { id: "handmade", to: "work", anchor: "case-kiodem",
       title: { en: "Hand-written sites", pl: "Strony pisane ręcznie", de: "Handgeschriebene Websites", fr: "Sites écrits à la main", es: "Webs escritas a mano" },
       line: { en: "HTML, CSS and JavaScript with no template underneath", pl: "HTML, CSS i JavaScript bez szablonu pod spodem", de: "HTML, CSS und JavaScript ohne Template darunter", fr: "HTML, CSS et JavaScript sans gabarit dessous", es: "HTML, CSS y JavaScript sin plantilla debajo" } },
@@ -555,7 +612,26 @@ window.KIODEM_DATA = (function () {
     es: { title: "KIODEM: webs, automatización y Google Ads para negocios independientes", description: "La persona con la que hablas hace el trabajo. Webs escritas a mano, WordPress y WooCommerce, integraciones en Python para tiendas, GA4 y Tag Manager, Google Ads juzgados por consultas. Michał Smoliński, Gliwice, Polonia." }
   };
 
-  return { LANGS: LANGS, I18N: I18N, WORK: WORK, SERVICES: SERVICES, AREAS: AREAS, CHARTS: CHARTS,
+  /* Adresy podstron (strony.py je generuje, app.js podmienia linki menu przy zmianie jezyka).
+     Dokumenty prawne sa tylko po angielsku i polsku. */
+  var PAGES = {
+    slug: {
+      work:     { en: "work", pl: "realizacje", de: "referenzen", fr: "realisations", es: "trabajos" },
+      services: { en: "services", pl: "uslugi", de: "leistungen", fr: "services", es: "servicios" },
+      about:    { en: "about", pl: "o-mnie", de: "ueber-mich", fr: "a-propos", es: "sobre-mi" },
+      faq:      { en: "faq", pl: "faq", de: "faq", fr: "faq", es: "faq" },
+      contact:  { en: "contact", pl: "kontakt", de: "kontakt", fr: "contact", es: "contacto" },
+      privacy:  { en: "privacy", pl: "polityka-prywatnosci" },
+      terms:    { en: "terms", pl: "regulamin" }
+    },
+    label: {
+      faq:     { en: "Questions", pl: "Pytania", de: "Fragen", fr: "Questions", es: "Preguntas" },
+      privacy: { en: "Privacy policy", pl: "Polityka prywatności", de: "Privacy policy (EN)", fr: "Privacy policy (EN)", es: "Privacy policy (EN)" },
+      terms:   { en: "Terms of service", pl: "Regulamin", de: "Terms of service (EN)", fr: "Terms of service (EN)", es: "Terms of service (EN)" }
+    }
+  };
+
+  return { PAGES: PAGES, LANGS: LANGS, I18N: I18N, WORK: WORK, SERVICES: SERVICES, AREAS: AREAS, CHARTS: CHARTS,
            GREETINGS: GREETINGS, GREETING_BY_LANG: GREETING_BY_LANG, LOCALES: LOCALES,
            PROCESS: PROCESS, LIVE: LIVE, CURSOR: CURSOR, GREETING_TIME: GREETING_TIME, META: META };
 })();

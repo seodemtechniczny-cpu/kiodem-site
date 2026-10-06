@@ -319,11 +319,11 @@
         ? '<h4 class="case__h">' + esc(title) + '</h4><ul class="list list--tight">' + items[lang].map((d) => '<li>' + esc(d) + '</li>').join('') + '</ul>' : '';
       return '<p class="lead">' + L.workLead + '</p>' + WORK.map((w) =>
         '<article class="case" id="case-' + w.id + '">' +
-        (w.img ? '<img class="case__thumb" src="' + ROOT + 'assets/work/' + w.img + '.webp" alt="" loading="lazy" onload="this.classList.add(\'is-loaded\')" onerror="this.remove()">' : '') +
+        (w.img ? '<img class="case__thumb" src="' + ROOT + 'assets/work/' + w.img + '.webp" alt="' + esc(w.name) + '" width="720" height="540" loading="lazy" onload="this.classList.add(\'is-loaded\')" onerror="this.remove()">' : '') +
         '<h3 class="display">' + esc(w.name) + '</h3><p class="case__meta">' + esc(w.sector[lang]) + '</p>' +
         '<p class="case__what">' + esc(w.what[lang]) + '</p>' +
         block(L.caseTech, w.tech) + block(L.caseResult, w.result) + block(L.caseAdvice, w.advice) +
-        '<a class="case__link" href="' + w.url + '" target="_blank" rel="noopener">' + L.visit + '</a></article>').join('');
+        (w.url ? '<a class="case__link" href="' + w.url + '" target="_blank" rel="noopener">' + L.visit + '</a>' : '') + '</article>').join('');
     }
     if (name === 'services') {
       panelTitle.textContent = L['nav.services'];
@@ -534,7 +534,8 @@
     else if (it.kind === 'area') openPanel(it.data.to, it.data.anchor || null);
     else openPanel(it.to || 'about');
   }
-  document.querySelectorAll('.dock__btn').forEach((b) => b.addEventListener('click', () => (current === b.dataset.panel ? closePanel() : openPanel(b.dataset.panel))));
+  // menu to linki do podstron (dla wyszukiwarek i bez JS); z JS otwiera panel w miejscu
+  document.querySelectorAll('.dock__btn').forEach((b) => b.addEventListener('click', (e) => { e.preventDefault(); current === b.dataset.panel ? closePanel() : openPanel(b.dataset.panel); }));
 
   /* Menu sklada sie z kawalkow: kazda litera przylatuje z innego miejsca i innego kata,
      w losowej kolejnosci, i trafia na swoje miejsce. Powtarza sie przy zmianie jezyka. */
@@ -686,6 +687,11 @@
     document.querySelectorAll('[data-i18n]:not(.dock__btn)').forEach((el) => { el.textContent = t(el.dataset.i18n); });
     assembleDock(dockShown);
     document.querySelectorAll('.lang__btn').forEach((b) => b.setAttribute('aria-pressed', b.dataset.lang === lang ? 'true' : 'false'));
+    // linki menu i dokumentow prowadza do podstron w wybranym jezyku
+    const PG = window.KIODEM_DATA.PAGES, base = lang === 'en' ? '/' : '/' + lang + '/';
+    const href = (p) => (PG.slug[p][lang] ? base + PG.slug[p][lang] : '/' + PG.slug[p].en) + '/';
+    document.querySelectorAll('.dock__btn').forEach((b) => { b.href = href(b.dataset.panel === 'brief' ? 'contact' : b.dataset.panel); });
+    document.querySelectorAll('.legal a').forEach((a) => { const p = a.dataset.legal; a.href = href(p); a.textContent = PG.label[p][lang]; });
     $('#panel-close').setAttribute('aria-label', t('close'));
     if (META[lang]) { document.title = META[lang].title; const md = document.querySelector('meta[name="description"]'); if (md) md.content = META[lang].description; }
     naviBtn.textContent = CURSOR.map[lang]; naviBtn.setAttribute('aria-label', CURSOR.map[lang]);
@@ -700,7 +706,7 @@
     const lineBox = root.querySelector('.loader__line'), line = $('#loader-line');
     const finish = () => {
       root.classList.add('is-done'); hero.style.opacity = ''; viewport.style.clipPath = '';
-      [$('.top'), $('.dock'), $('.navi')].forEach((e) => { if (e) e.style.opacity = ''; });
+      [$('.top'), $('.dock'), $('.navi'), $('.legal')].forEach((e) => { if (e) e.style.opacity = ''; });
     };
     const showDock = () => { if (dockShown) return; dockShown = true; assembleDock(true); };
     hero.style.opacity = '0';
@@ -773,7 +779,7 @@
     const grupy = (n) => kopie.map((c) => c.querySelector('.wm-' + n));
     LIT.forEach((n) => gsap.set(grupy(n), { opacity: 0, x: SPOD_D[n] }));
 
-    const chrome = [$('.top'), $('.dock'), $('.navi')].filter(Boolean);
+    const chrome = [$('.top'), $('.dock'), $('.navi'), $('.legal')].filter(Boolean);
     chrome.forEach((e) => { e.style.opacity = '0'; });
 
     const S = { on: 0, sk: START_SKALA, smuga: 1, otwor: 0 };
@@ -874,7 +880,7 @@
       const tile = t.closest('.tile');
       if (panel.classList.contains('is-open')) setState('off');
       else if (tile) setState('open', CURSOR.open[lang]);
-      else if (t.closest('.top, .dock, .navi')) setState('ui');
+      else if (t.closest('.top, .dock, .navi, .legal')) setState('ui');
       else if (t.closest('.viewport')) setState(F.dragging ? 'grab' : 'drag', CURSOR.drag[lang]);
       else setState('off');
       // magnes: przycisk w promieniu 56 px lekko idzie za kursorem

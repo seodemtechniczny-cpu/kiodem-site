@@ -1,0 +1,28 @@
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
+  X-Frame-Options: SAMEORIGIN
+
+# kopie robocze i adres techniczny Pages nie ida do indeksu (kanoniczny adres to kiodem.com)
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+https://:version.:project.pages.dev/*
+  X-Robots-Tag: noindex
+/_loader/*
+  X-Robots-Tag: noindex
+/_og/*
+  X-Robots-Tag: noindex
+/build.py
+  X-Robots-Tag: noindex
+/strony.py
+  X-Robots-Tag: noindex
+
+/assets/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/js/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/work/*
+  Cache-Control: public, max-age=2592000
+/realizacje-3d/media/*
+  Cache-Control: public, max-age=2592000

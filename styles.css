@@ -1,3 +1,10 @@
+/* Inter z wlasnego serwera (bez Google Fonts: zero zapytan do obcych serwerow, bez zgody na transfer IP) */
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 300 700; font-display: swap;
+  src: url(assets/fonts/inter-latin-ext.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: 'Inter'; font-style: normal; font-weight: 300 700; font-display: swap;
+  src: url(assets/fonts/inter-latin.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
 /* KIODEM — obsydian, grafit, kosc sloniowa. Zadnych innych barw: glebia zastepuje kolor. */
 :root {
   --obsidian: #080A0F;
@@ -227,7 +234,7 @@ a { color: inherit; }
   white-space: nowrap;
 }
 .dock__btn {
-  position: relative; padding: 8px 0;
+  position: relative; padding: 8px 0; display: inline-block; text-decoration: none;
   font-size: 13.5px; font-weight: 500; letter-spacing: .01em;
   color: var(--ink-70);
   transition: color .25s;
@@ -465,3 +472,11 @@ body.is-map .viewport::before { height: 130px; background: linear-gradient(to bo
 .step::before { content: counter(step, decimal-leading-zero); position: absolute; left: 0; top: 27px; font-size: 13px; color: var(--ink-45); letter-spacing: .04em; }
 .step h3 { margin: 0 0 8px; font-size: clamp(22px, 2.6vw, 30px); }
 @media (max-width: 600px) { .step { padding-left: 40px; } }
+
+/* H1 strony glownej = logotyp (tekst dla czytnikow i wyszukiwarek w .sr-only) */
+.hero__h1 { margin: 0; font-size: inherit; font-weight: inherit; line-height: 0; }
+/* linki prawne: male, w lewym dolnym rogu; na waskim ekranie tylko w DOM (sa tez w stopkach podstron) */
+.legal { position: fixed; left: 22px; bottom: calc(26px + var(--sa-b)); z-index: 60; display: flex; gap: 14px; font-size: 11.5px; }
+.legal a { color: var(--ink-45); text-decoration: none; transition: color .25s; }
+.legal a:hover { color: var(--ivory); }
+@media (max-width: 1100px), (pointer: coarse) { .legal { display: none; } }

@@ -6,7 +6,7 @@ on:
     - cron: "0 4 * * 1"
   workflow_dispatch:
 env:
-  SITE_URL: https://seodemtechniczny-cpu.github.io/kiodem-site/
+  SITE_URL: https://kiodem.com/
   # bez klucza dziala na wspolnym limicie Google (bywa wyczerpany, 429); klucz API z projektu Google Cloud
   # jako sekret repozytorium PSI_API_KEY usuwa ten problem
   PSI_KEY: ${{ secrets.PSI_API_KEY }}

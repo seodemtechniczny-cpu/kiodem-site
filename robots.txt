@@ -1,0 +1,7 @@
+# kiodem.com
+User-agent: *
+Allow: /
+Disallow: /_loader/
+Disallow: /_og/
+
+Sitemap: https://kiodem.com/sitemap.xml

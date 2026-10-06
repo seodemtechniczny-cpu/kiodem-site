@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>if(/github\.io$/.test(location.hostname))location.replace('https://kiodem.com'+location.pathname.replace(/^\/kiodem-site/,'')+location.search+location.hash)</script>
 <title>KIODEM: strony, automatyzacje i Google Ads dla niezależnych firm</title>
 <meta name="description" content="Robotę robi ta sama osoba, z którą rozmawiasz. Strony pisane ręcznie, WordPress i WooCommerce, integracje w Pythonie dla sklepów, GA4 i Tag Manager, Google Ads oceniane po zapytaniach. Michał Smoliński, Gliwice.">
 <meta name="theme-color" content="#080A0F">
@@ -27,8 +28,9 @@
 <!-- i18n:end -->
 <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
+ {"@type":"WebSite","@id":"https://kiodem.com/#site","url":"https://kiodem.com/","name":"KIODEM","publisher":{"@id":"https://kiodem.com/#org"},"inLanguage":["en","pl","de","fr","es"]},
  {"@type":"Organization","@id":"https://kiodem.com/#org","name":"KIODEM","url":"https://kiodem.com/","logo":"https://kiodem.com/assets/brand/og.png","email":"michal@kiodem.com","telephone":"+48789350367",
-  "founder":{"@id":"https://kiodem.com/#person"},"address":{"@type":"PostalAddress","addressLocality":"Gliwice","addressCountry":"PL"},
+  "founder":{"@id":"https://kiodem.com/#person"},"address":{"@type":"PostalAddress","streetAddress":"ul. Rybnicka 146","postalCode":"44-100","addressLocality":"Gliwice","addressCountry":"PL"},
   "areaServed":["PL","GB","DE"],"sameAs":["https://www.linkedin.com/in/michal-smolinski","https://kiokuya.com"]},
  {"@type":"Person","@id":"https://kiodem.com/#person","name":"Michał Smoliński","jobTitle":"Owner, KIODEM","url":"https://kiodem.com/","email":"michal@kiodem.com",
   "worksFor":{"@id":"https://kiodem.com/#org"},"knowsAbout":["HTML","CSS","JavaScript","WordPress","WooCommerce","Python","Google Ads","Google Analytics 4","Google Tag Manager","Shoper","Shopify","Shopware"],
@@ -37,10 +39,8 @@
 </script>
 <link rel="icon" href="../assets/brand/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../assets/brand/apple-touch-icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300..700&display=swap">
-<link rel="stylesheet" href="../styles.css?v=17">
+<link rel="preload" href="../assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../styles.css?v=18">
 </head>
 <body>
 
@@ -88,19 +88,20 @@
 <main class="viewport" id="viewport">
   <div class="field" id="field" aria-label="Site index"></div>
   <div class="hero" id="hero">
-    <svg class="hero__wordmark" aria-label="KIODEM"><use href="#sym-wordmark"/></svg>
+    <h1 class="hero__h1"><svg class="hero__wordmark" aria-hidden="true" focusable="false"><use href="#sym-wordmark"/></svg><span class="sr-only">KIODEM: strony, automatyzacje i Google Ads dla niezależnych firm</span></h1>
     <p class="hero__line" data-i18n="tagline">Strony, automatyzacje i Google Ads dla niezależnych firm.</p>
     <p class="hero__hint" id="hint" data-i18n="hint">Przeciągnij albo przewiń w dowolną stronę</p>
   </div>
 </main>
 
 <nav class="dock" id="dock" aria-label="Sections">
-  <button class="dock__btn" type="button" data-panel="work" data-i18n="nav.work" aria-label="Realizacje">Realizacje</button>
-  <button class="dock__btn" type="button" data-panel="services" data-i18n="nav.services" aria-label="Usługi">Usługi</button>
-  <button class="dock__btn" type="button" data-panel="about" data-i18n="nav.about" aria-label="O mnie">O mnie</button>
-  <button class="dock__btn" type="button" data-panel="contact" data-i18n="nav.contact" aria-label="Kontakt">Kontakt</button>
-  <button class="dock__btn" type="button" data-panel="brief" data-i18n="nav.brief" aria-label="Zacznij">Zacznij</button>
+  <a class="dock__btn" href="realizacje/" data-panel="work" data-i18n="nav.work" aria-label="Realizacje">Realizacje</a>
+  <a class="dock__btn" href="uslugi/" data-panel="services" data-i18n="nav.services" aria-label="Usługi">Usługi</a>
+  <a class="dock__btn" href="o-mnie/" data-panel="about" data-i18n="nav.about" aria-label="O mnie">O mnie</a>
+  <a class="dock__btn" href="kontakt/" data-panel="contact" data-i18n="nav.contact" aria-label="Kontakt">Kontakt</a>
+  <a class="dock__btn" href="kontakt/" data-panel="brief" data-i18n="nav.brief" aria-label="Zacznij">Zacznij</a>
 </nav>
+<nav class="legal" aria-label="Legal"><a href="faq/" data-legal="faq">Pytania</a><a href="/pl/polityka-prywatnosci/" data-legal="privacy">Polityka prywatności</a><a href="/pl/regulamin/" data-legal="terms">Regulamin</a></nav>
 
 <section class="overlay" id="panel" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="panel-title">
   <div class="overlay__inner">
@@ -119,11 +120,12 @@
     <h1>KIODEM</h1>
     <p>Websites, automation and Google Ads for independent businesses. Michał Smoliński, Gliwice, Poland.</p>
     <p><a href="mailto:michal@kiodem.com">michal@kiodem.com</a></p>
+    <p><a href="realizacje/">Work</a> · <a href="uslugi/">Services</a> · <a href="o-mnie/">About</a> · <a href="faq/">Questions</a> · <a href="kontakt/">Contact</a></p>
   </div>
 </noscript>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous"></script>
-<script src="../data.js?v=17"></script>
-<script src="../app.js?v=17"></script>
+<script src="../assets/js/gsap-3.12.5.min.js"></script>
+<script src="../data.js?v=18"></script>
+<script src="../app.js?v=18"></script>
 </body>
 </html>

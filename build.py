@@ -4,6 +4,7 @@ Kazda kopia ma wlasny <html lang>, data-lang (app.js honoruje go przed localStor
 tytul, opis, og:locale, canonical i statyczne teksty nawigacji w swoim jezyku.
 Sciezki do zasobow dostaja przedrostek ../. Uruchom po kazdej zmianie index.html lub tekstow."""
 import json, os, re, subprocess
+import strony as S
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SITE = "https://kiodem.com/"
 LANGS = ["pl", "de", "fr", "es"]
@@ -29,9 +30,20 @@ def localize(html, lang):
         key = m.group(1); val = L.get(key)
         return m.group(0) if not isinstance(val, str) else m.group(0).rsplit(">", 1)[0] + ">" + val
     html = re.sub(r'<([a-z]+) class="[^"]*" [^>]*data-i18n="([^"]+)"[^>]*>[^<]*', lambda m: re.sub(r">[^<]*$", ">" + L[m.group(2)], m.group(0)) if isinstance(L.get(m.group(2)), str) else m.group(0), html)
-    html = re.sub(r'(<button class="dock__btn"[^>]*data-i18n="([^"]+)"[^>]*aria-label=")[^"]*', lambda m: m.group(1) + L[m.group(2)], html)
+    html = re.sub(r'(<a class="dock__btn"[^>]*data-i18n="([^"]+)"[^>]*aria-label=")[^"]*', lambda m: m.group(1) + L[m.group(2)], html)
+    # menu, linki prawne i noscript prowadza do podstron w tym samym jezyku (slugi z strony.py)
+    for page in ("work", "services", "about", "contact", "faq"):
+        html = html.replace('href="%s/"' % page, 'href="%s/"' % S.SLUG[page][lang])
+    for page in ("privacy", "terms"):
+        target = S.url(page, lang)
+        html = html.replace('href="%s/"' % page, 'href="%s"' % target)
+    U = S.UI[lang]
+    html = html.replace('data-legal="faq">Questions<', 'data-legal="faq">%s<' % U["faq"])
+    html = html.replace('data-legal="privacy">Privacy policy<', 'data-legal="privacy">%s<' % U["privacy"])
+    html = html.replace('data-legal="terms">Terms of service<', 'data-legal="terms">%s<' % U["terms"])
+    html = re.sub(r'(<span class="sr-only">)[^<]*(</span></h1>)', lambda m: m.group(1) + M["title"] + m.group(2), html)
     # zasoby o poziom wyzej
-    for pat in ('href="assets/', 'href="styles.css', 'src="data.js', 'src="app.js'):
+    for pat in ('href="assets/', 'href="styles.css', 'src="data.js', 'src="app.js', 'src="assets/'):
         html = html.replace(pat, pat.replace('="', '="../'))
     return html
 
@@ -39,3 +51,9 @@ for lang in LANGS:
     d = os.path.join(ROOT, lang); os.makedirs(d, exist_ok=True)
     open(os.path.join(d, "index.html"), "w", encoding="utf-8").write(localize(src, lang))
     print("ok", lang)
+
+# podstrony, dokumenty, 404, sitemap
+for _l in S.LANGS:
+    S.build_lang(_l)
+S.build_docs(); S.build_404(); S.build_sitemap()
+print("ok strony")
