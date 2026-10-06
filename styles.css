@@ -309,7 +309,7 @@ a { color: inherit; }
 
 /* Realizacje jako lista: numer, nazwa, branza; klik rozwija szczegoly */
 .overlay__body:not(.is-calm) > .case { grid-column: 1 / -1; max-width: none; margin-top: 0; }
-.case { border-top: 1px solid var(--ink-10); scroll-margin-top: 20px; }
+.case { border-top: 1px solid var(--ink-10); scroll-margin-top: 88px; }
 .overlay__body > .case:last-child { border-bottom: 1px solid var(--ink-10); }
 .case__h3 { margin: 0 !important; font-size: inherit !important; }
 .case__row { width: 100%; display: grid; grid-template-columns: 44px minmax(0, 1fr) minmax(0, .9fr) 24px; align-items: baseline; gap: 16px;
