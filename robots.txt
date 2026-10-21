@@ -1,4 +1,3 @@
-# kiodem.com
 User-agent: *
 Allow: /
 Disallow: /_loader/
